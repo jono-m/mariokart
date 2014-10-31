@@ -1,0 +1,4 @@
+; 16-bit wide by 16 deep RAM
+memory_initialization_radix = 16;
+memory_initialization_vector = 
+8000,4000,2000,1000,0800,0400,0200,0100,0080,0040,0020,0010,0008,0004,0002,0001;
