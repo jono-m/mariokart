@@ -10,7 +10,7 @@ def create_coe(filename):
 
   byteno = 0
   pixels_written = 0
-  while (byteno + 5 < len(bytes)):
+  while (byteno + 11 < len(bytes)):
     total = 0
     blue = (int(bytes[byteno].encode('hex'), 16) >> 6)
     green = (int(bytes[byteno+1].encode('hex'), 16) >> 5) << 2
@@ -20,17 +20,29 @@ def create_coe(filename):
     green = (int(bytes[byteno+4].encode('hex'), 16) >> 5) << 2
     red = (int(bytes[byteno+5].encode('hex'), 16) >> 5) << 5
     total2 = hex(red + blue + green)[2:]
+    blue = (int(bytes[byteno+6].encode('hex'), 16) >> 6)
+    green = (int(bytes[byteno+7].encode('hex'), 16) >> 5) << 2
+    red = (int(bytes[byteno+8].encode('hex'), 16) >> 5) << 5
+    total3 = hex(red + blue + green)[2:]
+    blue = (int(bytes[byteno+9].encode('hex'), 16) >> 6)
+    green = (int(bytes[byteno+10].encode('hex'), 16) >> 5) << 2
+    red = (int(bytes[byteno+11].encode('hex'), 16) >> 5) << 5
+    total4 = hex(red + blue + green)[2:]
     if(len(total1) == 1):
       total1 = '0' + total1
     if(len(total2) == 1):
       total2 = '0' + total2
-    total = total1 + total2
-    byteno = byteno + 6
-    if(byteno + 2 < len(bytes)):
+    if(len(total3) == 1):
+      total3 = '0' + total3
+    if(len(total4) == 1):
+      total4 = '0' + total4
+    total = total1 + total2 + total3 + total4
+    byteno = byteno + 12
+    if(byteno + 11 < len(bytes)):
       coe_file.write(total + ',')
     else:
       coe_file.write(total + ';')
-    pixels_written = pixels_written + 2
+    pixels_written = pixels_written + 4
   coe_file.close()
   bmp_file.close()
   print pixels_written
