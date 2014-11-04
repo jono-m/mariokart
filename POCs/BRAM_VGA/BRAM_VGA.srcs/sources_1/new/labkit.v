@@ -45,12 +45,20 @@ endmodule
 
 module image_loader(input clk, input vga_clock, input [9:0] x, input [9:0] y,
         output [3:0] red, output [3:0] green, output [3:0] blue);
-    wire [17:0] addra = (479-y)*320 + (x >> 1);
-    wire [15:0] douta;
-    blk_mem_gen_0 mario_image(.clka(clk), .addra(addra), .douta(douta));
-    assign red = (x % 2 == 0) ? douta[15:13] : douta[7:5];
-    assign green = (x % 2 == 0) ? douta[12:10] : douta[4:2];
-    assign blue = (x % 2 == 0) ? douta[10:8] : douta[1:0];
+    wire [16:0] addra = (479-y)*160 + (x >> 2);
+    wire [31:0] douta;
+    wire enable = 1;
+    blk_mem_gen_0 mario_image(.clka(clk), .addra(addra), .douta(douta), .ena(enable));
+    wire [7:0] c1 = douta[31:24];
+    wire [7:0] c2 = douta[23:16];
+    wire [7:0] c3 = douta[15:8];
+    wire [7:0] c4 = douta[7:0];
+    
+    wire [1:0] n = x % 4;
+    wire [7:0] color = (n == 0) ? c1 : ((n == 1) ? c2 : ((n == 2) ? c3 : c4));
+    assign red = (color[7:5] << 1);
+    assign green = (color[4:2] << 1);
+    assign blue = (color[1:0] << 2);
 endmodule
 
 module vga(input vga_clock,
