@@ -6,3 +6,4 @@
 *.hw
 *.runs
 *.sim
+*.DS_Store
