@@ -395,29 +395,29 @@ set_property PACKAGE_PIN E3 [get_ports clk]
 
 
 ##Micro SD Connector
-##Bank = 35, Pin name = IO_L14P_T2_SRCC_35,					Sch name = SD_RESET
-#set_property PACKAGE_PIN E2 [get_ports sdReset]					
+#Bank = 35, Pin name = IO_L14P_T2_SRCC_35,					Sch name = SD_RESET
+set_property PACKAGE_PIN E2 [get_ports sdReset]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports sdReset]
-##Bank = 35, Pin name = IO_L9N_T1_DQS_AD7N_35,				Sch name = SD_CD
-#set_property PACKAGE_PIN A1 [get_ports sdCD]						
+#Bank = 35, Pin name = IO_L9N_T1_DQS_AD7N_35,				Sch name = SD_CD
+set_property PACKAGE_PIN A1 [get_ports sdCD]						
 	#set_property IOSTANDARD LVCMOS33 [get_ports sdCD]
-##Bank = 35, Pin name = IO_L9P_T1_DQS_AD7P_35,				Sch name = SD_SCK
-#set_property PACKAGE_PIN B1 [get_ports sdSCK]						
+#Bank = 35, Pin name = IO_L9P_T1_DQS_AD7P_35,				Sch name = SD_SCK
+set_property PACKAGE_PIN B1 [get_ports sdSCK]						
 	#set_property IOSTANDARD LVCMOS33 [get_ports sdSCK]
-##Bank = 35, Pin name = IO_L16N_T2_35,						Sch name = SD_CMD
-#set_property PACKAGE_PIN C1 [get_ports sdCmd]						
+#Bank = 35, Pin name = IO_L16N_T2_35,						Sch name = SD_CMD
+set_property PACKAGE_PIN C1 [get_ports sdCmd]						
 	#set_property IOSTANDARD LVCMOS33 [get_ports sdCmd]
-##Bank = 35, Pin name = IO_L16P_T2_35,						Sch name = SD_DAT0
-#set_property PACKAGE_PIN C2 [get_ports {sdData[0]}]				
+#Bank = 35, Pin name = IO_L16P_T2_35,						Sch name = SD_DAT0
+set_property PACKAGE_PIN C2 [get_ports {sdData[0]}]				
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sdData[0]}]
-##Bank = 35, Pin name = IO_L18N_T2_35,						Sch name = SD_DAT1
-#set_property PACKAGE_PIN E1 [get_ports {sdData[1]}]				
+#Bank = 35, Pin name = IO_L18N_T2_35,						Sch name = SD_DAT1
+set_property PACKAGE_PIN E1 [get_ports {sdData[1]}]				
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sdData[1]}]
-##Bank = 35, Pin name = IO_L18P_T2_35,						Sch name = SD_DAT2
-#set_property PACKAGE_PIN F1 [get_ports {sdData[2]}]				
+#Bank = 35, Pin name = IO_L18P_T2_35,						Sch name = SD_DAT2
+set_property PACKAGE_PIN F1 [get_ports {sdData[2]}]				
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sdData[2]}]
-##Bank = 35, Pin name = IO_L14N_T2_SRCC_35,					Sch name = SD_DAT3
-#set_property PACKAGE_PIN D2 [get_ports {sdData[3]}]				
+#Bank = 35, Pin name = IO_L14N_T2_SRCC_35,					Sch name = SD_DAT3
+set_property PACKAGE_PIN D2 [get_ports {sdData[3]}]				
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sdData[3]}]
 
 

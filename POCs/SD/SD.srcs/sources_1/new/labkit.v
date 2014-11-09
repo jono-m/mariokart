@@ -16,41 +16,79 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 endmodule
 
 module sdController(input clk, input reset, input [31:0] address, input doRead, 
-		input miso, output [7:0] reg byteOut = 0, output reg byteReady = 0, 
-		output sclk, output mosi, output reg cs);
+		input miso, output [7:0] reg byteOut = 0, output readyForRead, 
+		output reg byteReady = 0, output sclk, output mosi, output reg cs = 1);
 
-	parameter RST = 0; // Reset the controller. 
-	parameter INIT = 1; // Initialization period. Wait ~80 cycles for this.
-	parameter CMD0 = 2; // Send a software reset signal after SPI mode indicated.
-	parameter CMD55 = 3; // Toggle application command mode.
-	parameter CMD41 = 4; // Request card state.
-	parameter POLL_CMD = 5; // Check if the card has succesfully initialized.
-	parameter IDLE = 6; // Ready for a new read request.
-	parameter READ_BLOCK = 7; // Begin reading a block of 512 bytes.
-	parameter READ_BLOCK_WAIT = 8 // Wait for the SD card to respond to the block 
-																// read. Note: this reads through the start
-																// byte.
-	parameter READ_BLOCK_DATA = 9; // Read a block of actual data.
-	parameter READ_BLOCK_CRC = 10; // After the data read, we need to read two
-																 // bytes of CRC data (though we'll just throw
-																 // it out for our purposes).
-	parameter SEND_CMD = 11; // Send an actual command to the SD card.
-	parameter RECEIVE_BYTE_WAIT = 12; // Wait for a response following a command.
-	parameter RECEIVE_BYTE = 13; // Read in a byte. General purpose state.
-	parameter PRESENT_BYTE = 14; // Present a byte of user data to byteOut.
+	/*
+		There are 15 states used to initialize and read from the SD card using
+		the SD SPI protocol. These states are described in detail below.
 
+		RST: 	The controller's default state. Resets all counters and will
+				re-initialize the card in SPI mode.
+		INIT:	Waits 80 cycles for the SD card registers to initialize.
+		CMD0:	Sends a software reset signal after CS is set to low to start
+				the card in SPI mode.
+
+		CMD55/CMD41:	Requests the current state of the card. These two
+						commands are performed sequentially, as CMD41 is
+						application-specific; these sorts must be preceded by 
+						CMD55.
+
+		POLL_CMD:	Checks if the card has successfully initialized. If it has
+					not, this will direct back to CMD55/CMD41 to query card
+					state again.
+		IDLE:		The card is ready for a new read request.
+		READ_BLOCK:	Prepares to read a new block of 512 bytes.
+		SEND_CMD:	Sends a command to the SD card using a shift 
+					register.
+
+		READ_BLOCK_WAIT:	Waits for the SD card to be ready to transmit the
+							block. This reads through the start byte of the
+							transaction.
+		READ_BLOCK_DATA:	Reads a block of actual data following the start
+							byte.
+		READ_BLOCK_CRC:		Reads the CRC data (2 bytes) after the block data.
+							We don't use this at all, so this is ignored.
+		RECEIVE_BYTE_WAIT:	Waits for a response following a command.
+		RECEIVE_BYTE:		Reads in a byte. General purpose state.
+		PRESENT_BYTE:		Presents a byte of actual data to byteOut.
+	*/
+
+	parameter RST = 0;
+	parameter INIT = 1;
+	parameter CMD0 = 2;
+	parameter CMD55 = 3;
+	parameter CMD41 = 4;
+	parameter POLL_CMD = 5;
+	parameter IDLE = 6;
+	parameter READ_BLOCK = 7;
+	parameter READ_BLOCK_WAIT = 8
+	parameter READ_BLOCK_DATA = 9;
+	parameter READ_BLOCK_CRC = 10;
+	parameter SEND_CMD = 11;
+	parameter RECEIVE_BYTE_WAIT = 12;
+	parameter RECEIVE_BYTE = 13;
+	parameter PRESENT_BYTE = 14;
+
+	// Four commands are constants (i.e. no arguments).
 	parameter CMD_HI = 	56'hFF_FF_FF_FF_FF_FF_FF;
 	parameter CMD_0 = 	56'hFF_40_00_00_00_00_95;
 	parameter CMD_41 = 	56'hFF_69_00_00_00_00_95;
 	parameter CMD_55 = 	56'hFF_77_00_00_00_00_95;
 
-	reg [4:0] state;
-	reg [4:0] return_state;
-	reg [55:0] cmd_out;
-	reg [7:0] recv_data;
+	reg [4:0] state = RST;
+	reg [4:0] return_state = RST;
+	reg [55:0] cmd_out = CMD_HI;
+	reg [7:0] recv_data = 0;
 
 	reg [8:0] byte_count = 0;
 	reg [7:0] bit_count = 0;
+
+	assign mosi = cmd_out[55];
+
+	// TODO: may need to use a slower clock speed for the SD card than for the
+	// controller (some sources indicate 1/2 clock speed).
+	assign sclk = clk;
 
 	always @(posedge clk) begin
 		if(reset) begin
@@ -171,5 +209,4 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 			endcase
 		end
 	end
-	assign mosi = cmd_out[55];
 endmodule
