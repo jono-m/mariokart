@@ -1,18 +1,40 @@
 `timescale 1ns / 1ps
 
 module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
-	inout [3:0] sdData);
+	inout [3:0] sdData, output [15:0] led);
 	assign sdData[2] = 1;
 	assign sdData[1] = 1;
 	assign sdReset = 0;
 
-	wire [31:0] address;
+	wire [31:0] address = 32'h1;
 	wire [7:0] dataOut;
-	wire outputReady;
-	wire doRead;
+
+	reg [15:0] ledData = 0;
+	assign led = ledData;
+
+	reg [1:0] counter = 0;
+	reg doRead = 1;
 	wire reset = 0;
+	wire readyForRead;
+	wire byteReady;
 	sdController controller(clk, reset, address, doRead, sdData[0], dataOut, 
-		sdSCK, sdCmd, sdData[3]);
+			readyForRead, byteReady, sdSCK, sdCmd, sdData[3]);
+
+	always @(negedge readyForRead) begin
+		doRead <= 0;
+	end
+
+	always @(posedge byteReady) begin
+		if(counter != 2) begin
+			counter <= counter + 1
+			if(counter == 0) begin
+				ledData[15:8] <= dataOut;
+			end
+			else begin
+				ledData[7:0] <= dataOut;
+			end
+		end
+	end
 endmodule
 
 module sdController(input clk, input reset, input [31:0] address, input doRead, 
@@ -85,6 +107,8 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 	reg [7:0] bit_count = 0;
 
 	assign mosi = cmd_out[55];
+
+	assign readyForRead = (state == IDLE);
 
 	// TODO: may need to use a slower clock speed for the SD card than for the
 	// controller (some sources indicate 1/2 clock speed).
