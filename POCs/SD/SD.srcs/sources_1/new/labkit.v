@@ -116,7 +116,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 	reg is_bad_voltage = 0;
 	reg is_high_capacity = 0;
 
-	assign mosi = cmd_out[55];
+	assign mosi = command_to_send[55];
 	assign error = (state == ERROR);
 	assign readyForRead = (state == READY_FOR_READ);
 
@@ -135,7 +135,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 					command_to_send <= CMD_HI;
 					command_is_r1 <= 1;
 
-					card_resonse_r1 <= 0;
+					card_response_r1 <= 0;
 					card_response_r2 <= 0;
 
 					bit_counter <= 80;
@@ -159,7 +159,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 					end
 				end
 				CMD0: begin
-					state <= SEND_CMD_R1;
+					state <= SEND_CMD;
 					next_state <= CHECK_CMD0;
 					command_is_r1 <= 1;
 
@@ -167,8 +167,11 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 					bit_counter <= 55;
 				end
 				CHECK_CMD0: begin
-					if(card_resonse_r1 != 8'b0000_0001) begin
+					if(card_response_r1 != 8'b0000_0001) begin
 						state <= CMD0;
+					end
+					else begin
+					   state <= CMD8;
 					end
 				end
 				CMD8: begin
@@ -185,8 +188,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 						is_old_card <= 1;
 					end
 					else if(card_response_r2[39:33] != 7'b0 || 
-						card_response_r2[11:8] != 4'b0001 || 
-						card_response_r2[7:0] != 8'b1010_1010) begin
+						card_response_r2[11:0] != 12'h1AA) begin
 						state <= ERROR;
 						is_bad_voltage <= 1;
 					end
@@ -329,7 +331,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 					end
 					else begin
 						bit_counter <= bit_counter - 1;
-					end
+					end 
 					if(command_is_r1 == 1) begin
 						card_response_r1 <= {card_response_r1[6:0], miso};
 					end
