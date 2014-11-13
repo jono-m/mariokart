@@ -334,7 +334,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 						card_response_r1 <= {card_response_r1[6:0], miso};
 					end
 					else begin
-						card_response_r2 <= {card_response_r2{38:0}, miso};
+						card_response_r2 <= {card_response_r2[38:0], miso};
 					end
 				end
 			endcase
