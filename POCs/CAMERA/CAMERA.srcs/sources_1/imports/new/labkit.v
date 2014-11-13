@@ -38,12 +38,33 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     wire [7:0] pixel;
     wire valid;
     Capture camera(.pclk(JB[1], .vsync(JB[3]), .href(JB[2]), .data(JA), .x(x), .y(y), .valid(valid));
+
+    reg [15:0] pixel_data;
+    reg count = 0;
+    reg wea = 0;
+    always @(posedge JB[1]) begin
+        if(valid) begin
+            if(count == 0) begin
+                pixel_data[4:0] <= JA[7:3];
+                pixel_data[10:8] <= JA[2:0]; 
+                count <= 1;
+                wea <= 0;
+            end
+            else if(count == 1) begin
+                pixel_data[7:5] <= JA[7:5];
+                pixel_data[15:11] <= JA[4:0]};
+                wea <= 1;
+                count <= 0;
+            end        
+        end
+    end
     
-    pixel_buffer buff(.clka(clk), .addra({x[8:1],y[8:1]}), .dina(JA) .ena(1), .wea(1), .clkb(clk), .addrb(), 
+    wire [15:0] color;
+    pixel_buffer buff(.clka(clk), .addra({x[8:1],y[8:1]}), .dina(pixel_data) .ena(1), .wea(wea), .clkb(clk), .addrb({(hcount - 144)[8:1], (vcount - 35)[8:1]}), .doutb(color), .enb(1));
         
-    assign vgaRed = at_display_area ? {4{hcount[7]}} : 0;
-    assign vgaGreen = at_display_area ? {4{hcount[6]}} : 0;
-    assign vgaBlue = at_display_area ? {4{hcount[5]}} : 0;
+    assign vgaRed = at_display_area ? color[4:1] : 0;
+    assign vgaGreen = at_display_area ? {color[10:7]} : 0;
+    assign vgaBlue = at_display_area ? {color[15:12]} : 0;
     assign Hsync = ~hsync;
     assign Vsync = ~vsync;
 endmodule
