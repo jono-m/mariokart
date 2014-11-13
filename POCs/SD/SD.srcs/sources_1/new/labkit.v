@@ -2,253 +2,339 @@
 
 module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
 	inout [3:0] sdData, output [15:0] led, input btnC);
+	wire mosi;
+	wire miso;
+	wire sd_clk;
+	wire cs;
+
+	assign sdCmd = mosi;
+	assign miso = sdData[0];
+	assign cs = sdData[3];
+	assign sdSCK = sd_clk;
 	assign sdData[2] = 1;
 	assign sdData[1] = 1;
 	assign sdReset = 0;
 
-	wire [31:0] address = 32'h1;
-	wire [7:0] dataOut;
-
-	reg [7:0] ledData = 8'hFF;
-	
-	assign led = {state, clockHi, readyForRead, reset, status};
-
-	reg hasByte = 0;
-	reg doRead = 0;
-	reg clockHi = 0;
-	
 	wire reset = btnC;
+	wire [31:0] address = 32'h0;
+	reg doRead = 0;
 	wire readyForRead;
+	wire [7:0] byteOut;
 	wire byteReady;
-	wire clk25_mhz;
-	
-	wire [4:0] state;
-	
-	wire [7:0] status;
-	
-	clock_quarter_divider divider(clk, clk25_mhz);
-	sdController controller(clk25_mhz, reset, address, doRead, sdData[0], dataOut, 
-			readyForRead, byteReady, sdSCK, sdCmd, sdData[3], state, status);
+	wire [15:0] status;
+	wire error;
 
-	always @(posedge byteReady) begin
-		if(hasByte != 1) begin
-		  hasByte <= 1;
-		  ledData <= dataOut;
-		end
-	end
+	clock_400mhz divider(clk, sd_clk);
 	
-	always @(posedge clk25_mhz) begin
-	   clockHi <= 1;
-	end
+	sdController controller(.sd_clk(sd_clk), .reset(reset), .address(address),
+			.doRead(doRead), .readyForRead(readyForRead), .byteOut(byteOut),
+			.byteReady(byteReady), .status(status), .error(error), .miso(miso),
+			.mosi(mosi), .cs(cs));
+
+	assign led = status;
+
+	// ****************
+	// Ready to read the card and do what we want with it.
+
 endmodule
 
-module clock_quarter_divider(input clk100_mhz, output reg clk25_mhz = 0);
-    reg [7:0] counter = 0;
+module clock_400mhz(input clk_in, output reg clk_out = 0);
+    reg [8:0] counter = 0;
     
-    always @(posedge clk100_mhz) begin
-        if (counter >= 125) begin
-            clk25_mhz <= ~clk25_mhz;
+    always @(posedge clk_in) begin
+        if (counter == 125) begin
+            clk_out <= ~clk_out;
             counter <= 0;
         end
         else begin
-            counter <= counter + 8'd1;
+            counter <= counter + 1;
         end
     end
 endmodule
 
-module sdController(input clk, input reset, input [31:0] address, input doRead, 
-		input miso, output reg [7:0] byteOut = 0, output readyForRead, 
-		output reg byteReady = 0, output sclk, output mosi, output reg cs = 1, 
-            output reg [4:0] state = RST, output reg [7:0] status = 0);
-
-	/*
-		There are 15 states used to initialize and read from the SD card using
-		the SD SPI protocol. These states are described in detail below.
-
-		RST: 	The controller's default state. Resets all counters and will
-				re-initialize the card in SPI mode.
-		INIT:	Waits 80 cycles for the SD card registers to initialize.
-		CMD0:	Sends a software reset signal after CS is set to low to start
-				the card in SPI mode.
-
-		CMD55/CMD41:	Requests the current state of the card. These two
-						commands are performed sequentially, as CMD41 is
-						application-specific; these sorts must be preceded by 
-						CMD55.
-
-		POLL_CMD:	Checks if the card has successfully initialized. If it has
-					not, this will direct back to CMD55/CMD41 to query card
-					state again.
-		IDLE:		The card is ready for a new read request.
-		READ_BLOCK:	Prepares to read a new block of 512 bytes.
-		SEND_CMD:	Sends a command to the SD card using a shift 
-					register.
-
-		READ_BLOCK_WAIT:	Waits for the SD card to be ready to transmit the
-							block. This reads through the start byte of the
-							transaction.
-		READ_BLOCK_DATA:	Reads a block of actual data following the start
-							byte.
-		READ_BLOCK_CRC:		Reads the CRC data (2 bytes) after the block data.
-							We don't use this at all, so this is ignored.
-		RECEIVE_BYTE_WAIT:	Waits for a response following a command.
-		RECEIVE_BYTE:		Reads in a byte. General purpose state.
-		PRESENT_BYTE:		Presents a byte of actual data to byteOut.
-	*/
+/* Status format: 
+15-11 : State
+10-8 : Errors and Card Info
+7:0 : Card response
+*/
+module sdController(input sd_clk, input reset, input [31:0] address, 
+		input doRead, output readyForRead, output reg [7:0] byteOut = 0, 
+		output reg byteReady = 0, output [15:0] status, output error,
+		input miso, output mosi, output reg cs = 1);
 
 	parameter RST = 0;
 	parameter INIT = 1;
+
 	parameter CMD0 = 2;
-	parameter CMD55 = 3;
-	parameter CMD41 = 4;
-	parameter POLL_CMD = 5;
-	parameter IDLE = 6;
-	parameter READ_BLOCK = 7;
-	parameter READ_BLOCK_WAIT = 8;
-	parameter READ_BLOCK_DATA = 9;
-	parameter READ_BLOCK_CRC = 10;
-	parameter SEND_CMD = 11;
-	parameter RECEIVE_BYTE_WAIT = 12;
-	parameter RECEIVE_BYTE = 13;
-	parameter PRESENT_BYTE = 14;
+	parameter CHECK_CMD0 = 3;
+
+	parameter CMD8 = 4;
+	parameter CHECK_CMD8 = 5;
+
+	parameter CMD58 = 6;
+	parameter CHECK_CMD58 = 7;
+
+	parameter CMD55 = 8;
+	parameter CMD41 = 9;
+	parameter CHECK_CARD_READY = 10;
+
+	parameter READY_FOR_READ = 11;
+	parameter CMD17 = 13;
+	parameter CHECK_CMD17 = 14;
+
+	parameter WAIT_DATA_START = 15;
+	parameter READ_DATA = 16;
+	parameter READ_CRC = 17;
+
+	parameter SEND_CMD = 18;
+	parameter WAIT_CARD_RESPONSE = 19;
+	parameter READ_CARD_RESPONSE = 20;
+
+	parameter ERROR = 21;
             
 	// Four commands are constants (i.e. no arguments).
 	parameter CMD_HI = 	56'hFF_FF_FF_FF_FF_FF_FF;
 	parameter CMD_0 = 	56'hFF_40_00_00_00_00_95;
+	parameter CMD_8 = 	56'hFF_48_00_00_01_AA_0F;
 	parameter CMD_41 = 	56'hFF_69_00_00_00_00_95;
 	parameter CMD_55 = 	56'hFF_77_00_00_00_00_95;
+	parameter CMD_58 = 	56'hFF_7A_00_00_00_00_75;
 
-	reg [4:0] return_state = RST;
-	reg [55:0] cmd_out = CMD_HI;
-	reg [7:0] recv_data = 0;
+	reg [4:0] state = RST;
+	reg [4:0] next_state = RST;
 
-	reg [8:0] byte_counter = 0;
+	reg [55:0] command_to_send = CMD_HI;
+	reg command_is_r1 = 1;
+
+	reg [7:0] card_response_r1 = 0;
+	reg [39:0] card_response_r2 = 0;
+
 	reg [7:0] bit_counter = 0;
+	reg [8:0] byte_counter = 0;
+
+	reg is_old_card = 0;
+	reg is_bad_voltage = 0;
+	reg is_high_capacity = 0;
 
 	assign mosi = cmd_out[55];
+	assign error = (state == ERROR);
+	assign readyForRead = (state == READY_FOR_READ);
 
-	assign readyForRead = (state == IDLE);
+	assign status = {state, is_old_card, is_bad_voltage, is_high_capacity,
+			card_response_r1};
 
-	// TODO: may need to use a slower clock speed for the SD card than for the
-	// controller (some sources indicate 1/2 clock speed).
-	assign sclk = clk;
-
-	always @(posedge clk) begin
+	always @(posedge sd_clk) begin
 		if(reset) begin
 			state <= RST;
 		end
 		else begin
 			case(state)
 				RST: begin
-					cmd_out <= CMD_HI;
-					byte_counter <= 0;
+					state <= INIT;
+
+					command_to_send <= CMD_HI;
+					command_is_r1 <= 1;
+
+					card_resonse_r1 <= 0;
+					card_response_r2 <= 0;
+
 					bit_counter <= 80;
+					byte_counter <= 0;
+
+					is_old_card <= 0;
+					is_bad_voltage <= 0;
+					is_high_capacity <= 0;
+
+					byteOut <= 0;
 					byteReady <= 0;
 					cs <= 1;
-					state <= INIT;
 				end
 				INIT: begin
 					if (bit_counter == 0) begin
-						cs <= 0;
 						state <= CMD0;
+						cs <= 0;
 					end
 					else begin
 						bit_counter <= bit_counter - 1;
 					end
 				end
 				CMD0: begin
-					cmd_out <= CMD_0;
+					state <= SEND_CMD_R1;
+					next_state <= CHECK_CMD0;
+					command_is_r1 <= 1;
+
+					command_to_send <= CMD_0;
 					bit_counter <= 55;
-					return_state <= CMD55;
+				end
+				CHECK_CMD0: begin
+					if(card_resonse_r1 != 8'b0000_0001) begin
+						state <= CMD0;
+					end
+				end
+				CMD8: begin
 					state <= SEND_CMD;
+					next_state <= CHECK_CMD8;
+					command_is_r1 <= 0;
+
+					command_to_send <= CMD_8;
+					bit_counter <= 55;
+				end
+				CHECK_CMD8: begin
+					if(card_response_r2[34] == 1) begin
+						state <= CMD58;
+						is_old_card <= 1;
+					end
+					else if(card_response_r2[39:33] != 7'b0 || 
+						card_response_r2[11:8] != 4'b0001 || 
+						card_response_r2[7:0] != 8'b1010_1010) begin
+						state <= ERROR;
+						is_bad_voltage <= 1;
+					end
+					else begin
+						state <= CMD55;
+					end
+				end
+				CMD58: begin
+					state <= SEND_CMD;
+					next_state <= CHECK_CMD58;
+					command_is_r1 <= 0;
+
+					command_to_send <= CMD_58;
+					bit_counter <= 55;
+				end
+				CHECK_CMD58: begin
+					if(is_old_card) begin
+						if(card_response_r2[21] != 1) begin
+							state <= ERROR;
+							is_bad_voltage <= 1;
+						end
+						else begin
+							state <= CMD_55;
+						end
+					end
+					else begin
+						state <= READY_FOR_READ;
+						if(card_response_r2[30] == 1) begin
+							is_high_capacity <= 1;
+						end
+					end
 				end
 				CMD55: begin
-					cmd_out <= CMD_55;
-					bit_counter <= 55;
-					return_state <= CMD41;
 					state <= SEND_CMD;
+					next_state <= CMD41;
+					command_is_r1 <= 1;
+
+					command_to_send <= CMD_55;
+					bit_counter <= 55;
 				end
 				CMD41: begin
-					cmd_out <= CMD_41;
-					bit_counter <= 55;
-					return_state <= POLL_CMD;
 					state <= SEND_CMD;
+					next_state <= CHECK_CARD_READY;
+					command_is_r1 <= 1;
+
+					command_to_send <= CMD_41;
+					bit_counter <= 55;
 				end
-				POLL_CMD: begin
-				    status <= recv_data;
-					if (recv_data[0] == 0) begin
-						state <= IDLE;
+				CHECK_CARD_READY: begin
+					if(card_response_r1 != 8'b0) begin
+						state <= CMD55;
 					end
-					//else begin
-						//state <= CMD55;
-					//end
+					else begin
+						if(is_old_card) begin
+							state <= READY_FOR_READ;
+						end
+						else begin
+							state <= CMD58;
+						end
+					end
+				end
+				READY_FOR_READ: begin
+					if(doRead == 1) begin
+						state <= CMD17;
+					end
+				end
+				CMD17: begin
+					state <= SEND_CMD;
+					next_state <= CHECK_CMD17;
+					command_is_r1 <= 1;
+
+					command_to_send <= {16'hFF_51, address, 16'hFF};
+					bit_counter <= 55;
+				end
+				CHECK_CMD17: begin
+					if(card_response_r1 != 8'b0) begin
+						state <= ERROR;
+					end
+					else begin
+						state <= WAIT_DATA_START;
+						card_response_r1 <= 0;
+					end
+				end
+				WAIT_DATA_START: begin
+					card_response_r1 <= {card_response_r1[6:0], miso};
+					if({card_response_r1[6:0], miso} == 8'hFE) begin
+						state <= READ_DATA;
+						bit_counter <= 7;
+						byte_counter <= 511;
+						card_response_r1 <= 0;
+					end
+				end
+				READ_DATA: begin
+					card_response_r1 <= {card_response_r1[6:0], miso};
+					if(byte_counter == 0) begin
+						if(bit_counter == 0) begin
+							state <= READ_CRC;
+							bit_counter <= 15;
+						end
+					end
+					if(bit_counter == 0) begin
+						byteReady <= 1;
+						byteOut <= {card_response_r1[6:0], miso};
+						if(byte_counter != 0) begin
+							bit_counter <= 7;
+							byte_counter <= byte_counter - 1;
+						end
+					end
+					else begin
+						byteReady <= 0;
+						bit_counter <= bit_counter - 1;
+					end
+				end
+				READ_CRC: begin
+					if(bit_counter == 0) begin
+						state <= READY_FOR_READ;
+					end
+					else begin
+						bit_counter <= bit_counter - 1;
+					end
 				end
 				SEND_CMD: begin
+					command_to_send <= {command_to_send[54:0], 1'b1};
 					if(bit_counter == 0) begin
-						state <= RECEIVE_BYTE_WAIT;
-					end
-					else begin
-						bit_counter <= bit_counter - 1;
-						cmd_out <= {cmd_out[54:0], 1'b1};
-					end
-				end
-				READ_BLOCK: begin
-					cmd_out <= {16'hFF_51, address, 8'hFF};
-					bit_counter <= 55;
-					return_state <= READ_BLOCK_WAIT;
-					state <= SEND_CMD;
-				end
-				READ_BLOCK_WAIT: begin
-					if(miso == 0) begin
-						byte_counter <= 511;
-						bit_counter <= 7;
-						state <= READ_BLOCK_DATA;
-					end
-				end
-				READ_BLOCK_DATA: begin
-					byte_counter <= byte_counter - 1;
-					return_state <= PRESENT_BYTE;
-					bit_counter <= 7;
-					state <= RECEIVE_BYTE;
-				end
-				PRESENT_BYTE: begin
-					byteOut <= recv_data;
-					byteReady <= 1;
-					if (byte_counter == 0) begin
-						bit_counter <= 7;
-						return_state <= READ_BLOCK_CRC;
-						state <= RECEIVE_BYTE;
-					end
-					else begin
-						state <= READ_BLOCK_DATA;
-					end
-				end
-				READ_BLOCK_CRC: begin
-					bit_counter <= 7;
-					return_state <= IDLE;
-					state <= RECEIVE_BYTE;
-				end
-				RECEIVE_BYTE_WAIT: begin
-					if(miso == 0) begin
-						recv_data <= 0;
-						bit_counter <= 6;
-						state <= RECEIVE_BYTE;
-					end
-				end
-				RECEIVE_BYTE: begin
-					byteReady <= 0;
-					recv_data <= {recv_data[6:0], miso};
-					if(bit_counter == 0) begin
-						state <= return_state;
-						status <= recv_data;
+						state <= WAIT_CARD_RESPONSE;
 					end
 					else begin
 						bit_counter <= bit_counter - 1;
 					end
 				end
-				IDLE: begin
-					if (doRead) begin
-						state <= READ_BLOCK;
+				WAIT_CARD_RESPONSE: begin
+					if(miso == 0) begin
+						state <= READ_CARD_RESPONSE;
+						bit_counter <= command_is_r1 ? 6 : 38;
+					end
+				end
+				READ_CARD_RESPONSE: begin
+					if(bit_counter == 0) begin
+						state <= next_state;
+					end
+					else begin
+						bit_counter <= bit_counter - 1;
+					end
+					if(command_is_r1 == 1) begin
+						card_response_r1 <= {card_response_r1[6:0], miso};
+					end
+					else begin
+						card_response_r2 <= {card_response_r2{38:0}, miso};
 					end
 				end
 			endcase
