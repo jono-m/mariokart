@@ -22,7 +22,7 @@
 //JA[7:0] = data
 
 module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output[1:0] led, output JA[7:0], output JB[5:0]);
-    assign led[1] = 1;
+    assign led[1] = wea;
     assign led[0] = 0;
     wire vga_clock;
     clock_quarter_divider vga_clockgen(clk, vga_clock);
@@ -39,32 +39,30 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     wire valid;
     Capture camera(.pclk(JB[1], .vsync(JB[3]), .href(JB[2]), .data(JA), .x(x), .y(y), .valid(valid));
 
-    reg [15:0] pixel_data;
+    reg [7:0] pixel_data;
     reg count = 0;
     reg wea = 0;
     always @(posedge JB[1]) begin
         if(valid) begin
             if(count == 0) begin
-                pixel_data[4:0] <= JA[7:3];
-                pixel_data[10:8] <= JA[2:0]; 
-                count <= 1;
-                wea <= 0;
+                //do nothing. Cr or Cb incoming
             end
             else if(count == 1) begin
-                pixel_data[7:5] <= JA[7:5];
-                pixel_data[15:11] <= JA[4:0]};
+                pixel_data[7:0] <= JA[7:0];
                 wea <= 1;
-                count <= 0;
-            end        
+            end
+            count <= count + 1;        
         end
+        wea <= 0;
+        count <= 0;
     end
     
-    wire [15:0] color;
+    wire [7:0] color;
     pixel_buffer buff(.clka(clk), .addra({x[8:1],y[8:1]}), .dina(pixel_data) .ena(1), .wea(wea), .clkb(clk), .addrb({(hcount - 144)[8:1], (vcount - 35)[8:1]}), .doutb(color), .enb(1));
         
-    assign vgaRed = at_display_area ? color[4:1] : 0;
-    assign vgaGreen = at_display_area ? {color[10:7]} : 0;
-    assign vgaBlue = at_display_area ? {color[15:12]} : 0;
+    assign vgaRed = at_display_area ? color[7:4] : 0;
+    assign vgaGreen = at_display_area ? 0 : 0;
+    assign vgaBlue = at_display_area ? 0 : 0;
     assign Hsync = ~hsync;
     assign Vsync = ~vsync;
 endmodule
