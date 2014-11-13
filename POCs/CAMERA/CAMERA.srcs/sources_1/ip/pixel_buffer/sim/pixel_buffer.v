@@ -74,7 +74,7 @@ input wire [0 : 0] wea;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR" *)
 input wire [15 : 0] addra;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN" *)
-input wire [15 : 0] dina;
+input wire [7 : 0] dina;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTB CLK" *)
 input wire clkb;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTB EN" *)
@@ -82,7 +82,7 @@ input wire enb;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTB ADDR" *)
 input wire [15 : 0] addrb;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTB DOUT" *)
-output wire [15 : 0] doutb;
+output wire [7 : 0] doutb;
 
   blk_mem_gen_v8_2 #(
     .C_FAMILY("artix7"),
@@ -104,7 +104,7 @@ output wire [15 : 0] doutb;
     .C_INIT_FILE_NAME("no_coe_file_loaded"),
     .C_INIT_FILE("pixel_buffer.mem"),
     .C_USE_DEFAULT_DATA(1),
-    .C_DEFAULT_DATA("1111"),
+    .C_DEFAULT_DATA("FF"),
     .C_HAS_RSTA(0),
     .C_RST_PRIORITY_A("CE"),
     .C_RSTRAM_A(0),
@@ -114,8 +114,8 @@ output wire [15 : 0] doutb;
     .C_USE_BYTE_WEA(0),
     .C_WEA_WIDTH(1),
     .C_WRITE_MODE_A("READ_FIRST"),
-    .C_WRITE_WIDTH_A(16),
-    .C_READ_WIDTH_A(16),
+    .C_WRITE_WIDTH_A(8),
+    .C_READ_WIDTH_A(8),
     .C_WRITE_DEPTH_A(65536),
     .C_READ_DEPTH_A(65536),
     .C_ADDRA_WIDTH(16),
@@ -128,8 +128,8 @@ output wire [15 : 0] doutb;
     .C_USE_BYTE_WEB(0),
     .C_WEB_WIDTH(1),
     .C_WRITE_MODE_B("READ_FIRST"),
-    .C_WRITE_WIDTH_B(16),
-    .C_READ_WIDTH_B(16),
+    .C_WRITE_WIDTH_B(8),
+    .C_READ_WIDTH_B(8),
     .C_WRITE_DEPTH_B(65536),
     .C_READ_DEPTH_B(65536),
     .C_ADDRB_WIDTH(16),
@@ -149,9 +149,9 @@ output wire [15 : 0] doutb;
     .C_DISABLE_WARN_BHV_COLL(0),
     .C_EN_SLEEP_PIN(0),
     .C_DISABLE_WARN_BHV_RANGE(0),
-    .C_COUNT_36K_BRAM("30"),
+    .C_COUNT_36K_BRAM("16"),
     .C_COUNT_18K_BRAM("0"),
-    .C_EST_POWER_SUMMARY("Estimated Power for IP     :     39.351448 mW")
+    .C_EST_POWER_SUMMARY("Estimated Power for IP     :     38.935 mW")
   ) inst (
     .clka(clka),
     .rsta(1'D0),
@@ -167,7 +167,7 @@ output wire [15 : 0] doutb;
     .regceb(1'D0),
     .web(1'B0),
     .addrb(addrb),
-    .dinb(16'B0),
+    .dinb(8'B0),
     .doutb(doutb),
     .injectsbiterr(1'D0),
     .injectdbiterr(1'D0),
@@ -185,7 +185,7 @@ output wire [15 : 0] doutb;
     .s_axi_awburst(2'B0),
     .s_axi_awvalid(1'D0),
     .s_axi_awready(),
-    .s_axi_wdata(16'B0),
+    .s_axi_wdata(8'B0),
     .s_axi_wstrb(1'B0),
     .s_axi_wlast(1'D0),
     .s_axi_wvalid(1'D0),

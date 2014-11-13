@@ -21,11 +21,14 @@
 //JB[0] = xclk JB[1] = pclk JB[2] = href JB[3] = vsync JB[4] = PWDN JB[5] = reset
 //JA[7:0] = data
 
-module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output[1:0] led, output JA[7:0], output JB[5:0]);
-    assign led[1] = wea;
-    assign led[0] = 0;
+module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output [15:0] led, input[7:0] JA, inout[7:0] JB);
+//    assign led[1] = wea;
+//    assign led[0] = 0;
     wire vga_clock;
     clock_quarter_divider vga_clockgen(clk, vga_clock);
+    assign JB[0] = vga_clock;
+    assign JB[4] = 0;
+    assign JB[5] = 0;
     
     wire [9:0] hcount;
     wire [9:0] vcount;
@@ -35,30 +38,17 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     
     wire [8:0] x;
     wire [8:0] y;
-    wire [7:0] pixel;
     wire valid;
-    Capture camera(.pclk(JB[1], .vsync(JB[3]), .href(JB[2]), .data(JA), .x(x), .y(y), .valid(valid));
+    Camera camera(.pclk(JB[1]), .vsync(JB[3]), .href(JB[2]), .data(JA), .x(x), .y(y), .valid(valid), .pixel(pixel_data));
 
-    reg [7:0] pixel_data;
-    reg count = 0;
-    reg wea = 0;
-    always @(posedge JB[1]) begin
-        if(valid) begin
-            if(count == 0) begin
-                //do nothing. Cr or Cb incoming
-            end
-            else if(count == 1) begin
-                pixel_data[7:0] <= JA[7:0];
-                wea <= 1;
-            end
-            count <= count + 1;        
-        end
-        wea <= 0;
-        count <= 0;
-    end
+    wire [7:0] pixel_data;
+    wire wea = valid;
+    assign led = {wx[8:1],wy[8:1]};
     
     wire [7:0] color;
-    pixel_buffer buff(.clka(clk), .addra({x[8:1],y[8:1]}), .dina(pixel_data) .ena(1), .wea(wea), .clkb(clk), .addrb({(hcount - 144)[8:1], (vcount - 35)[8:1]}), .doutb(color), .enb(1));
+    wire [9:0] wx = hcount - 144;
+    wire [9:0] wy = vcount - 35;
+    pixel_buffer buff(.clka(clk), .addra({x[8:1],y[8:1]}), .dina(pixel_data), .ena(1), .wea(wea), .clkb(clk), .addrb({wx[8:1], wy[8:1]}), .doutb(color), .enb(1));
         
     assign vgaRed = at_display_area ? color[7:4] : 0;
     assign vgaGreen = at_display_area ? 0 : 0;

@@ -1,7 +1,7 @@
 // Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2014.2 (win64) Build 932637 Wed Jun 11 13:33:10 MDT 2014
-// Date        : Thu Nov 13 10:46:44 2014
+// Date        : Thu Nov 13 12:52:21 2014
 // Host        : brad-windows running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode synth_stub
 //               C:/Users/brad_000/Documents/GitHub/mariokart/POCs/CAMERA/CAMERA.srcs/sources_1/ip/pixel_buffer/pixel_buffer_stub.v
@@ -15,14 +15,14 @@
 // Please paste the declaration into a Verilog source file or add the file as an additional source.
 (* x_core_info = "blk_mem_gen_v8_2,Vivado 2014.2" *)
 module pixel_buffer(clka, ena, wea, addra, dina, clkb, enb, addrb, doutb)
-/* synthesis syn_black_box black_box_pad_pin="clka,ena,wea[0:0],addra[15:0],dina[15:0],clkb,enb,addrb[15:0],doutb[15:0]" */;
+/* synthesis syn_black_box black_box_pad_pin="clka,ena,wea[0:0],addra[15:0],dina[7:0],clkb,enb,addrb[15:0],doutb[7:0]" */;
   input clka;
   input ena;
   input [0:0]wea;
   input [15:0]addra;
-  input [15:0]dina;
+  input [7:0]dina;
   input clkb;
   input enb;
   input [15:0]addrb;
-  output [15:0]doutb;
+  output [7:0]doutb;
 endmodule

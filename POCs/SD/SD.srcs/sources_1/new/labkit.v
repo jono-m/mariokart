@@ -1,5 +1,25 @@
 `timescale 1ns / 1ps
 
+/*module test();
+    reg clk = 0;
+    wire sdCD;
+    wire sdReset;
+    wire sdSCK;
+    wire sdCmd;
+    wire sdData;
+    wire [15:0] led;
+    wire btnC;
+    
+    initial begin
+        clk = 0;
+    end
+    
+    always #50 clk=~clk;
+    
+    labkit labkit1(clk, sdCD, sdReset, sdSCK, sdCmd, 
+        sdData, led, btnC);
+endmodule*/
+
 module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
 	inout [3:0] sdData, output [15:0] led, input btnC);
 	wire mosi;
@@ -9,11 +29,11 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 
 	assign sdCmd = mosi;
 	assign miso = sdData[0];
-	assign cs = sdData[3];
+	assign sdData[3] = cs;
 	assign sdSCK = sd_clk;
 	assign sdData[2] = 1;
 	assign sdData[1] = 1;
-	assign sdReset = 0;
+	assign sdReset = reset;
 
 	wire reset = btnC;
 	wire [31:0] address = 32'h0;
@@ -24,7 +44,7 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 	wire [15:0] status;
 	wire error;
 
-	clock_400mhz divider(clk, sd_clk);
+	clock_400khz divider(clk, sd_clk);
 	
 	sdController controller(.sd_clk(sd_clk), .reset(reset), .address(address),
 			.doRead(doRead), .readyForRead(readyForRead), .byteOut(byteOut),
@@ -38,7 +58,7 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 
 endmodule
 
-module clock_400mhz(input clk_in, output reg clk_out = 0);
+module clock_400khz(input clk_in, output reg clk_out = 0);
     reg [8:0] counter = 0;
     
     always @(posedge clk_in) begin

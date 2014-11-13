@@ -1,6 +1,8 @@
 
 //pclk is set to 25Mhz
-module Capture (input pclk, vsync, href, data[7:0], output reg x[8:0] = 0, reg y[8:0] = 0, pixel[7:0], valid);
+module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,output reg [8:0] y = 0,output reg [7:0] pixel,output reg valid);
+	
+	reg count = 0;
 	always @(posedge pclk) begin
 		if (href == 0) begin
             x <= 0;
@@ -10,17 +12,26 @@ module Capture (input pclk, vsync, href, data[7:0], output reg x[8:0] = 0, reg y
             else begin
                 y <= y + 1;
             end
+            valid <= 0;
 		end
 		else begin
-            x <= x + 1;
+		  if(count == 0) begin
+		      count <= 1;
+		      valid <= 0;
+		  end
+		  else begin
+		      pixel <= data;
+		      count <= 0;
+		      x <= x + 1;
+		      valid <= 1;
+		  end
 		end
 	end
-    assign valid = href;
 endmodule
 
 //One reproject module per camera.
 //coeffs are in the form [xm, xb, ym, yb]
-module Reproject (input reg coeffs [3:0], input i[9:0], j[8:0], output x[11:0], y[10:0]);
+module Reproject (input [3:0] coeffs, input [9:0] i, [8:0] j, output [11:0] x, [10:0] y);
 	assign x = coeffs[0]*i + coeffs[1];
 	assign y = coeffs[2]*j + coeffs[3];
 endmodule
