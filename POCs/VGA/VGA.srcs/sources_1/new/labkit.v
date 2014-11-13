@@ -39,6 +39,17 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     assign Vsync = ~vsync;
 endmodule
 
+module clock_quarter_divider(input clk100_mhz, output reg clk25_mhz = 0);
+    reg counter = 0;
+    
+    always @(posedge clk100_mhz) begin
+        counter <= counter + 1;
+        if (counter == 0) begin
+            clk25_mhz <= ~clk25_mhz;
+        end
+    end
+endmodule
+
 module vga(input vga_clock,
             output reg [9:0] hcount = 0,    // pixel number on current line
             output reg [9:0] vcount = 0,	 // line number

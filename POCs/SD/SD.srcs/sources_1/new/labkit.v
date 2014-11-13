@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
-	inout [3:0] sdData, output [15:0] led);
+	inout [3:0] sdData, output [15:0] led, input btnC);
 	assign sdData[2] = 1;
 	assign sdData[1] = 1;
 	assign sdReset = 0;
@@ -9,37 +9,57 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 	wire [31:0] address = 32'h1;
 	wire [7:0] dataOut;
 
-	reg [15:0] ledData = 16'hAA_CC;
-	assign led = ledData;
+	reg [7:0] ledData = 8'hFF;
+	
+	assign led = {state, clockHi, readyForRead, reset, status};
 
-	reg [1:0] counter = 0;
+	reg hasByte = 0;
 	reg doRead = 0;
-	wire reset = 0;
+	reg clockHi = 0;
+	
+	wire reset = btnC;
 	wire readyForRead;
 	wire byteReady;
-	sdController controller(clk, reset, address, doRead, sdData[0], dataOut, 
-			readyForRead, byteReady, sdSCK, sdCmd, sdData[3]);
-
-	/*always @(negedge readyForRead) begin
-		doRead <= 0;
-	end
+	wire clk25_mhz;
+	
+	wire [4:0] state;
+	
+	wire [7:0] status;
+	
+	clock_quarter_divider divider(clk, clk25_mhz);
+	sdController controller(clk25_mhz, reset, address, doRead, sdData[0], dataOut, 
+			readyForRead, byteReady, sdSCK, sdCmd, sdData[3], state, status);
 
 	always @(posedge byteReady) begin
-		if(counter != 2) begin
-			counter <= counter + 1;
-			if(counter == 0) begin
-				ledData[15:8] <= dataOut;
-			end
-			else begin
-				ledData[7:0] <= dataOut;
-			end
+		if(hasByte != 1) begin
+		  hasByte <= 1;
+		  ledData <= dataOut;
 		end
-	end*/
+	end
+	
+	always @(posedge clk25_mhz) begin
+	   clockHi <= 1;
+	end
+endmodule
+
+module clock_quarter_divider(input clk100_mhz, output reg clk25_mhz = 0);
+    reg [7:0] counter = 0;
+    
+    always @(posedge clk100_mhz) begin
+        if (counter >= 125) begin
+            clk25_mhz <= ~clk25_mhz;
+            counter <= 0;
+        end
+        else begin
+            counter <= counter + 8'd1;
+        end
+    end
 endmodule
 
 module sdController(input clk, input reset, input [31:0] address, input doRead, 
 		input miso, output reg [7:0] byteOut = 0, output readyForRead, 
-		output reg byteReady = 0, output sclk, output mosi, output reg cs = 1);
+		output reg byteReady = 0, output sclk, output mosi, output reg cs = 1, 
+            output reg [4:0] state = RST, output reg [7:0] status = 0);
 
 	/*
 		There are 15 states used to initialize and read from the SD card using
@@ -91,20 +111,19 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 	parameter RECEIVE_BYTE_WAIT = 12;
 	parameter RECEIVE_BYTE = 13;
 	parameter PRESENT_BYTE = 14;
-
+            
 	// Four commands are constants (i.e. no arguments).
 	parameter CMD_HI = 	56'hFF_FF_FF_FF_FF_FF_FF;
 	parameter CMD_0 = 	56'hFF_40_00_00_00_00_95;
 	parameter CMD_41 = 	56'hFF_69_00_00_00_00_95;
 	parameter CMD_55 = 	56'hFF_77_00_00_00_00_95;
 
-	reg [4:0] state = RST;
 	reg [4:0] return_state = RST;
 	reg [55:0] cmd_out = CMD_HI;
 	reg [7:0] recv_data = 0;
 
-	reg [8:0] byte_count = 0;
-	reg [7:0] bit_count = 0;
+	reg [8:0] byte_counter = 0;
+	reg [7:0] bit_counter = 0;
 
 	assign mosi = cmd_out[55];
 
@@ -156,12 +175,13 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 					state <= SEND_CMD;
 				end
 				POLL_CMD: begin
+				    status <= recv_data;
 					if (recv_data[0] == 0) begin
 						state <= IDLE;
 					end
-					else begin
-						STATE <= CMD55;
-					end
+					//else begin
+						//state <= CMD55;
+					//end
 				end
 				SEND_CMD: begin
 					if(bit_counter == 0) begin
@@ -173,7 +193,7 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 					end
 				end
 				READ_BLOCK: begin
-					cmd_out <= {16'hFF51, address, 8'hFF};
+					cmd_out <= {16'hFF_51, address, 8'hFF};
 					bit_counter <= 55;
 					return_state <= READ_BLOCK_WAIT;
 					state <= SEND_CMD;
@@ -220,6 +240,7 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 					recv_data <= {recv_data[6:0], miso};
 					if(bit_counter == 0) begin
 						state <= return_state;
+						status <= recv_data;
 					end
 					else begin
 						bit_counter <= bit_counter - 1;
