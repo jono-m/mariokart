@@ -1,5 +1,20 @@
 `timescale 1ns / 1ps
 
+module test();
+    reg clk = 0;
+    wire sdCD, sdReset, sdSCK, sdCmd;
+    wire [3:0] sdData;
+    wire [15:0] led;
+    wire btnC;
+    
+    initial begin
+        clk = 0;
+        forever #50 clk = ~clk;
+    end
+    
+    labkit l1(clk, sdCD, sdReset, sdSCK, sdCmd, sdData, led, btnC);
+endmodule
+
 module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
 	inout [3:0] sdData, output [15:0] led, input btnC);
 	wire mosi;
