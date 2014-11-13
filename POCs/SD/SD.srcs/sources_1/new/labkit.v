@@ -323,6 +323,8 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 					if(miso == 0) begin
 						state <= READ_CARD_RESPONSE;
 						bit_counter <= command_is_r1 ? 6 : 38;
+						card_response_r1 <= 0;
+						card_response_r2 <= 0;
 					end
 				end
 				READ_CARD_RESPONSE: begin
