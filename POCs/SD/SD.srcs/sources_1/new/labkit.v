@@ -9,24 +9,24 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 	wire [31:0] address = 32'h1;
 	wire [7:0] dataOut;
 
-	reg [15:0] ledData = 0;
+	reg [15:0] ledData = 16'hAA_CC;
 	assign led = ledData;
 
 	reg [1:0] counter = 0;
-	reg doRead = 1;
+	reg doRead = 0;
 	wire reset = 0;
 	wire readyForRead;
 	wire byteReady;
 	sdController controller(clk, reset, address, doRead, sdData[0], dataOut, 
 			readyForRead, byteReady, sdSCK, sdCmd, sdData[3]);
 
-	always @(negedge readyForRead) begin
+	/*always @(negedge readyForRead) begin
 		doRead <= 0;
 	end
 
 	always @(posedge byteReady) begin
 		if(counter != 2) begin
-			counter <= counter + 1
+			counter <= counter + 1;
 			if(counter == 0) begin
 				ledData[15:8] <= dataOut;
 			end
@@ -34,11 +34,11 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 				ledData[7:0] <= dataOut;
 			end
 		end
-	end
+	end*/
 endmodule
 
 module sdController(input clk, input reset, input [31:0] address, input doRead, 
-		input miso, output [7:0] reg byteOut = 0, output readyForRead, 
+		input miso, output reg [7:0] byteOut = 0, output readyForRead, 
 		output reg byteReady = 0, output sclk, output mosi, output reg cs = 1);
 
 	/*
@@ -84,7 +84,7 @@ module sdController(input clk, input reset, input [31:0] address, input doRead,
 	parameter POLL_CMD = 5;
 	parameter IDLE = 6;
 	parameter READ_BLOCK = 7;
-	parameter READ_BLOCK_WAIT = 8
+	parameter READ_BLOCK_WAIT = 8;
 	parameter READ_BLOCK_DATA = 9;
 	parameter READ_BLOCK_CRC = 10;
 	parameter SEND_CMD = 11;
