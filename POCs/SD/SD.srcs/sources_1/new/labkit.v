@@ -121,7 +121,7 @@ module sdController(input sd_clk, input reset, input [31:0] address,
 	assign readyForRead = (state == READY_FOR_READ);
 
 	assign status = {state, is_old_card, is_bad_voltage, is_high_capacity,
-			card_response_r1};
+			next_state, card_response_r1[2:0]};
 
 	always @(posedge sd_clk) begin
 		if(reset) begin
