@@ -3,30 +3,38 @@
 module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,output reg [8:0] y = 0,output reg [7:0] pixel,output reg valid);
 	
 	reg count = 0;
+	reg vinc = 0;
+	reg hres = 0;
 	always @(posedge pclk) begin
-		if (href == 0) begin
-            x <= 0;
-            if (vsync == 1) begin
-                y <= 0;
-            end
-            else begin
-                y <= y + 1;
-            end
-            valid <= 0;
-		end
-		else begin
-		  if(count == 0) begin
-		      count <= 1;
-		      valid <= 0;
-		  end
-		  else begin
-		      pixel <= data;
-		      count <= 0;
-		      x <= x + 1;
-		      valid <= 1;
-		  end
-		end
-	end
+	   if(href == 1) begin
+	       if(count == 0) begin
+	           count <= 1;
+	       end
+	       else begin
+	           pixel <= data;
+	           count <= 0;
+	           x <= x + 1;
+	       end
+	       vinc <= 0;
+	       hres <= 0;
+	       valid <= 1;
+	   end
+	   else if(vsync == 1) begin
+	       if(vinc == 0) begin
+	           y <= 0;
+	           vinc <= 1;
+	       end
+	       valid <= 0;
+	   end
+	   else if(href == 0) begin
+	       if(hres == 0) begin
+	           x <= 0;
+	           y <= y + 1;
+	           hres <= 1;
+	       end
+	       valid <= 0;
+	   end
+    end
 endmodule
 
 //One reproject module per camera.

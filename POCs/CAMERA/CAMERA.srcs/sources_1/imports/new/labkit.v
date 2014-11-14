@@ -28,7 +28,7 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     clock_quarter_divider vga_clockgen(clk, vga_clock);
     assign JB[0] = vga_clock;
     assign JB[4] = 0;
-    assign JB[5] = 0;
+    assign JB[5] = 1;
     
     wire [9:0] hcount;
     wire [9:0] vcount;
@@ -43,12 +43,13 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
 
     wire [7:0] pixel_data;
     wire wea = valid;
-    assign led = {wx[8:1],wy[8:1]};
+    assign led[7:0] = x[8:1];
+    assign led[15:8] = y[8:1];
     
     wire [7:0] color;
     wire [9:0] wx = hcount - 144;
     wire [9:0] wy = vcount - 35;
-    pixel_buffer buff(.clka(clk), .addra({x[8:1],y[8:1]}), .dina(pixel_data), .ena(1), .wea(wea), .clkb(clk), .addrb({wx[8:1], wy[8:1]}), .doutb(color), .enb(1));
+    pixel_buffer buff(.clka(vga_clock), .addra({x[8:1],y[8:1]}), .dina(JA), .ena(1), .wea(wea), .clkb(clk), .addrb({wx[8:1], wy[8:1]}), .doutb(color), .enb(1));
         
     assign vgaRed = at_display_area ? color[7:4] : 0;
     assign vgaGreen = at_display_area ? 0 : 0;
