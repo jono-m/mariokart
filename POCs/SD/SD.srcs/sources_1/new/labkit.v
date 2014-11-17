@@ -1,7 +1,24 @@
 `timescale 1ns / 1ps
 
+module test();
+    reg clk = 0;
+    wire sdCd, sdReset, sdSCK, sdCmd;
+    wire [3:0] sdData;
+    wire [15:0] led;
+    wire btnC;
+    wire stb;
+    wire ack;
+    
+    labkit l1(clk, sdCD, sdReset, sdSCK, sdCmd, sdData, led, btnC, stb, ack);
+    
+    initial begin
+        clk = 0;
+        forever #50 clk = ~clk;
+    end
+endmodule
+
 module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
-	inout [3:0] sdData, output [15:0] led, input btnC);
+	inout [3:0] sdData, output [15:0] led, input btnC, output stb, output ack);
 	wire clk_100mhz = clk;
 	wire clk_50mhz;
 	wire clk_25mhz;
@@ -65,6 +82,7 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 	wire [31:0] sd_read_adr;
 	wire byte_available;
 	wire error;
+	wire [15:0] wb_status;
 
 	wb_driver u_wb_driver(
 	  .clk(clk_25mhz), 
@@ -73,25 +91,30 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
 	  .do_read(do_read),
 	  .sd_read_adr(sd_read_adr),
 	  .byte_available(byte_available),
+	  .error(error),
 	  .adr(adr), 
 	  .din(masterDin), 
 	  .dout(masterDout), 
 	  .stb(stb), 
 	  .we(we), 
-	  .ack(ack)
-  );
-
+	  .ack(ack),
+	  .status(wb_status)
+    );
+    
+    wire [15:0] sd_status; 
 	sd_tester u_sd_tester(
 		.clk(clk_25mhz), 
 		.rst(rst),
-		.ready_for_read(ready_for_read)
+		.ready_for_read(ready_for_read),
 		.do_read(do_read),
 		.sd_read_adr(sd_read_adr),
 		.byte_available(byte_available),
 		.error(error),
 		.din(masterDout),
-		.leds(led)
+		.status(sd_status)
 	);
+	
+	assign led = sd_status;
 endmodule
 
 module clock_divider(input clk_in, output reg clk_out = 0);
@@ -101,7 +124,7 @@ module clock_divider(input clk_in, output reg clk_out = 0);
 endmodule
 
 module wb_driver(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available, 
-		error, adr, din, dout, stb, we, ack);
+		error, adr, din, dout, stb, we, ack, status);
 	input clk, rst;
 	output ready_for_read;
 	input do_read;
@@ -112,6 +135,7 @@ module wb_driver(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available,
 	output [7:0] dout;
 	output stb, we;
 	input ack;
+	output [15:0] status;
 
 	reg byte_available = 0;
 	reg [7:0] adr = 0;
@@ -121,40 +145,40 @@ module wb_driver(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available,
 
 	// Initialization states
 	parameter W_INIT_SD = 0;
-	parameter CHECK_FOR_INIT_ERR;
+	parameter CHECK_FOR_INIT_ERR = 1;
 
 	// Transmit & error loading states
-	parameter W_TRANSMIT = 1;
-	parameter R_IS_BUSY = 2;
-	parameter WAIT_UNTIL_NOT_BUSY = 3;
-	parameter R_ERRORS = 4;
+	parameter W_TRANSMIT = 2;
+	parameter R_IS_BUSY = 3;
+	parameter WAIT_UNTIL_NOT_BUSY = 4;
+	parameter R_ERRORS = 5;
 
 	// Reading from SD states
-	parameter W_ADD1 = 5;
-	parameter W_ADD2 = 6;
-	parameter W_ADD3 = 7;
-	parameter W_ADD4 = 8;
-	parameter W_READ_SD = 9;
-	parameter CHECK_FOR_READ_ERR = 10;
-	parameter R_DATA_BYTE = 11;
-	parameter WAIT_UNTIL_BLOCK_READ = 12;
+	parameter W_ADD1 = 6;
+	parameter W_ADD2 = 7;
+	parameter W_ADD3 = 8;
+	parameter W_ADD4 = 9;
+	parameter W_READ_SD = 10;
+	parameter CHECK_FOR_READ_ERR = 11;
+	parameter R_DATA_BYTE = 12;
+	parameter WAIT_UNTIL_BLOCK_READ = 13;
 
 	// Ready state
-	parameter READY = 13;
+	parameter READY = 14;
 
 	// Write state
-	parameter WRITE = 14;
-	parameter READ = 15;
+	parameter WRITE = 15;
+	parameter READ = 16;
 
 	// Error state
-	parameter ERROR = 16;
+	parameter ERROR = 17;
 
 	parameter SPI_TRANS_TYPE_REG = 	 8'h02;
 	parameter SPI_TRANS_CTRL_REG = 	 8'h03;
 	parameter SPI_TRANS_STS_REG = 	 8'h04;
 	parameter SPI_TRANS_ERROR_REG =  8'h05;
-	parameter SD_ADDR_7_0_REG = 		 8'h07;
-	parameter SD_ADDR_15_8_REG = 		 8'h08;
+	parameter SD_ADDR_7_0_REG =      8'h07;
+	parameter SD_ADDR_15_8_REG =     8'h08;
 	parameter SD_ADDR_23_16_REG = 	 8'h09;
 	parameter SD_ADDR_31_24_REG = 	 8'h0a;
 	parameter SPI_RX_FIFO_DATA_REG = 8'hb0;
@@ -167,14 +191,16 @@ module wb_driver(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available,
 	parameter READ_NO_ERROR = 2'd0;
 
 	reg [4:0] state = W_INIT_SD;
-	reg [4:0] state_after_op = CHECK_FOR_INIT_ERR;
-	reg [4:0] state_after_transmit = READY;
+	reg [4:0] state_after_op = W_TRANSMIT;
+	reg [4:0] state_after_transmit = CHECK_FOR_INIT_ERR;
 
 	reg [8:0] byte_counter;
 
 	assign ready_for_read = (state == READY);
 	assign error = (state == ERROR);
 
+    assign status = {state, state_after_op, state_after_transmit, 1'b1};
+    
 	always @(posedge clk) begin
 		if(rst) begin
 			byte_available <= 0;
@@ -329,7 +355,7 @@ module wb_driver(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available,
 endmodule
 
 module sd_tester(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available, 
-		error, din, leds);
+		error, din, status);
 	input clk, rst;
 	input ready_for_read;
 	output do_read;
@@ -337,25 +363,24 @@ module sd_tester(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available,
 	input byte_available;
 	input error;
 	input [7:0] din;
-	output [15:0] leds;
+	output [15:0] status;
 
 	reg do_read = 0;
 	reg [31:0] sd_read_adr = 0;
-	reg [15:0] leds = 0;
+	reg [15:0] status = 0;
 
 	reg [1:0] bytes_read = 0;
 
 	always @(posedge clk) begin
 		if(rst) begin
-			read_once <= 0;
 			do_read <= 0;
 			sd_read_adr <= 0;
-			leds <= 0;
+			status <= 0;
 			bytes_read <= 0;
 		end
 		else begin
 			if(error) begin
-				leds <= {8'hFF, din};
+				status <= {8'hFF, din};
 			end
 			else if(ready_for_read) begin
 				do_read <= 1;
@@ -364,11 +389,11 @@ module sd_tester(clk, rst, ready_for_read, do_read, sd_read_adr, byte_available,
 			if(byte_available) begin
 				do_read <= 0;
 				if(bytes_read == 0) begin
-					leds[15:8] <= din;
+					status[15:8] <= din;
 					bytes_read <= bytes_read + 1;
 				end	
 				else if(bytes_read == 1) begin
-					leds[7:0] <= din;
+					status[7:0] <= din;
 					bytes_read <= bytes_read + 1;
 				end
 			end
