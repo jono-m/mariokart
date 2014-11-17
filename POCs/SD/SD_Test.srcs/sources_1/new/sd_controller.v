@@ -14,8 +14,9 @@ module sd_controller(
     output reg [7:0] dout,
     output reg byte_available,
     output ready_for_read,
-    input [31:0] adr,
-    input clk
+    input [31:0] address,
+    input clk,
+    output [4:0] status
 );
 
     parameter RST = 0;
@@ -42,6 +43,7 @@ module sd_controller(
     parameter WRITE_DATA_SIZE = 515;
     
     reg [4:0] state = RST;
+    assign status = state;
     reg [4:0] return_state;
     reg sclk_sig = 0;
     reg [55:0] cmd_out;
@@ -54,7 +56,7 @@ module sd_controller(
     reg [9:0] byte_counter;
     reg [9:0] bit_counter;
     
-    always @(posedge clk or reset) begin
+    always @(posedge clk) begin
         if(reset == 1) begin
             state <= RST;
             sclk_sig <= 0;
@@ -63,8 +65,7 @@ module sd_controller(
             case(state)
                 RST: begin
                     sclk_sig <= 0;
-                    cmd_out <= 56{1'b1};
-                    address <= 32'h00_00_00_00;
+                    cmd_out <= {56{1'b1}};
                     byte_counter <= 0;
                     byte_available <= 0;
                     cmd_mode <= 1;
@@ -80,7 +81,7 @@ module sd_controller(
                     end
                     else begin
                         bit_counter <= bit_counter - 1;
-                        sclk_sig <= not sclk_sig;
+                        sclk_sig <= ~sclk_sig;
                     end
                 end
                 CMD0: begin
@@ -134,7 +135,7 @@ module sd_controller(
                         return_state <= READ_BLOCK_DATA;
                         state <= RECEIVE_BYTE;
                     end
-                    sclk_sig <= not sclk_sig;
+                    sclk_sig <= ~sclk_sig;
                 end
                 READ_BLOCK_DATA: begin
                     dout <= recv_data;
@@ -166,11 +167,11 @@ module sd_controller(
                             cmd_out <= {cmd_out[54:0], 1'b1};
                         end
                     end
-                    sclk_sig <= not sclk_sig;
+                    sclk_sig <= ~sclk_sig;
                 end
                 RECEIVE_BYTE_WAIT: begin
                     if (sclk_sig == 1) begin
-                        if (miso = 0) begin
+                        if (miso == 0) begin
                             recv_data <= 0;
                             if (response_mode == 0) begin
                                 bit_counter <= 3;
@@ -181,20 +182,20 @@ module sd_controller(
                             state <= RECEIVE_BYTE;
                         end
                     end
-                    sclk_sig <= not sclk_sig;
+                    sclk_sig <= ~sclk_sig;
                 end
                 RECEIVE_BYTE: begin
                     byte_available <= 0;
                     if (sclk_sig == 1) begin
                         recv_data <= {recv_data[6:0], miso};
-                        if (bit_counter == 0) then
+                        if (bit_counter == 0) begin
                             state <= return_state;
                         end
                         else begin
                             bit_counter <= bit_counter - 1;
                         end
                     end
-                    sclk_sig <= not sclk_sig;
+                    sclk_sig <= ~sclk_sig;
                 end
                 WRITE_BLOCK_CMD: begin
                     cmd_mode <= 1;
@@ -242,11 +243,11 @@ module sd_controller(
                             state <= WRITE_BLOCK_DATA;
                         end
                         else begin
-                            data_sig <= {data_sig[6:0], 1};
+                            data_sig <= {data_sig[6:0], 1'b1};
                             bit_counter <= bit_counter - 1;
                         end;
                     end;
-                    sclk_sig <= not sclk_sig;
+                    sclk_sig <= ~sclk_sig;
                 end
                 WRITE_BLOCK_WAIT: begin
                     response_mode <= 1;
@@ -260,7 +261,7 @@ module sd_controller(
                             end
                         end
                     end
-                    sclk_sig <= not sclk_sig;
+                    sclk_sig = ~sclk_sig;
                 end
             endcase
         end
