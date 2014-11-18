@@ -9,34 +9,34 @@ set_property PACKAGE_PIN E3 [get_ports clk]
 set_property IOSTANDARD LVCMOS33 [get_ports clk]
 create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_ports clk]
 
-## Switches
-##Bank = 34, Pin name = IO_L21P_T3_DQS_34,					Sch name = SW0
-#set_property PACKAGE_PIN U9 [get_ports {sw[0]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[0]}]
-##Bank = 34, Pin name = IO_25_34,							Sch name = SW1
-#set_property PACKAGE_PIN U8 [get_ports {sw[1]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
-##Bank = 34, Pin name = IO_L23P_T3_34,						Sch name = SW2
-#set_property PACKAGE_PIN R7 [get_ports {sw[2]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[2]}]
-##Bank = 34, Pin name = IO_L19P_T3_34,						Sch name = SW3
-#set_property PACKAGE_PIN R6 [get_ports {sw[3]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[3]}]
-##Bank = 34, Pin name = IO_L19N_T3_VREF_34,					Sch name = SW4
-#set_property PACKAGE_PIN R5 [get_ports {sw[4]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[4]}]
-##Bank = 34, Pin name = IO_L20P_T3_34,						Sch name = SW5
-#set_property PACKAGE_PIN V7 [get_ports {sw[5]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[5]}]
-##Bank = 34, Pin name = IO_L20N_T3_34,						Sch name = SW6
-#set_property PACKAGE_PIN V6 [get_ports {sw[6]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[6]}]
-##Bank = 34, Pin name = IO_L10P_T1_34,						Sch name = SW7
-#set_property PACKAGE_PIN V5 [get_ports {sw[7]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[7]}]
-##Bank = 34, Pin name = IO_L8P_T1-34,						Sch name = SW8
-#set_property PACKAGE_PIN U4 [get_ports {sw[8]}]
-#set_property IOSTANDARD LVCMOS33 [get_ports {sw[8]}]
+# Switches
+#Bank = 34, Pin name = IO_L21P_T3_DQS_34,					Sch name = SW0
+set_property PACKAGE_PIN U9 [get_ports {sw[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[0]}]
+#Bank = 34, Pin name = IO_25_34,							Sch name = SW1
+set_property PACKAGE_PIN U8 [get_ports {sw[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
+#Bank = 34, Pin name = IO_L23P_T3_34,						Sch name = SW2
+set_property PACKAGE_PIN R7 [get_ports {sw[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[2]}]
+#Bank = 34, Pin name = IO_L19P_T3_34,						Sch name = SW3
+set_property PACKAGE_PIN R6 [get_ports {sw[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[3]}]
+#Bank = 34, Pin name = IO_L19N_T3_VREF_34,					Sch name = SW4
+set_property PACKAGE_PIN R5 [get_ports {sw[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[4]}]
+#Bank = 34, Pin name = IO_L20P_T3_34,						Sch name = SW5
+set_property PACKAGE_PIN V7 [get_ports {sw[5]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[5]}]
+#Bank = 34, Pin name = IO_L20N_T3_34,						Sch name = SW6
+set_property PACKAGE_PIN V6 [get_ports {sw[6]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[6]}]
+#Bank = 34, Pin name = IO_L10P_T1_34,						Sch name = SW7
+set_property PACKAGE_PIN V5 [get_ports {sw[7]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[7]}]
+#Bank = 34, Pin name = IO_L8P_T1-34,						Sch name = SW8
+set_property PACKAGE_PIN U4 [get_ports {sw[8]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {sw[8]}]
 ##Bank = 34, Pin name = IO_L9N_T1_DQS_34,					Sch name = SW9
 #set_property PACKAGE_PIN V2 [get_ports {sw[9]}]
 #set_property IOSTANDARD LVCMOS33 [get_ports {sw[9]}]
@@ -723,44 +723,38 @@ set_property IOSTANDARD LVCMOS33 [get_ports Vsync]
 
 set_property MARK_DEBUG true [get_nets {JB[6]}]
 set_property MARK_DEBUG true [get_nets {JB[7]}]
-create_debug_core u_ila_0_0 ila
-set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0_0]
-set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0_0]
-set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0_0]
-set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0_0]
-set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0_0]
-set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0_0]
-set_property C_TRIGIN_EN false [get_debug_cores u_ila_0_0]
-set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0_0]
-set_property port_width 1 [get_debug_ports u_ila_0_0/clk]
+
 connect_debug_port u_ila_0_0/clk [get_nets [list n_0_89_BUFG]]
-set_property port_width 9 [get_debug_ports u_ila_0_0/probe0]
-connect_debug_port u_ila_0_0/probe0 [get_nets [list {camera/p_0_in__0[0]} {camera/p_0_in__0[1]} {camera/p_0_in__0[2]} {camera/p_0_in__0[3]} {camera/p_0_in__0[4]} {camera/p_0_in__0[5]} {camera/p_0_in__0[6]} {camera/p_0_in__0[7]} {camera/p_0_in__0[8]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 9 [get_debug_ports u_ila_0_0/probe1]
-connect_debug_port u_ila_0_0/probe1 [get_nets [list {camera/p_0_in__1[0]} {camera/p_0_in__1[1]} {camera/p_0_in__1[2]} {camera/p_0_in__1[3]} {camera/p_0_in__1[4]} {camera/p_0_in__1[5]} {camera/p_0_in__1[6]} {camera/p_0_in__1[7]} {camera/p_0_in__1[8]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 8 [get_debug_ports u_ila_0_0/probe2]
-connect_debug_port u_ila_0_0/probe2 [get_nets [list {JA[0]} {JA[1]} {JA[2]} {JA[3]} {JA[4]} {JA[5]} {JA[6]} {JA[7]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 2 [get_debug_ports u_ila_0_0/probe3]
-connect_debug_port u_ila_0_0/probe3 [get_nets [list {JB[6]} {JB[7]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 10 [get_debug_ports u_ila_0_0/probe4]
-connect_debug_port u_ila_0_0/probe4 [get_nets [list {wx[0]} {wx[1]} {wx[2]} {wx[3]} {wx[4]} {wx[5]} {wx[6]} {wx[7]} {wx[8]} {wx[9]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 10 [get_debug_ports u_ila_0_0/probe5]
-connect_debug_port u_ila_0_0/probe5 [get_nets [list {wy[0]} {wy[1]} {wy[2]} {wy[3]} {wy[4]} {wy[5]} {wy[6]} {wy[7]} {wy[8]} {wy[9]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 9 [get_debug_ports u_ila_0_0/probe6]
-connect_debug_port u_ila_0_0/probe6 [get_nets [list {x[0]} {x[1]} {x[2]} {x[3]} {x[4]} {x[5]} {x[6]} {x[7]} {x[8]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 9 [get_debug_ports u_ila_0_0/probe7]
-connect_debug_port u_ila_0_0/probe7 [get_nets [list {y[0]} {y[1]} {y[2]} {y[3]} {y[4]} {y[5]} {y[6]} {y[7]} {y[8]}]]
-create_debug_port u_ila_0_0 probe
-set_property port_width 1 [get_debug_ports u_ila_0_0/probe8]
-connect_debug_port u_ila_0_0/probe8 [get_nets [list at_display_area]]
+connect_debug_port u_ila_0_0/probe6 [get_nets [list {camera/O3[0]} {camera/O3[1]} {camera/O3[2]} {camera/O3[3]} {camera/O3[4]} {camera/O3[5]} {camera/O3[6]} {camera/O3[7]} {camera/O3[8]}]]
+connect_debug_port dbg_hub/clk [get_nets n_0_89_BUFG]
+
+
+
+
+connect_debug_port u_ila_0_0/clk [get_nets [list n_0_97_BUFG]]
+connect_debug_port dbg_hub/clk [get_nets n_0_97_BUFG]
+
+
+create_debug_core u_ila_0 ila
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property port_width 1 [get_debug_ports u_ila_0/clk]
+connect_debug_port u_ila_0/clk [get_nets [list {n_2_JB_OBUF[0]_inst_i_1}]]
+set_property port_width 12 [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {blue[0]} {blue[1]} {blue[2]} {blue[3]} {blue[4]} {blue[5]} {blue[6]} {blue[7]} {blue[8]} {blue[9]} {blue[10]} {blue[11]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 12 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {green[0]} {green[1]} {green[2]} {green[3]} {green[4]} {green[5]} {green[6]} {green[7]} {green[8]} {green[9]} {green[10]} {green[11]}]]
+create_debug_port u_ila_0 probe
+set_property port_width 12 [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {red[0]} {red[1]} {red[2]} {red[3]} {red[4]} {red[5]} {red[6]} {red[7]} {red[8]} {red[9]} {red[10]} {red[11]}]]
 set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
 set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
-connect_debug_port dbg_hub/clk [get_nets n_0_89_BUFG]
+connect_debug_port dbg_hub/clk [get_nets n_2_JB_OBUF[0]_inst_i_1]
