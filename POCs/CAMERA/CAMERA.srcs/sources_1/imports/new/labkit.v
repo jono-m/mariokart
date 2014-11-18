@@ -21,7 +21,7 @@
 //JB[0] = xclk JB[1] = pclk JB[2] = href JB[3] = vsync JB[4] = PWDN JB[5] = reset
 //JA[7:0] = data
 
-module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output [15:0] led, (* mark_debug = "true" *) input[7:0] JA, (* mark_debug = "true" *) inout[7:0] JB);
+module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output [15:0] led, (* mark_debug = "true" *) input[7:0] JA, inout[7:0] JB);
 //    assign led[1] = wea;
 //    assign led[0] = 0;
     wire vga_clock;

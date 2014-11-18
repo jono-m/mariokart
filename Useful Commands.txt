@@ -1,0 +1,7 @@
+In vivado use the TCL Console (bottom window) and use the commands
+
+// gets the max number of threads vivado uses
+get_param general.maxThreads
+
+//set the max number of threads vivado can use to 8
+set_param general.maxThreads 8

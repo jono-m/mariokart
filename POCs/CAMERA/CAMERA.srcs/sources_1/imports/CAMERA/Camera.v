@@ -1,6 +1,13 @@
 
 //pclk is set to 25Mhz
-module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,output reg [8:0] y = 0,output reg [7:0] pixel = 0,output reg valid);
+module Camera ((* mark_debug = "true" *) input pclk, 
+               (* mark_debug = "true" *) input vsync, 
+               (* mark_debug = "true" *) input href,
+               input [7:0] data, 
+               output reg [8:0] x = 0,
+               output reg [8:0] y = 0,
+               (* mark_debug = "true" *) output reg [7:0] pixel = 0,
+               output reg valid);
 	
 	reg count = 0;
 	reg vinc = 0;
