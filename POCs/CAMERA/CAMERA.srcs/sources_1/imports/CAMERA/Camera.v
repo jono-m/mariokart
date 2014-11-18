@@ -1,6 +1,6 @@
 
 //pclk is set to 25Mhz
-module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,output reg [8:0] y = 0,output reg [7:0] pixel,output reg valid);
+module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,output reg [8:0] y = 0,output reg [7:0] pixel = 0,output reg valid);
 	
 	reg count = 0;
 	reg vinc = 0;
@@ -25,6 +25,7 @@ module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,
 	           vinc <= 1;
 	       end
 	       valid <= 0;
+	       count <= 0;
 	   end
 	   else if(href == 0) begin
 	       if(hres == 0) begin
@@ -33,6 +34,7 @@ module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,
 	           hres <= 1;
 	       end
 	       valid <= 0;
+	       count <= 0;
 	   end
     end
 endmodule

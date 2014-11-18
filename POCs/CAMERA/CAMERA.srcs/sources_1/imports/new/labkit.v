@@ -21,7 +21,7 @@
 //JB[0] = xclk JB[1] = pclk JB[2] = href JB[3] = vsync JB[4] = PWDN JB[5] = reset
 //JA[7:0] = data
 
-module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output [15:0] led, input[7:0] JA, inout[7:0] JB);
+module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vgaGreen, output Hsync, output Vsync, output [15:0] led, (* mark_debug = "true" *) input[7:0] JA, (* mark_debug = "true" *) inout[7:0] JB);
 //    assign led[1] = wea;
 //    assign led[0] = 0;
     wire vga_clock;
@@ -32,28 +32,34 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     
     wire [9:0] hcount;
     wire [9:0] vcount;
-    wire hsync, vsync, at_display_area;
+    wire hsync, vsync;
+    (* mark_debug = "true" *) wire at_display_area;
     vga vga1(.vga_clock(vga_clock),.hcount(hcount),.vcount(vcount),
           .hsync(hsync),.vsync(vsync),.at_display_area(at_display_area));
     
-    wire [8:0] x;
-    wire [8:0] y;
+    (* mark_debug = "true" *) wire [8:0] x;
+    (* mark_debug = "true" *) wire [8:0] y;
     wire valid;
     Camera camera(.pclk(JB[1]), .vsync(JB[3]), .href(JB[2]), .data(JA), .x(x), .y(y), .valid(valid), .pixel(pixel_data));
 
+//    (* mark_debug = "true" *) JA;
+//    (* mark_debug = "true" *) JB[1];
+//    (* mark_debug = "true" *) JB[3];
+//    (* mark_debug = "true" *) JB[2];
+    
     wire [7:0] pixel_data;
     wire wea = valid;
-    assign led[7:0] = x[8:1];
-    assign led[15:8] = y[8:1];
+    assign led[7:0] = pixel_data;
+    assign led[15:8] = x[8:1];
     
     wire [7:0] color;
-    wire [9:0] wx = hcount - 144;
-    wire [9:0] wy = vcount - 35;
+    (* mark_debug = "true" *) wire [9:0] wx = hcount - 144;
+    (* mark_debug = "true" *) wire [9:0] wy = vcount - 35;
     pixel_buffer buff(.clka(vga_clock), .addra({x[8:1],y[8:1]}), .dina(JA), .ena(1), .wea(wea), .clkb(clk), .addrb({wx[8:1], wy[8:1]}), .doutb(color), .enb(1));
         
     assign vgaRed = at_display_area ? color[7:4] : 0;
-    assign vgaGreen = at_display_area ? 0 : 0;
-    assign vgaBlue = at_display_area ? 0 : 0;
+    assign vgaGreen = at_display_area ? color[7:4] : 0;
+    assign vgaBlue = at_display_area ? color[7:4] : 0;
     assign Hsync = ~hsync;
     assign Vsync = ~vsync;
 endmodule
