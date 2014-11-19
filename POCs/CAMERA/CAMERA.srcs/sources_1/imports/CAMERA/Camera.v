@@ -1,38 +1,53 @@
 
 //pclk is set to 25Mhz
-module Camera (input pclk, vsync, href,input [7:0] data, output reg [8:0] x = 0,output reg [8:0] y = 0,output reg [7:0] pixel,output reg valid);
+module Camera ((* mark_debug = "true" *) input pclk, 
+               (* mark_debug = "true" *) input vsync, 
+               (* mark_debug = "true" *) input href,
+               input [7:0] data, 
+               output reg [9:0] x = 10'b11111_11111,
+               output reg [8:0] y = 0,
+               (* mark_debug = "true" *) output reg [8:0] pixel = 0,
+               output reg pixels_available = 0);
 	
-	reg count = 0;
-	reg vinc = 0;
-	reg hres = 0;
+	reg [1:0] byteCounter = 0;
+	reg vsync_previous = 0;
+	reg href_previous = 0;
+		
 	always @(posedge pclk) begin
+	   vsync_previous <= vsync;
+	   href_previous <= href;
 	   if(href == 1) begin
-	       if(count == 0) begin
-	           count <= 1;
-	       end
-	       else begin
-	           pixel <= data;
-	           count <= 0;
-	           x <= x + 1;
-	       end
-	       vinc <= 0;
-	       hres <= 0;
-	       valid <= 1;
+	       byteCounter <= byteCounter + 1;
+	       case (byteCounter)
+	           0: begin
+	               pixel[5:3] <= data[7:5];
+	               pixels_available <= 0;
+	           end
+	           1: begin
+	               pixel[8:6] <= data[7:5];
+	           end
+               2: begin
+                   pixel[2:0] <= data[7:5];
+                   x <= x + 1;
+                   pixels_available <= 1;
+                   //new pixel available
+               end
+               3: begin
+                   pixel[8:6] <= data[7:5];
+                   x <= x + 1;
+                   //new pixel available
+               end
+	       endcase
 	   end
-	   else if(vsync == 1) begin
-	       if(vinc == 0) begin
+	   else if(vsync == 1 && vsync_previous == 0) begin
+	       if(vsync_previous == 0) begin
 	           y <= 0;
-	           vinc <= 1;
 	       end
-	       valid <= 0;
 	   end
-	   else if(href == 0) begin
-	       if(hres == 0) begin
-	           x <= 0;
-	           y <= y + 1;
-	           hres <= 1;
-	       end
-	       valid <= 0;
+	   else if(href == 0 && href_previous == 1) begin
+           x <= 10'b11111_11111;
+           y <= y + 1;
+           byteCounter <= 0;
 	   end
     end
 endmodule
