@@ -50,10 +50,10 @@ module labkit(input clk,
     wire rst = ~btnCpuReset;
 
     // Set up SD mapping.
-    wire spiClk;
-    wire spiMiso;
-    wire spiMosi;
-    wire spiCS;
+    wire sd_CLK;
+    wire sd_MISO;
+    wire sd_MOSI;
+    wire sd_CS;
     
     // MicroSD SPI/SD Mode/Nexys 4
     // 1: Unused / DAT2 / sdData[2]
@@ -65,11 +65,11 @@ module labkit(input clk,
     // 7: MISO / DAT0 / sdData[0]
     // 8: UNUSED / DAT1 / sdData[1]
     assign sdData[2] = 1;
-    assign sdData[3] = spiCS;
-    assign sdCmd = spiMosi;
+    assign sdData[3] = sd_CS;
+    assign sdCmd = sd_MOSI;
     assign sdReset = 0;
-    assign sdSCK = spiClk;
-    assign spiMiso = sdData[0];
+    assign sdSCK = sd_CLK;
+    assign sd_MISO = sdData[0];
     assign sdData[1] = 1;
 
 	wire sd_read;
@@ -81,7 +81,7 @@ module labkit(input clk,
 	sd_controller sdcont(.clk(clk_25mhz), .cs(sd_CS), .mosi(sd_MOSI), 
 			.miso(sd_MISO), .sclk(sd_CLK), .rd(sd_read), .wr(0), .dm_in(0), 
 			.reset(rst), .din(0), .dout(sd_byte),
-			.byte_available(sd_byte_available), .ready_for_read(ready_for_read), 
+			.byte_available(sd_byte_available), .ready_for_read(sd_ready_for_read), 
 			.address(sd_address), .status());
 
 	// Set up VGA output.
@@ -136,7 +136,9 @@ module labkit(input clk,
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(sd_address),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue));
 
-	assign vgaRed = at_display_area ? im_red : 0;
-    assign vgaGreen = at_display_area ? im_green : 0;
-    assign vgaBlue = at_display_area ? im_blue : 0;
+	assign vgaRed = at_display_area ? red : 0;
+    assign vgaGreen = at_display_area ? green : 0;
+    assign vgaBlue = at_display_area ? blue : 0;
+    
+    assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 7'b111_1111};
 endmodule
