@@ -1,8 +1,6 @@
-def create_coe(filename):
+def create_hex(filename):
   bmp_file = open(filename)
-  coe_file = open(filename.split('.')[0] + '.coe', 'w')
-  coe_file.write('memory_initialization_radix=16;\n' +
-      'memory_initialization_vector=\n')
+  coe_file = open(filename.split('.')[0] + '.hex', 'w')
   bmp_file.seek(10)
   offset = bmpno_to_int(bmp_file.read(4))
   bmp_file.seek(offset)
@@ -38,10 +36,7 @@ def create_coe(filename):
       total4 = '0' + total4
     total = total1 + total2 + total3 + total4
     byteno = byteno + 12
-    if(byteno + 11 < len(bytes)):
-      coe_file.write(total + ',')
-    else:
-      coe_file.write(total + ';')
+    coe_file.write(total)
     pixels_written = pixels_written + 4
   coe_file.close()
   bmp_file.close()
