@@ -69,8 +69,8 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     wire [8:0] c4 = color[8:0];
     
     wire [1:0] n = wx % 4;
-    //wire [8:0] pixel_color = (n == 0) ? c1 : ((n == 1) ? c2 : ((n == 2) ? c3 : c4));
-    wire [8:0] pixel_color = sw[8:0];
+    wire [8:0] pixel_color = (n == 0) ? c1 : ((n == 1) ? c2 : ((n == 2) ? c3 : c4));
+    //wire [8:0] pixel_color = sw[8:0];
     wire [11:0] p_y = {8'h00, pixel_color[8:6], 1'b0};
     wire [11:0] p_cb = {8'h00, pixel_color[5:3], 1'b0};
     wire [11:0] p_cr = {8'h00, pixel_color[2:0], 1'b0};
@@ -82,6 +82,7 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
     (* mark_debug = "true" *) reg [11:0] red = 0;
     (* mark_debug = "true" *) reg [11:0] green = 0;
     (* mark_debug = "true" *) reg [11:0] blue = 0;
+
     always@(posedge vga_clock) begin
         temp_red <= ((p_y*12'h12A + p_cr*12'h199) >> 4);
         temp_green <= ((p_y*12'h12A - p_cb*12'h064 - p_cr*12'h0d0) >> 4);
@@ -106,9 +107,9 @@ module labkit(input clk, output[3:0] vgaRed, output[3:0] vgaBlue, output[3:0] vg
         end
     end
     
-    assign vgaRed = at_display_area ? temp_red[3:0] : 0;
-    assign vgaGreen = at_display_area ? temp_green[3:0] : 0;
-    assign vgaBlue = at_display_area ? temp_blue[3:0] : 0;
+    assign vgaRed = at_display_area ? pixel_color[8:6] : 0;
+    assign vgaGreen = at_display_area ? pixel_color[8:6] : 0;
+    assign vgaBlue = at_display_area ? pixel_color[8:6] : 0;
     assign Hsync = ~hsync;
     assign Vsync = ~vsync;
     
