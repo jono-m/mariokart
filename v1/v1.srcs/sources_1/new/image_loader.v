@@ -26,13 +26,13 @@ module image_loader
     // Read a pixel from BRAM
     wire is_present = (x < WIDTH && y < HEIGHT);
     wire [BRAM_ADDWIDTH:0] read_address = is_present ? 
-            ((HEIGHT-1)-y)*(WIDTH/4) + (x/4) : 0;
+            ((HEIGHT-1)-y)*(WIDTH/4) + (x >> 2) : 0;
     wire [7:0] c1 = bram_read_data[31:24];
     wire [7:0] c2 = bram_read_data[23:16];
     wire [7:0] c3 = bram_read_data[15:8];
     wire [7:0] c4 = bram_read_data[7:0];
     
-    wire [1:0] n = x % 4;
+    wire [1:0] n = x[1:0];
     wire [7:0] color = (n == 0) ? c1 : ((n == 1) ? c2 : ((n == 2) ? c3 : c4));
     assign red = (color[7:5] << 1);
     assign green = (color[4:2] << 1);
@@ -41,13 +41,15 @@ module image_loader
     assign alpha = is_present && ~(ALPHA == 1 && is_black == 1);
 
     reg was_byte_available = 0;
-    reg [2:0] loaded_pixels = 0;
+    reg [1:0] loaded_pixels = 0;
     reg [BRAM_ADDWIDTH:0] loaded_rows = 0;
     reg [BRAM_ADDWIDTH:0] write_address = 0;
 
     wire loaded = (loaded_rows >= ROWS);
     assign is_loaded = loaded;
     assign bram_address = is_loaded ? read_address : write_address;
+
+    reg [31:0] new_pixels = 0;
 
     always @(posedge clk) begin
         if(rst) begin
@@ -59,6 +61,7 @@ module image_loader
             sd_do_read <= 0;
             was_byte_available <= 0;
             write_address <= 0;
+            new_pixels <= 0;
         end
         else begin
             if(loaded == 0 && load == 1) begin
@@ -70,26 +73,14 @@ module image_loader
                 else if(sd_do_read == 1) begin
                     was_byte_available <= sd_byte_available;
                     if(was_byte_available == 0 && sd_byte_available == 1) begin
-                        if(loaded_pixels == 0) begin
-                            bram_write_data[31:24] <= sd_byte;
-                            loaded_pixels <= loaded_pixels + 1;
-                            bram_write_enable <= 0;
-                        end
-                        if(loaded_pixels == 1) begin
-                            bram_write_data[23:16] <= sd_byte;
-                            loaded_pixels <= loaded_pixels + 1;
-                        end
-                        if(loaded_pixels == 2) begin
-                            bram_write_data[15:8] <= sd_byte;
-                            loaded_pixels <= loaded_pixels + 1;
-                        end
+                        new_pixels = {new_pixels[23:0], sd_byte};
                         if(loaded_pixels == 3) begin
-                            bram_write_data[7:0] <= sd_byte;
+                            bram_write_data <= {new_pixels[23:0], sd_byte};
                             bram_write_enable <= 1;
                             write_address <= loaded_rows;
                             loaded_rows <= loaded_rows + 1;
-                            loaded_pixels <= 0;
                         end
+                        loaded_pixels <= loaded_pixels + 1;
                     end
                 end
             end

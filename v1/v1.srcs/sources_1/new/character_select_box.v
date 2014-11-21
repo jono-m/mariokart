@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module character_select_box
-        #(WIDTH = 130, HEIGHT = 153, THICKNESS = 10)
+        #(WIDTH = 129, HEIGHT = 153, THICKNESS = 5)
         (input clk, input rst,
         input [9:0] x, input [9:0] y,
         input [11:0] color,

@@ -62,8 +62,8 @@ module scene_logic(input clk_100mhz, input rst,
         `PHASE_CHARACTER_SELECT: begin
           show_text <= 0;
           show_char_select_box1 <= 1;
-          char_select_box1_x <= 39 + (selected_character[1:0] * 139);
-          char_select_box1_y <= 114 + (selected_character[2] * 165);
+          char_select_box1_x <= 42 + (selected_character[1:0] * 139);
+          char_select_box1_y <= 119 + (selected_character[2] * 165);
         end
         default: begin
           show_text <= 0;

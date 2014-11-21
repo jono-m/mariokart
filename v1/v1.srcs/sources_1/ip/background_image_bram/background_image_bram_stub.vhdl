@@ -1,10 +1,10 @@
 -- Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2014.2 (win64) Build 932637 Wed Jun 11 13:33:10 MDT 2014
--- Date        : Thu Nov 20 12:34:01 2014
+-- Date        : Fri Nov 21 14:27:52 2014
 -- Host        : brad-windows running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
---               c:/Users/brad_000/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/background_image_bram/background_image_bram_stub.vhdl
+--               C:/Users/brad_000/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/background_image_bram/background_image_bram_stub.vhdl
 -- Design      : background_image_bram
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-3

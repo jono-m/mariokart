@@ -54,7 +54,7 @@ module image_loader(input clk, input vga_clock, input [9:0] x, input [9:0] y,
     wire [7:0] c3 = douta[15:8];
     wire [7:0] c4 = douta[7:0];
     
-    wire [1:0] n = x % 4;
+    wire [1:0] n = x[1:0];
     wire [7:0] color = (n == 0) ? c1 : ((n == 1) ? c2 : ((n == 2) ? c3 : c4));
     assign red = (color[7:5] << 1);
     assign green = (color[4:2] << 1);
