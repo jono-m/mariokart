@@ -15,7 +15,10 @@ module video_logic(input clk_100mhz, input rst,
         
         // VGA connections
         input [9:0] x, input [9:0] y,
-        output [3:0] red, output [3:0] green, output [3:0] blue
+        output [3:0] red, output [3:0] green, output [3:0] blue,
+
+        // Car connections
+        input [9:0] car1_x, input [8:0] car1_y, input car1_present
     );
 
     // Flag if image loaders should be unloaded.
@@ -60,10 +63,9 @@ module video_logic(input clk_100mhz, input rst,
                     .bram_address(bram_bg_adr), .bram_read_data(bram_bg_read),
                     .bram_write_data(bram_bg_write), 
                     .bram_write_enable(bram_bg_we));
-    // -------------------------
     
     // --------------------------
-    // Background image loader
+    // Text image loader
     //
     // BRAM connections.
     wire [12:0] bram_text_adr;
@@ -99,7 +101,44 @@ module video_logic(input clk_100mhz, input rst,
                     .bram_address(bram_text_adr), .bram_read_data(bram_text_read),
                     .bram_write_data(bram_text_write), 
                     .bram_write_enable(bram_text_we));
-    // -------------------------
+
+    // --------------------------
+    // Sprite 1 image loader
+    //
+    // BRAM connections.
+    wire [6:0] bram_sprite1_adr;
+    wire [31:0] bram_sprite1_write;
+    wire [31:0] bram_sprite1_read;
+    wire bram_sprite1_we;   
+    sprite1_image_bram sprite1_bram(.clka(clk_100mhz), .addra(bram_sprite1_adr), 
+            .dina(bram_sprite1_write), .douta(bram_sprite1_read), .wea(bram_sprite1_we));
+    // Loader connections.
+    reg sprite1_load = 0;
+    wire [3:0] sprite1_r;
+    wire [3:0] sprite1_g;
+    wire [3:0] sprite1_b;
+    wire sprite1_a;
+    wire [9:0] sprite1_x;
+    wire [8:0] sprite1_y;
+    wire show_sprite1;
+    wire sprite1_alpha = show_sprite1 && sprite1_a;
+    wire [31:0] sprite1_address_offset;
+    wire is_sprite1_loaded;
+    wire [31:0] sprite1_sd_adr;
+    wire sprite1_sd_read;
+    image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
+            .ALPHA(1)) 
+            sprite1_loader(.clk(clk_100mhz), .rst(rst_loader), 
+                    .load(sprite1_load), .x(x-sprite1_x), .y(y-sprite1_y), .red(sprite1_r), 
+                    .green(sprite1_g), .blue(sprite1_b), .alpha(sprite1_a),
+                    .address_offset(sprite1_address_offset),
+                    .is_loaded(is_sprite1_loaded), 
+                    .sd_byte_available(sd_byte_available), 
+                    .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+                    .sd_address(sprite1_sd_adr), .sd_do_read(sprite1_sd_read),
+                    .bram_address(bram_sprite1_adr), .bram_read_data(bram_sprite1_read),
+                    .bram_write_data(bram_sprite1_write), 
+                    .bram_write_enable(bram_sprite1_we));
     
     wire [9:0] csb1_x;
     wire [8:0] csb1_y;
@@ -113,58 +152,41 @@ module video_logic(input clk_100mhz, input rst,
             .x(x-csb1_x), .y(y-csb1_y),
             .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
             .alpha(csb1_a));
+
     // -------
     // SHADER
     
     shader image_shader(.fader(fader), .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
             .text_r(text_r), .text_g(text_g), .text_b(text_b), .text_alpha(text_alpha),
             .csb1_r(csb1_r), .csb1_g(csb1_g), .csb1_b(csb1_b), .csb1_alpha(csb1_alpha),
+            .sprite1_r(sprite1_r), .sprite1_g(sprite1_g), .sprite1_b(sprite1_b), .sprite1_a(sprite1_a),
             .out_red(red), .out_green(green), .out_blue(blue));
     
     scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
             .selected_character(selected_character),
+            .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
             .bg_address_offset(bg_address_offset),
             .text_address_offset(text_address_offset),
             .show_text(show_text), .text_x(text_x), .text_y(text_y),
             .show_char_select_box1(show_csb1),
             .char_select_box1_x(csb1_x),
-            .char_select_box1_y(csb1_y));
+            .char_select_box1_y(csb1_y),
+            .sprite1_x(sprite1_x),
+            .sprite1_y(sprite1_y),
+            .show_sprite1(show_sprite1));
 
     // ------
     // BRAM LOADER
     
     // Tracks which image loader is currently active.
-    wire [1:0] active_loader = {bg_load, text_load};
+    wire [1:0] active_loader = {bg_load, text_load, sprite1_load};
 
     wire in_loading_phase = (phase == `PHASE_LOADING_START_SCREEN ||
                           phase == `PHASE_LOADING_CHARACTER_SELECT ||
                           phase == `PHASE_LOADING_RACING);
 
-    wire are_all_loaders_unloaded = ~is_bg_loaded && ~is_text_loaded;
-
-    // TODO// Determine which images should be loaded.
-    // always @(posedge clk_100mhz) begin
-    //     if(rst == 1) begin
-    //         bg_address_offset <= 0;
-    //         text_address_offset <= 0;
-    //     end
-    //     else begin
-    //         case(phase)
-    //             `PHASE_LOADING_START_SCREEN: begin
-    //                 bg_address_offset <= `ADR_START_SCREEN_BG;
-    //                 text_address_offset <= `ADR_PRESS_START_TEXT;
-    //             end
-    //             `PHASE_LOADING_CHARACTER_SELECT: begin
-    //                 bg_address_offset <= `ADR_CHAR_SELECT_BG;
-    //             end
-    //             `PHASE_LOADING_RACING: begin
-    //                 bg_address_offset <= `ADR_RACING_BG;
-    //             end
-    //             default: begin
-    //             end
-    //         endcase
-    //     end
-    // end
+    wire are_all_loaders_unloaded = ~is_bg_loaded && 
+            ~is_text_loaded && ~is_sprite1_loaded;
 
     // Reload images into BRAM.
     always @(posedge clk_100mhz) begin
@@ -172,6 +194,7 @@ module video_logic(input clk_100mhz, input rst,
             // Reset all loaders
             bg_load <= 0;
             text_load <= 0;
+            sprite1_load <= 0;
 
             is_loaded <= 0;
             unload <= 0;
@@ -187,15 +210,23 @@ module video_logic(input clk_100mhz, input rst,
                     if(is_bg_loaded == 0) begin
                         bg_load <= 1;
                         text_load <= 0;
+                        sprite1_load <= 0
                     end
                     else if(is_text_loaded == 0) begin
                         bg_load <= 0;
                         text_load <= 1;
+                        sprite1_load <= 0;
+                    end
+                    else if(is_sprite1_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 1;
                     end
                     else begin
                         // Done loading, clean up.
                         bg_load <= 0;
                         text_load <= 0;
+                        sprite1_load <= 0;
                         
                         if(fader == 5'b1_0000) begin
                             is_loaded <= 1;
@@ -250,19 +281,19 @@ module video_logic(input clk_100mhz, input rst,
     always @(*) begin
         case(active_loader)
             // Background loader
-            2'b10: begin
+            3'b100: begin
                 sd_read = bg_sd_read;
                 sd_address = bg_sd_adr;
             end
-            2'b01: begin
+            3'b010: begin
                 sd_read = text_sd_read;
                 sd_address = text_sd_adr;
             end
-            2'b11: begin
-                sd_read = 0;
-                sd_address = 0;
+            3'b001: begin
+                sd_read = sprite1_sd_read;
+                sd_address = sprite1_sd_adr;
             end
-            2'b00: begin
+            default: begin
                 sd_read = 0;
                 sd_address = 0;
             end
