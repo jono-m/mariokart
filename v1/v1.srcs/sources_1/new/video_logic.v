@@ -5,7 +5,7 @@
 module video_logic(input clk_100mhz, input rst,
         // Game logic connections
         input [2:0] phase,
-        input selected_character,
+        input [2:0] selected_character,
         input load,
         output reg is_loaded = 0,
 
@@ -43,11 +43,12 @@ module video_logic(input clk_100mhz, input rst,
     wire [3:0] bg_g;
     wire [3:0] bg_b;
     wire bg_a;
-    reg [31:0] bg_address_offset = 0;
+    wire [31:0] bg_address_offset;
     wire is_bg_loaded;
     wire [31:0] bg_sd_adr;
     wire bg_sd_read;
-    image_loader #(.WIDTH(640), .HEIGHT(480), .ROWS(76800), .BRAM_ADDWIDTH(16)) 
+    image_loader #(.WIDTH(640), .HEIGHT(480), .ROWS(76800), .BRAM_ADDWIDTH(16),
+            .ALPHA(0)) 
             bg_loader(.clk(clk_100mhz), .rst(rst_loader), 
                     .load(bg_load), .x(x), .y(y), .red(bg_r), 
                     .green(bg_g), .blue(bg_b), .alpha(bg_a),
@@ -77,13 +78,18 @@ module video_logic(input clk_100mhz, input rst,
     wire [3:0] text_g;
     wire [3:0] text_b;
     wire text_a;
-    reg [31:0] text_address_offset = 0;
+    wire [9:0] text_x;
+    wire [8:0] text_y;
+    wire show_text;
+    wire text_alpha = show_text && text_a;
+    wire [31:0] text_address_offset;
     wire is_text_loaded;
     wire [31:0] text_sd_adr;
     wire text_sd_read;
-    image_loader #(.WIDTH(400), .HEIGHT(80), .ROWS(8000), .BRAM_ADDWIDTH(12)) 
+    image_loader #(.WIDTH(400), .HEIGHT(80), .ROWS(8000), .BRAM_ADDWIDTH(12),
+            .ALPHA(1)) 
             text_loader(.clk(clk_100mhz), .rst(rst_loader), 
-                    .load(text_load), .x(x), .y(y), .red(text_r), 
+                    .load(text_load), .x(x-text_x), .y(y-text_y), .red(text_r), 
                     .green(text_g), .blue(text_b), .alpha(text_a),
                     .address_offset(text_address_offset),
                     .is_loaded(is_text_loaded), 
@@ -95,14 +101,35 @@ module video_logic(input clk_100mhz, input rst,
                     .bram_write_enable(bram_text_we));
     // -------------------------
     
+    wire [9:0] csb1_x;
+    wire [8:0] csb1_y;
+    wire [3:0] csb1_r;
+    wire [3:0] csb1_g;
+    wire [3:0] csb1_b;
+    wire csb1_a;
+    wire show_csb1;
+    wire csb1_alpha = show_csb1 && csb1_a;
+    character_select_box p1_select(.clk(clk_100mhz), .rst(rst),
+            .x(x-csb1_x), .y(y-csb1_y),
+            .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
+            .alpha(csb1_a));
     // -------
     // SHADER
     
     shader image_shader(.fader(fader), .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
-            .text_r(text_r), .text_g(text_g), .text_b(text_b), .text_alpha(text_a),
+            .text_r(text_r), .text_g(text_g), .text_b(text_b), .text_alpha(text_alpha),
+            .csb1_r(csb1_r), .csb1_g(csb1_g), .csb1_b(csb1_b), .csb1_alpha(csb1_alpha),
             .out_red(red), .out_green(green), .out_blue(blue));
     
-    
+    scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
+            .selected_character(selected_character),
+            .bg_address_offset(bg_address_offset),
+            .text_address_offset(text_address_offset),
+            .show_text(show_text), .text_x(text_x), .text_y(text_y),
+            .show_char_select_box1(show_csb1),
+            .char_select_box1_x(csb1_x),
+            .char_select_box1_y(csb1_y));
+
     // ------
     // BRAM LOADER
     
@@ -113,29 +140,31 @@ module video_logic(input clk_100mhz, input rst,
                           phase == `PHASE_LOADING_CHARACTER_SELECT ||
                           phase == `PHASE_LOADING_RACING);
 
-    // Determine which images should be loaded.
-    always @(posedge clk_100mhz) begin
-        if(rst == 1) begin
-            bg_address_offset <= 0;
-            text_address_offset <= 0;
-        end
-        else begin
-            case(phase)
-                `PHASE_LOADING_START_SCREEN: begin
-                    bg_address_offset <= `ADR_START_SCREEN_BG;
-                    text_address_offset <= `ADR_PRESS_START_TEXT;
-                end
-                `PHASE_LOADING_CHARACTER_SELECT: begin
-                    bg_address_offset <= `ADR_CHAR_SELECT_BG;
-                end
-                `PHASE_LOADING_RACING: begin
-                    bg_address_offset <= `ADR_RACING_BG;
-                end
-                default: begin
-                end
-            endcase
-        end
-    end
+    wire are_all_loaders_unloaded = ~is_bg_loaded && ~is_text_loaded;
+
+    // TODO// Determine which images should be loaded.
+    // always @(posedge clk_100mhz) begin
+    //     if(rst == 1) begin
+    //         bg_address_offset <= 0;
+    //         text_address_offset <= 0;
+    //     end
+    //     else begin
+    //         case(phase)
+    //             `PHASE_LOADING_START_SCREEN: begin
+    //                 bg_address_offset <= `ADR_START_SCREEN_BG;
+    //                 text_address_offset <= `ADR_PRESS_START_TEXT;
+    //             end
+    //             `PHASE_LOADING_CHARACTER_SELECT: begin
+    //                 bg_address_offset <= `ADR_CHAR_SELECT_BG;
+    //             end
+    //             `PHASE_LOADING_RACING: begin
+    //                 bg_address_offset <= `ADR_RACING_BG;
+    //             end
+    //             default: begin
+    //             end
+    //         endcase
+    //     end
+    // end
 
     // Reload images into BRAM.
     always @(posedge clk_100mhz) begin
@@ -157,6 +186,7 @@ module video_logic(input clk_100mhz, input rst,
                     // Refresh each loader in order.
                     if(is_bg_loaded == 0) begin
                         bg_load <= 1;
+                        text_load <= 0;
                     end
                     else if(is_text_loaded == 0) begin
                         bg_load <= 0;
@@ -207,7 +237,7 @@ module video_logic(input clk_100mhz, input rst,
             end
             // If we are unloading, wait until loaders have updated.
             if(unload == 1) begin
-                if(is_bg_loaded == 0) begin
+                if(are_all_loaders_unloaded == 1) begin
                     // Can begin loading new scene.
                     loading <= 1;
                     unload <= 0;

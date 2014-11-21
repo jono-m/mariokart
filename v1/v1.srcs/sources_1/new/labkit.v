@@ -94,7 +94,7 @@ module labkit(input clk,
 	// Set up controller
 	wire A = btnC;
 	wire B = 0;
-	wire start = 0;
+	wire start = btnC;
 	wire Z = 0;
 	wire R = 0;
 	wire L = 0;
@@ -106,10 +106,10 @@ module labkit(input clk,
 	wire cD = 0;
 	wire cL = 0;
 	wire cR = 0;
-	wire stickUp = 0;
-	wire stickDown = 0;
-	wire stickLeft = 0;
-	wire stickRight = 0;
+	wire stickUp = btnU;
+	wire stickDown = btnD;
+	wire stickLeft = btnL;
+	wire stickRight = btnR;
 	wire [7:0] stickX = 0;
 	wire [7:0] stickY = 0;
 
@@ -133,29 +133,31 @@ module labkit(input clk,
   wire clean_stickRight;
 
   debounce debounceA(rst, clk_100mhz, A, clean_A);
-  debounce debounceA(rst, clk_100mhz, B, clean_B);
-  debounce debounceA(rst, clk_100mhz, start, clean_start);
-  debounce debounceA(rst, clk_100mhz, Z, clean_Z);
-  debounce debounceA(rst, clk_100mhz, R, clean_R);
-  debounce debounceA(rst, clk_100mhz, L, clean_L);
-  debounce debounceA(rst, clk_100mhz, dU, clean_dU);
-  debounce debounceA(rst, clk_100mhz, dD, clean_dD);
-  debounce debounceA(rst, clk_100mhz, dL, clean_dL);
-  debounce debounceA(rst, clk_100mhz, dR, clean_dR);
-  debounce debounceA(rst, clk_100mhz, cU, clean_cU);
-  debounce debounceA(rst, clk_100mhz, cD, clean_cD);
-  debounce debounceA(rst, clk_100mhz, cL, clean_cL);
-  debounce debounceA(rst, clk_100mhz, cR, clean_cR);
-  debounce debounceA(rst, clk_100mhz, stickUp, clean_stickUp);
-  debounce debounceA(rst, clk_100mhz, stickDown, clean_stickDown);
-  debounce debounceA(rst, clk_100mhz, stickLeft, clean_stickLeft);
-  debounce debounceA(rst, clk_100mhz, stickRight, clean_stickRight);
+  debounce debounceB(rst, clk_100mhz, B, clean_B);
+  debounce debounceS(rst, clk_100mhz, start, clean_start);
+  debounce debounceZ(rst, clk_100mhz, Z, clean_Z);
+  debounce debounceR(rst, clk_100mhz, R, clean_R);
+  debounce debounceL(rst, clk_100mhz, L, clean_L);
+  debounce debounceDU(rst, clk_100mhz, dU, clean_dU);
+  debounce debounceDD(rst, clk_100mhz, dD, clean_dD);
+  debounce debounceDL(rst, clk_100mhz, dL, clean_dL);
+  debounce debounceDR(rst, clk_100mhz, dR, clean_dR);
+  debounce debounceCU(rst, clk_100mhz, cU, clean_cU);
+  debounce debounceCD(rst, clk_100mhz, cD, clean_cD);
+  debounce debounceCL(rst, clk_100mhz, cL, clean_cL);
+  debounce debounceCR(rst, clk_100mhz, cR, clean_cR);
+  debounce debounceSU(rst, clk_100mhz, stickUp, clean_stickUp);
+  debounce debounceSD(rst, clk_100mhz, stickDown, clean_stickDown);
+  debounce debounceSL(rst, clk_100mhz, stickLeft, clean_stickLeft);
+  debounce debounceSR(rst, clk_100mhz, stickRight, clean_stickRight);
 
   wire paused_stickUp;
   wire paused_stickDown;
   wire paused_stickLeft;
   wire paused_stickRight;
+  wire paused_A;
 
+  pause_repeater(rst, clk_100mhz, clean_A, paused_A);
   pause_repeater(rst, clk_100mhz, clean_stickUp, paused_stickUp);
   pause_repeater(rst, clk_100mhz, clean_stickDown, paused_stickDown);
   pause_repeater(rst, clk_100mhz, clean_stickLeft, paused_stickLeft);
@@ -165,8 +167,8 @@ module labkit(input clk,
 	wire phase_loaded;
 	wire [2:0] phase;
 	wire [3:0] selected_character;
-	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(clean_A), .B(clean_B), 
-			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU)
+	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
+			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
       .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
       .cL(clean_cL), .cR(clean_cR), .stickUp(paused_stickUp), 
       .stickDown(paused_stickDown), .stickLeft(paused_stickLeft), 
@@ -190,5 +192,5 @@ module labkit(input clk,
     assign vgaBlue = at_display_area ? blue : 0;
     
     assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-        paused_stickLeft, stickLeft, clean_stickLeft, 4'hF};
+        paused_stickLeft, stickLeft, clean_stickLeft, selected_character, 1'b1};
 endmodule

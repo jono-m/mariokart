@@ -11,9 +11,9 @@ module scene_logic(input clk_100mhz, input rst,
     output reg [9:0] text_x = 0, 
     output reg [8:0] text_y = 0,
 
-    output reg show_char_select_box1 = 0;
+    output reg show_char_select_box1 = 0,
     output reg [9:0] char_select_box1_x = 0,
-    output reg [9:0] char_select_box1_y = 0, 
+    output reg [9:0] char_select_box1_y = 0
     );
   
   // Determine which images should be loaded for each scene.
@@ -62,8 +62,12 @@ module scene_logic(input clk_100mhz, input rst,
         `PHASE_CHARACTER_SELECT: begin
           show_text <= 0;
           show_char_select_box1 <= 1;
-          char_select_box1_x <= 49 + (selected_character[1:0] * 139);
-          char_select_box1_y <= 124 + (selected_character[2] * 165);
+          char_select_box1_x <= 39 + (selected_character[1:0] * 139);
+          char_select_box1_y <= 114 + (selected_character[2] * 165);
+        end
+        default: begin
+          show_text <= 0;
+          show_char_select_box1 <= 0;
         end
       endcase
     end

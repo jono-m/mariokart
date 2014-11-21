@@ -7,7 +7,7 @@ module debounce #(parameter DELAY=1000000)   // .01 sec with a 100Mhz clock
           (input reset, clock, noisy,
            output reg clean);
 
-  reg [16:0] count;
+  reg [19:0] count;
   reg new;
 
   always @(posedge clock) begin
