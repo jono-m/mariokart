@@ -35,15 +35,15 @@ module video_logic(input clk_100mhz, input rst,
 	wire [31:0] bram_bg_write;
 	wire [31:0] bram_bg_read;
 	wire bram_bg_we;   
-  background_image_bram bg_bram(.clka(clk_100mhz), .addra(bram_bg_adr), 
+  	background_image_bram bg_bram(.clka(clk_100mhz), .addra(bram_bg_adr), 
   		.dina(bram_bg_write), .douta(bram_bg_read), .wea(bram_bg_we));
-  // Loader connections.
+  	// Loader connections.
 	reg bg_load = 0;
 	wire [3:0] bg_r;
 	wire [3:0] bg_g;
 	wire [3:0] bg_b;
 	wire bg_a;
-	reg [31:0] bg_address_offset = 0;
+	wire [31:0] bg_address_offset;
 	wire is_bg_loaded;
 	wire [31:0] bg_sd_adr;
 	wire bg_sd_read;
@@ -61,76 +61,62 @@ module video_logic(input clk_100mhz, input rst,
 					.bram_write_enable(bram_bg_we));
 	
 	// --------------------------
-  // Text image loader
-  //
-  // BRAM connections.
-  wire [12:0] bram_text_adr;
-  wire [31:0] bram_text_write;
-  wire [31:0] bram_text_read;
-  wire bram_text_we;   
-  text_image_bram text_bram(.clka(clk_100mhz), .addra(bram_text_adr), 
-          .dina(bram_text_write), .douta(bram_text_read), .wea(bram_text_we));
-  // Loader connections.
-  reg text_load = 0;
-  wire [3:0] text_r;
-  wire [3:0] text_g;
-  wire [3:0] text_b;
-  wire show_text;
-  wire text_a;
-  wire text_alpha = text_a & show_text;
-  wire [9:0] text_x;
-  wire [8:0] text_y;
-  reg [31:0] text_address_offset = 0;
-  wire is_text_loaded;
-  wire [31:0] text_sd_adr;
-  wire text_sd_read;
-  image_loader #(.WIDTH(400), .HEIGHT(80), .ROWS(8000), .BRAM_ADDWIDTH(12)) 
-          text_loader(.clk(clk_100mhz), .rst(rst_loader), 
-                  .load(text_load), .x(x-text_x), .y(y-text_y), .red(text_r), 
-                  .green(text_g), .blue(text_b), .alpha(text_a),
-                  .address_offset(text_address_offset),
-                  .is_loaded(is_text_loaded), 
-                  .sd_byte_available(sd_byte_available), 
-                  .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
-                  .sd_address(text_sd_adr), .sd_do_read(text_sd_read),
-                  .bram_address(bram_text_adr), .bram_read_data(bram_text_read),
-                  .bram_write_data(bram_text_write), 
-                  .bram_write_enable(bram_text_we));
-  
-  // -------
-  // SCENE LOGIC
-  scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
-      .selected_character(selected_character), 
-      .bg_address_offset(.bg_address_offset), 
-      .text_address_offset(text_address_offset),
-      .show_bg(show_bg), .show_text(show_text), .text_x(text_x), 
-      .text_y(text_y));
+	// Text image loader
+	//
+	// BRAM connections.
+	wire [12:0] bram_text_adr;
+	wire [31:0] bram_text_write;
+	wire [31:0] bram_text_read;
+	wire bram_text_we;   
+	text_image_bram text_bram(.clka(clk_100mhz), .addra(bram_text_adr), 
+	      .dina(bram_text_write), .douta(bram_text_read), .wea(bram_text_we));
+	// Loader connections.
+	reg text_load = 0;
+	wire [3:0] text_r;
+	wire [3:0] text_g;
+	wire [3:0] text_b;
+	wire show_text;
+	wire text_a;
+	wire text_alpha = text_a & show_text;
+	wire [9:0] text_x;
+	wire [8:0] text_y;
+	wire [31:0] text_address_offset;
+	wire is_text_loaded;
+	wire [31:0] text_sd_adr;
+	wire text_sd_read;
+	image_loader #(.WIDTH(400), .HEIGHT(80), .ROWS(8000), .BRAM_ADDWIDTH(12)) 
+	      text_loader(.clk(clk_100mhz), .rst(rst_loader), 
+	              .load(text_load), .x(x-text_x), .y(y-text_y), .red(text_r), 
+	              .green(text_g), .blue(text_b), .alpha(text_a),
+	              .address_offset(text_address_offset),
+	              .is_loaded(is_text_loaded), 
+	              .sd_byte_available(sd_byte_available), 
+	              .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+	              .sd_address(text_sd_adr), .sd_do_read(text_sd_read),
+	              .bram_address(bram_text_adr), .bram_read_data(bram_text_read),
+	              .bram_write_data(bram_text_write), 
+	              .bram_write_enable(bram_text_we));
 
-  module scene_logic(input clk_100mhz, input rst,
-      input [2:0] phase,
-      input selected_character,
+	// -------
+	// SCENE LOGIC
+	scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
+	  .selected_character(selected_character), 
+	  .bg_address_offset(bg_address_offset), 
+	  .text_address_offset(text_address_offset), .show_text(show_text), 
+	  .text_x(text_x), .text_y(text_y));
 
-      output reg [31:0] bg_address_offset = 0,
-      output reg [31:0] text_address_offset = 0,
+	// -------
+	// SHADER
 
-      output reg show_bg = 0,
-      output reg show_text = 0,
+	shader image_shader(.fader(fader), 
+	  .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
+	  .text_r(text_r), .text_g(text_g), .text_b(text_b), 
+	  .text_alpha(text_alpha), .out_red(red), .out_green(green), 
+	  .out_blue(blue));
 
-      output reg [9:0] text_x = 0, output reg [8:0] text_y
-      );
 
-  // -------
-  // SHADER
-  
-  shader image_shader(.fader(fader), 
-      .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
-      .text_r(text_r), .text_g(text_g), .text_b(text_b), 
-      .text_alpha(text_alpha), .out_red(red), .out_green(green), 
-      .out_blue(blue));
-  
-  
-  // ------
-  // BRAM LOADER
+	// ------
+	// BRAM LOADER
     
 	// Tracks which image loader is currently active.
 	wire [1:0] active_loader = {bg_load, text_load};
@@ -169,18 +155,18 @@ module video_logic(input clk_100mhz, input rst,
 						bg_load <= 0;
 						text_load <= 0;
 						
-            if(fader == 5'b1_0000) begin
-					    is_loaded <= 1;
+                        if(fader == 5'b1_0000) begin
+					       is_loaded <= 1;
 						end
 						else begin
-					    if(fade_counter == 1000000) begin
-                  fader <= fader + 1;
-                  fade_counter <= 0;
-                end
-                else begin
-                  fade_counter <= fade_counter + 1;
-                end
-              end  
+					       if(fade_counter == 1000000) begin
+                              fader <= fader + 1;
+                              fade_counter <= 0;
+                        end
+                        else begin
+                          fade_counter <= fade_counter + 1;
+                        end
+                      end  
 					end
 				end
 				else if(faded == 1) begin
@@ -188,18 +174,18 @@ module video_logic(input clk_100mhz, input rst,
 					faded <= 0;
 				end
 				else begin
-			    if(fader == 0) begin
-		        faded <= 1;
-			    end
-			    else begin
-            if(fade_counter == 1000000) begin
-              fader <= fader - 1;
-              fade_counter <= 0;
-            end
-            else begin
-              fade_counter <= fade_counter + 1;
-            end
-			    end
+    			    if(fader == 0) begin
+                        faded <= 1;
+    			    end
+    			    else begin
+                        if(fade_counter == 1000000) begin
+                            fader <= fader - 1;
+                            fade_counter <= 0;
+                        end
+                        else begin
+                            fade_counter <= fade_counter + 1;
+                        end
+    			    end
 				end
 			end
 			else begin
@@ -226,14 +212,14 @@ module video_logic(input clk_100mhz, input rst,
 				sd_read = bg_sd_read;
 				sd_address = bg_sd_adr;
 			end
-      2'b01: begin
-        sd_read = text_sd_read;
-        sd_address = text_sd_adr;
-      end
-      2'b11: begin
-        sd_read = 0;
-        sd_address = 0;
-      end
+            2'b01: begin
+                sd_read = text_sd_read;
+                sd_address = text_sd_adr;
+            end
+            2'b11: begin
+                sd_read = 0;
+                sd_address = 0;
+            end
 			2'b00: begin
 				sd_read = 0;
 				sd_address = 0;

@@ -4,7 +4,7 @@ module scene_logic(input clk_100mhz, input rst,
     input [2:0] phase,
     input selected_character,
 
-    output reg [31:0] bg_address_offset = 0,
+    output reg [31:0] bg_address_offset = `ADR_START_SCREEN_BG,
     output reg [31:0] text_address_offset = 0,
 
     output reg show_text = 0,
@@ -15,7 +15,7 @@ module scene_logic(input clk_100mhz, input rst,
   // Determine which images should be loaded for each scene.
   always @(posedge clk_100mhz) begin
     if(rst == 1) begin
-      bg_address_offset <= 0;
+      bg_address_offset <= `ADR_START_SCREEN_BG;
       text_address_offset <= 0;
     end
     else begin
@@ -29,8 +29,6 @@ module scene_logic(input clk_100mhz, input rst,
         end
         `PHASE_LOADING_RACING: begin
           bg_address_offset <= `ADR_RACING_BG;
-        end
-        default: begin
         end
       endcase
     end
@@ -47,18 +45,20 @@ module scene_logic(input clk_100mhz, input rst,
       text_y <= 0;
       counter <= 0;
     end
-    case(phase) begin
+    else begin
       counter <= counter + 1;
-      `PHASE_START_SCREEN: begin
-        if(counter == 50000000) begin
-          show_text <= ~show_text;
-          text_x <= 138;
-          text_y <= 306;
+      case(phase)
+        `PHASE_START_SCREEN: begin
+          if(counter == 50000000) begin
+            show_text <= ~show_text;
+            text_x <= 138;
+            text_y <= 306;
+          end
         end
-      end
-      `PHASE_CHARACTER_SELECT: begin
-        show_text <= 0;
-      end
+        `PHASE_CHARACTER_SELECT: begin
+          show_text <= 0;
+        end
+      endcase
     end
   end
 endmodule
