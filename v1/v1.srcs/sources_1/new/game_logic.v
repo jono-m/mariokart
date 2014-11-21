@@ -9,13 +9,13 @@ module game_logic(input clk_100mhz, input rst,
 		// State connections.
 		input phase_loaded, 
 		output reg [2:0] phase = `PHASE_LOADING_START_SCREEN,
-		output reg selected_character = `CHARACTER_TOAD
+		output reg [3:0] selected_character = `CHARACTER_MARIO
 	);
 
 	always @(posedge clk_100mhz) begin
 		if(rst == 1) begin
 			phase <= `PHASE_LOADING_START_SCREEN;
-			selected_character <= `CHARACTER_TOAD;
+			selected_character <= `CHARACTER_MARIO;
 		end
 		else begin
 			case(phase)
@@ -39,10 +39,24 @@ module game_logic(input clk_100mhz, input rst,
 						phase <= `PHASE_LOADING_RACING;
 					end
 					if(stickLeft == 1) begin
-						selected_character <= selected_character - 1;
+						if(selected_character[1:0] != 2'b00) begin
+							selected_character <= selected_character - 1;
+						end
 					end
 					if(stickRight == 1) begin
-						selected_character <= selected_character + 1;
+						if(selected_character[1:0] != 2'b11) begin
+							selected_character <= selected_character + 1;
+						end
+					end
+					if(stickDown == 1) begin
+						if(selected_character[2] != 1'b1) begin
+							selected_character <= selected_character + 3'b100;
+						end
+					end
+					if(stickUp == 1) begin
+						if(selected_character[2] != 1'b0) begin
+							selected_character <= selected_character - 3'b100;
+						end
 					end
 				end
 				`PHASE_LOADING_RACING: begin

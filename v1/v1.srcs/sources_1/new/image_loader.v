@@ -4,7 +4,7 @@
 `timescale 1ns / 1ps
 
 module image_loader 
-        #(WIDTH = 640, HEIGHT = 480, ROWS = 76800, BRAM_ADDWIDTH = 16)
+        #(WIDTH = 400, HEIGHT = 80, ROWS = 8000, BRAM_ADDWIDTH = 12)
         (input clk, input rst, input load,
         input [31:0] address_offset,
         input [9:0] x, input [9:0] y,

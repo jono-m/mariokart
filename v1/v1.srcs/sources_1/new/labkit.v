@@ -40,37 +40,37 @@ module labkit(input clk,
 	);
 	// Set up clocks
 	wire clk_100mhz = clk;
-    wire clk_50mhz;
-    wire clk_25mhz;
+  wire clk_50mhz;
+  wire clk_25mhz;
 
-    clock_divider div1(clk_100mhz, clk_50mhz);
-    clock_divider div2(clk_50mhz, clk_25mhz);
+  clock_divider div1(clk_100mhz, clk_50mhz);
+  clock_divider div2(clk_50mhz, clk_25mhz);
 
-    // Set up reset switch.
-    wire rst = ~btnCpuReset;
+  // Set up reset switch.
+  wire rst = ~btnCpuReset;
 
-    // Set up SD mapping.
-    wire sd_CLK;
-    wire sd_MISO;
-    wire sd_MOSI;
-    wire sd_CS;
-    
-    // MicroSD SPI/SD Mode/Nexys 4
-    // 1: Unused / DAT2 / sdData[2]
-    // 2: CS / DAT3 / sdData[3]
-    // 3: MOSI / CMD / sdCmd
-    // 4: VDD / VDD / ~sdReset
-    // 5: SCLK / SCLK / sdSCK
-    // 6: GND / GND / - 
-    // 7: MISO / DAT0 / sdData[0]
-    // 8: UNUSED / DAT1 / sdData[1]
-    assign sdData[2] = 1;
-    assign sdData[3] = sd_CS;
-    assign sdCmd = sd_MOSI;
-    assign sdReset = 0;
-    assign sdSCK = sd_CLK;
-    assign sd_MISO = sdData[0];
-    assign sdData[1] = 1;
+  // Set up SD mapping.
+  wire sd_CLK;
+  wire sd_MISO;
+  wire sd_MOSI;
+  wire sd_CS;
+  
+  // MicroSD SPI/SD Mode/Nexys 4
+  // 1: Unused / DAT2 / sdData[2]
+  // 2: CS / DAT3 / sdData[3]
+  // 3: MOSI / CMD / sdCmd
+  // 4: VDD / VDD / ~sdReset
+  // 5: SCLK / SCLK / sdSCK
+  // 6: GND / GND / - 
+  // 7: MISO / DAT0 / sdData[0]
+  // 8: UNUSED / DAT1 / sdData[1]
+  assign sdData[2] = 1;
+  assign sdData[3] = sd_CS;
+  assign sdCmd = sd_MOSI;
+  assign sdReset = 0;
+  assign sdSCK = sd_CLK;
+  assign sd_MISO = sdData[0];
+  assign sdData[1] = 1;
 
 	wire sd_read;
 	wire [7:0] sd_byte;
@@ -113,15 +113,64 @@ module labkit(input clk,
 	wire [7:0] stickX = 0;
 	wire [7:0] stickY = 0;
 
+  wire clean_A;
+  wire clean_B;
+  wire clean_start;
+  wire clean_Z;
+  wire clean_R;
+  wire clean_L;
+  wire clean_dU;
+  wire clean_dD;
+  wire clean_dL;
+  wire clean_dR;
+  wire clean_cU;
+  wire clean_cD;
+  wire clean_cL;
+  wire clean_cR;
+  wire clean_stickUp;
+  wire clean_stickDown;
+  wire clean_stickLeft;
+  wire clean_stickRight;
+
+  debounce debounceA(rst, clk_100mhz, A, clean_A);
+  debounce debounceA(rst, clk_100mhz, B, clean_B);
+  debounce debounceA(rst, clk_100mhz, start, clean_start);
+  debounce debounceA(rst, clk_100mhz, Z, clean_Z);
+  debounce debounceA(rst, clk_100mhz, R, clean_R);
+  debounce debounceA(rst, clk_100mhz, L, clean_L);
+  debounce debounceA(rst, clk_100mhz, dU, clean_dU);
+  debounce debounceA(rst, clk_100mhz, dD, clean_dD);
+  debounce debounceA(rst, clk_100mhz, dL, clean_dL);
+  debounce debounceA(rst, clk_100mhz, dR, clean_dR);
+  debounce debounceA(rst, clk_100mhz, cU, clean_cU);
+  debounce debounceA(rst, clk_100mhz, cD, clean_cD);
+  debounce debounceA(rst, clk_100mhz, cL, clean_cL);
+  debounce debounceA(rst, clk_100mhz, cR, clean_cR);
+  debounce debounceA(rst, clk_100mhz, stickUp, clean_stickUp);
+  debounce debounceA(rst, clk_100mhz, stickDown, clean_stickDown);
+  debounce debounceA(rst, clk_100mhz, stickLeft, clean_stickLeft);
+  debounce debounceA(rst, clk_100mhz, stickRight, clean_stickRight);
+
+  wire paused_stickUp;
+  wire paused_stickDown;
+  wire paused_stickLeft;
+  wire paused_stickRight;
+
+  pause_repeater(rst, clk_100mhz, clean_stickUp, paused_stickUp);
+  pause_repeater(rst, clk_100mhz, clean_stickDown, paused_stickDown);
+  pause_repeater(rst, clk_100mhz, clean_stickLeft, paused_stickLeft);
+  pause_repeater(rst, clk_100mhz, clean_stickRight, paused_stickRight);
+
 	// Set up game logic.
 	wire phase_loaded;
 	wire [2:0] phase;
-	wire selected_character;
-	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(A), .B(B), 
-			.start(start), .Z(Z), .R(R), .L(L), .dU(dU), .dD(dD), .dL(dL), 
-			.dR(dR), .cU(cU), .cD(cD), .cL(cL), .cR(cR), .stickUp(stickUp), 
-			.stickDown(stickDown), .stickLeft(stickLeft), 
-			.stickRight(stickRight), .stickX(stickX), .stickY(stickY), 
+	wire [3:0] selected_character;
+	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(clean_A), .B(clean_B), 
+			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU)
+      .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
+      .cL(clean_cL), .cR(clean_cR), .stickUp(paused_stickUp), 
+      .stickDown(paused_stickDown), .stickLeft(paused_stickLeft), 
+			.stickRight(paused_stickRight), .stickX(stickX), .stickY(stickY), 
 			.phase_loaded(phase_loaded), .phase(phase),
 			.selected_character(selected_character));
 
@@ -140,5 +189,6 @@ module labkit(input clk,
     assign vgaGreen = at_display_area ? green : 0;
     assign vgaBlue = at_display_area ? blue : 0;
     
-    assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 7'b111_1111};
+    assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
+        paused_stickLeft, stickLeft, clean_stickLeft, 4'hF};
 endmodule
