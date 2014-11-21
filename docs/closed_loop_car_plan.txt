@@ -1,0 +1,39 @@
+GAME LOGIC Car [x,y] input.
+VIDEO LOGIC Display the car icons on the screen based on which character was selected.
+
+
+PHYSICS LOGIC
+	Receive [x,y] position of cars
+	Receive button pushes and stick stuff
+	Output
+		wire forward
+		wire [1:0] speed
+			SPEED_STOP = 0
+			SPEED_SLOW = 1
+			SPEED_NORMAL = 2
+			SPEED_BOOST = 3
+		wire [1:0] turn
+			TURN_LEFT
+			TURN_STRAIGHT
+			TURN_RIGHT
+DRIVER SIMULATOR
+	Receive
+		wire forward
+		wire [1:0] speed
+		wire [1:0] turn
+	Output
+		[x,y] position
+
+	Keep track of
+		reg [x,y] position
+		reg [8:0] angle
+
+	To update:
+		signed deltaX = (forward ? 1 : -1) * speed * cos(angle)
+		signed deltaY = (forward ? 1 : -1) * speed * sin(angle)
+		position_x += deltaX;
+		position_y += deltaY;
+		case turn
+			LEFT: angle += speed
+			STRAIGHT: angle = angle
+			RIGHT: angle -= speed
