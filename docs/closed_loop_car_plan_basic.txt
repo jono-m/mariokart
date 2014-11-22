@@ -1,0 +1,29 @@
+Physics logic OUTPUT
+	[9:0] map_information_x
+	[8:0] map_information_y
+
+Physics logic INPUT
+	[1:0] map_info_item
+	[1:0] map_info_surface
+
+
+
+SET map_information_x and map_information_y to the pixel you are interested in examining on the map for if an item is there and what kind of surface it is (Grass etc)
+[wait 1 clock cycle for BRAM read]
+MAP INFORMATION available in item and surface
+
+the game logic sendsthe xy coordinates of the car led to the physics logic
+the game logic also sends the texture of the pixel at that coordinate 
+
+
+
+
+
+
+
+
+IMAGE MAP
+
+FAST FAST SLOW SLOW WALL WALL
+
+              [Car]

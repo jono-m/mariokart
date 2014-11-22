@@ -18,3 +18,12 @@
 `define ADR_CHAR_SELECT_BG				      307200   // LEN 307200
 `define ADR_RACING_BG				            614400   // LEN 307200      
 `define ADR_PRESS_START_TEXT            921600   // LEN 32000
+  
+`define TURN_LEFT                       0
+`define TURN_STRAIGHT                   1
+`define TURN_STRAIGHT                   2
+
+`define SPEED_STOP                      0
+`define SPEED_SLOW                      1
+`define SPEED_NORMAL                    2
+`define SPEED_BOOST                     3

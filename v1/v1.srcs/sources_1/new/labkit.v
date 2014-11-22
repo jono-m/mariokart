@@ -176,16 +176,20 @@ module labkit(input clk,
 			.phase_loaded(phase_loaded), .phase(phase),
 			.selected_character(selected_character));
 
+  wire [9:0] car1_x;
+  wire [8:0] car1_y;
+  
 	// Set up video logic.
 	wire [3:0] red;
 	wire [3:0] green;
 	wire [3:0] blue;
 	video_logic vl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
-			.selected_character(selected_character), .load(1), 
+			.selected_character(selected_character), .load(1),
 			.is_loaded(phase_loaded), .sd_read(sd_read), .sd_byte(sd_byte),
 			.sd_byte_available(sd_byte_available), 
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(sd_address),
-			.x(x), .y(y), .red(red), .green(green), .blue(blue));
+			.x(x), .y(y), .red(red), .green(green), .blue(blue),
+      .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present));
 
 	assign vgaRed = at_display_area ? red : 0;
     assign vgaGreen = at_display_area ? green : 0;
