@@ -92,8 +92,8 @@ module labkit(input clk,
 			.hsync(Hsync), .at_display_area(at_display_area));
 
 	// Set up controller
-	wire A = btnC;
-	wire B = 0;
+	wire A = btnU;
+	wire B = btnD;
 	wire start = btnC;
 	wire Z = 0;
 	wire R = 0;
@@ -178,6 +178,14 @@ module labkit(input clk,
 
   wire [9:0] car1_x;
   wire [8:0] car1_y;
+
+  wire forward = clean_A ? 1 : 0;
+  wire [1:0] speed = (clean_A || clean_B) ? `SPEED_NORMAL : `SPEED_STOP;
+  wire [1:0] turn = clean_stickLeft ? `TURN_LEFT : 
+      (clean_stickRight ? `TURN_RIGHT : `TURN_STRAIGHT);
+
+  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward),
+      .speed(speed), .turn(turn), .car1_x(car1_x), .car1_y(car1_y));
   
 	// Set up video logic.
 	wire [3:0] red;
@@ -192,9 +200,9 @@ module labkit(input clk,
       .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present));
 
 	assign vgaRed = at_display_area ? red : 0;
-    assign vgaGreen = at_display_area ? green : 0;
-    assign vgaBlue = at_display_area ? blue : 0;
+  assign vgaGreen = at_display_area ? green : 0;
+  assign vgaBlue = at_display_area ? blue : 0;
     
-    assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-        paused_stickLeft, stickLeft, clean_stickLeft, selected_character, 1'b1};
+  assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
+      paused_stickLeft, stickLeft, clean_stickLeft, selected_character, 1'b1};
 endmodule

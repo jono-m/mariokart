@@ -33,14 +33,14 @@ module car_simulator(input clk_100mhz, input rst,
       car1_x <= $signed(car1_x) + (deltaX >> 7);
       car1_y <= $signed(car1_y) + (deltaY >> 7);
       case(turn)
-        TURN_LEFT: begin
+        `TURN_LEFT: begin
           angle <= $signed(angle_constrained) 
               + $signed(speed) * (forward ? 1 : -1) * SPEED_FACTOR;
         end
-        TURN_STRAIGHT: begin
+        `TURN_STRAIGHT: begin
           angle <= angle + speed;
         end
-        TURN_RIGHT: begin
+        `TURN_RIGHT: begin
           angle <= $signed(angle_constrained) 
               - $signed(speed) * (forward ? 1 : -1) * SPEED_FACTOR;
         end

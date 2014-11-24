@@ -21,7 +21,7 @@
   
 `define TURN_LEFT                       0
 `define TURN_STRAIGHT                   1
-`define TURN_STRAIGHT                   2
+`define TURN_RIGHT                      2
 
 `define SPEED_STOP                      0
 `define SPEED_SLOW                      1
