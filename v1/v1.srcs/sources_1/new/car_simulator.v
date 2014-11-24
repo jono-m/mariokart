@@ -3,48 +3,70 @@
 // NEED TO SEND A SLOWER CLOCK TO THIS MODULE
 
 module car_simulator(input clk_100mhz, input rst, 
-    input forward, input [1:0] speed, input [1:0] turn,
+    input forward, input backward, input left, input right, input [1:0] speed,
 
-    output reg [9:0] car1_x = 0, output reg [8:0] car1_y = 0);
-  parameter SPEED_FACTOR = 1
+    output reg [9:0] car1_x = 100, output reg [8:0] car1_y = 200);
+  parameter SPEED_FACTOR = 1;
   
-  signed reg [9:0] angle = 0;
-  signed wire [9:0] angle_constrained = (angle < 0) ? (10'sb011_0010010 - angle) : 
+  /*reg signed [9:0] angle = 0;
+  wire signed [9:0] angle_constrained = (angle < 0) ? (10'sb011_0010010 - angle) : 
       (angle > 10'sb011_0010010 ? angle - 10'sb011_0010010 : angle);
 
-  signed wire [9:0] cos;
-  signed wire [9:0] sin;
+  wire signed [9:0] cos;
+  wire signed [9:0] sin;
 
-  signed wire [21:0] deltaX = (forward ? 1 : -1) * $signed(speed) * cos;
-  signed wire [21:0] deltaY = (forward ? 1 : -1) * $signed(speed) * sin;
+  wire signed [21:0] deltaX = (forward ? 1 : (backward ? -1 : 0)) * $signed(speed) * cos;
+  wire signed [21:0] deltaY = (forward ? 1 : (backward ? -1 : 0)) * $signed(speed) * sin;
 
-  wire new_angle_ready;
-  reg last_angle_ready = 0;
-  cordic sincosgen(.phase_in(angle_constrained), .x_out(cos), .y_out(sin));
-
+  cordic sincosgen(.PHASE_IN(angle_constrained), .X_OUT(cos), .Y_OUT(sin));*/
+  
+  reg [18:0] counter = 0;
+  reg clk_move = 1;
   always @(posedge clk_100mhz) begin
     if(rst == 1) begin
-      car1_x <= 0;
-      car1_y <= 0;
-      angle <= 0;
-      last_angle_ready <= 0
+        counter <= 0;
+        clk_move <= 1;
     end
     else begin
-      car1_x <= $signed(car1_x) + (deltaX >> 7);
+        if(counter == 470000) begin
+            counter <= 0;
+            clk_move <= ~clk_move;
+        end
+        else begin
+            counter <= counter + 1;
+        end
+    end
+  end
+  
+  always @(posedge clk_move) begin
+    if(rst == 1) begin
+      car1_x <= 200;
+      car1_y <= 200;
+      //angle <= 0;
+    end
+    else begin
+      if(forward) begin
+        car1_y <= car1_y + speed;
+      end
+      else if(backward) begin
+        car1_y <= car1_y - speed;
+      end
+      else if(left) begin
+        car1_x <= car1_x - speed;
+      end
+      else if(right) begin
+        car1_x <= car1_x + speed;
+      end
+      /*car1_x <= $signed(car1_x) + (deltaX >> 7);
       car1_y <= $signed(car1_y) + (deltaY >> 7);
-      case(turn)
-        `TURN_LEFT: begin
+      if(left == 1) begin
           angle <= $signed(angle_constrained) 
               + $signed(speed) * (forward ? 1 : -1) * SPEED_FACTOR;
-        end
-        `TURN_STRAIGHT: begin
-          angle <= angle + speed;
-        end
-        `TURN_RIGHT: begin
+      end
+      else if(right == 1) begin
           angle <= $signed(angle_constrained) 
               - $signed(speed) * (forward ? 1 : -1) * SPEED_FACTOR;
-        end
-      endcase
+      end*/
     end
   end
 endmodule

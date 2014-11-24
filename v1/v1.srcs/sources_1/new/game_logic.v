@@ -9,7 +9,7 @@ module game_logic(input clk_100mhz, input rst,
 		// State connections.
 		input phase_loaded, 
 		output reg [2:0] phase = `PHASE_LOADING_START_SCREEN,
-		output reg [3:0] selected_character = `CHARACTER_MARIO
+		output reg [2:0] selected_character = `CHARACTER_MARIO
 	);
 
 	always @(posedge clk_100mhz) begin

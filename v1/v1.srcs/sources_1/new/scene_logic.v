@@ -7,6 +7,7 @@ module scene_logic(input clk_100mhz, input rst,
 
     output reg [31:0] bg_address_offset = `ADR_START_SCREEN_BG,
     output reg [31:0] text_address_offset = 0,
+    output reg [31:0] sprite1_address_offset = 0,
 
     output reg show_text = 0,
     output reg [9:0] text_x = 0, 
@@ -38,6 +39,7 @@ module scene_logic(input clk_100mhz, input rst,
         end
         `PHASE_LOADING_RACING: begin
           bg_address_offset <= `ADR_RACING_BG;
+          sprite1_address_offset <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character);
         end
       endcase
     end
@@ -79,7 +81,7 @@ module scene_logic(input clk_100mhz, input rst,
           char_select_box1_x <= 42 + (selected_character[1:0] * 139);
           char_select_box1_y <= 119 + (selected_character[2] * 165);
         end
-        default: begin
+        `PHASE_RACING: begin
           show_text <= 0;
           show_char_select_box1 <= 0;
           show_sprite1 <= 1;

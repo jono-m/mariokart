@@ -17,7 +17,9 @@
 `define ADR_START_SCREEN_BG				      0        // LEN 307200
 `define ADR_CHAR_SELECT_BG				      307200   // LEN 307200
 `define ADR_RACING_BG				            614400   // LEN 307200      
-`define ADR_PRESS_START_TEXT            921600   // LEN 32000
+`define ADR_PRESS_START_TEXT            921600   // LEN 332256
+`define ADR_CHARACTER_SPRITE1           953856   // LEN 512*8
+`define ADR_TRACK_INFORMATION_IMAGE		957952	 // LEN 76800
   
 `define TURN_LEFT                       0
 `define TURN_STRAIGHT                   1
@@ -27,3 +29,8 @@
 `define SPEED_SLOW                      1
 `define SPEED_NORMAL                    2
 `define SPEED_BOOST                     3
+
+`define MAPTYPE_ROAD					0
+`define MAPTYPE_GRASS					1
+`define MAPTYPE_WALL					2
+`define MAPTYPE_FINISH					3
