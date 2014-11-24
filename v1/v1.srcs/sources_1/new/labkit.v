@@ -72,11 +72,11 @@ module labkit(input clk,
   assign sd_MISO = sdData[0];
   assign sdData[1] = 1;
 
-	wire sd_read;
+	reg sd_read;
 	wire [7:0] sd_byte;
 	wire sd_byte_available;
 	wire sd_ready_for_read;
-	wire [31:0] sd_address;
+	reg [31:0] sd_address;
 
 	sd_controller sdcont(.clk(clk_25mhz), .cs(sd_CS), .mosi(sd_MOSI), 
 			.miso(sd_MISO), .sclk(sd_CLK), .rd(sd_read), .wr(0), .dm_in(0), 
@@ -157,16 +157,16 @@ module labkit(input clk,
   wire paused_stickRight;
   wire paused_A;
 
-  pause_repeater(rst, clk_100mhz, clean_A, paused_A);
-  pause_repeater(rst, clk_100mhz, clean_stickUp, paused_stickUp);
-  pause_repeater(rst, clk_100mhz, clean_stickDown, paused_stickDown);
-  pause_repeater(rst, clk_100mhz, clean_stickLeft, paused_stickLeft);
-  pause_repeater(rst, clk_100mhz, clean_stickRight, paused_stickRight);
+  pause_repeater p1(rst, clk_100mhz, clean_A, paused_A);
+  pause_repeater p2(rst, clk_100mhz, clean_stickUp, paused_stickUp);
+  pause_repeater p3(rst, clk_100mhz, clean_stickDown, paused_stickDown);
+  pause_repeater p4(rst, clk_100mhz, clean_stickLeft, paused_stickLeft);
+  pause_repeater p5(rst, clk_100mhz, clean_stickRight, paused_stickRight);
 
 	// Set up game logic.
 	wire phase_loaded;
 	wire [2:0] phase;
-	wire [3:0] selected_character;
+	wire [2:0] selected_character;
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
 			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
       .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
@@ -179,30 +179,92 @@ module labkit(input clk,
   wire [9:0] car1_x;
   wire [8:0] car1_y;
 
-  wire forward = clean_A ? 1 : 0;
-  wire [1:0] speed = (clean_A || clean_B) ? `SPEED_NORMAL : `SPEED_STOP;
-  wire [1:0] turn = clean_stickLeft ? `TURN_LEFT : 
-      (clean_stickRight ? `TURN_RIGHT : `TURN_STRAIGHT);
+  wire [1:0] speed;
 
-  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward),
-      .speed(speed), .turn(turn), .car1_x(car1_x), .car1_y(car1_y));
-  
+  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst), .forward(clean_A),
+      .backward(clean_B), .left(clean_stickLeft), .right(clean_stickRight), .speed(speed), 
+      .car1_x(car1_x), .car1_y(car1_y));
+
 	// Set up video logic.
+  reg video_load = 0;
+  wire video_loaded;
 	wire [3:0] red;
 	wire [3:0] green;
 	wire [3:0] blue;
+  wire [31:0] video_sd_adr;
+  wire video_sd_read;
+
 	video_logic vl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
-			.selected_character(selected_character), .load(1),
-			.is_loaded(phase_loaded), .sd_read(sd_read), .sd_byte(sd_byte),
+			.selected_character(selected_character), .load(video_load),
+			.is_loaded(video_loaded), .sd_read(video_sd_read), .sd_byte(sd_byte),
 			.sd_byte_available(sd_byte_available), 
-			.sd_ready_for_read(sd_ready_for_read), .sd_address(sd_address),
+			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
       .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present));
 
+  reg imap_load = 0;
+  wire [9:0] imap_x = car1_x;
+  wire [8:0] imap_y = car1_y;
+  wire [1:0] map_type;
+  assign speed = (map_type == `MAPTYPE_ROAD ? `SPEED_NORMAL : 
+      (map_type == `MAPTYPE_GRASS ? `SPEED_SLOW :
+      (map_type == `MAPTYPE_WALL ? `SPEED_STOP :
+      (map_type == `MAPTYPE_FINISH ? `SPEED_BOOST : 0
+      ))));
+  
+  wire imap_loaded;
+  wire [31:0] imap_sd_adr;
+  wire imap_sd_read;
+  information_map(.clk_100mhz(clk_100mhz), .rst(rst), .load(imap_load),
+      .address_offset(`ADR_TRACK_INFORMATION_IMAGE),
+      .x(imap_x), .y(imap_y), .map_type(map_type), .is_loaded(imap_loaded),
+      .sd_byte_available(sd_byte_available), 
+      .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+      .sd_address(imap_sd_adr), .sd_do_read(imap_sd_read));
+
+  wire [1:0] loaders = {imap_load, video_load};
+  assign phase_loaded = imap_loaded && video_loaded;
+  
 	assign vgaRed = at_display_area ? red : 0;
   assign vgaGreen = at_display_area ? green : 0;
   assign vgaBlue = at_display_area ? blue : 0;
     
   assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
       paused_stickLeft, stickLeft, clean_stickLeft, selected_character, 1'b1};
+
+  // -----
+  // Loaders
+  always @(posedge clk_100mhz) begin
+    if(rst == 1) begin
+      imap_load <= 1;
+      video_load <= 0;
+    end
+    else begin
+      if(imap_loaded == 1) begin
+        imap_load <= 0;
+        video_load <= 1;
+      end
+    end
+  end
+
+  always @(*) begin
+    case (loaders)
+      2'b01: begin
+        sd_address = video_sd_adr;
+        sd_read = video_sd_read;
+      end
+      2'b10: begin
+        sd_address = imap_sd_adr;
+        sd_read = imap_sd_read;
+      end
+      2'b00: begin
+        sd_address = 0;
+        sd_read = 0;
+      end
+      2'b11: begin
+        sd_address = 0;
+        sd_read = 0;
+      end
+    endcase
+  end
 endmodule

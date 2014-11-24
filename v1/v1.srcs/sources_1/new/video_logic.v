@@ -159,7 +159,7 @@ module video_logic(input clk_100mhz, input rst,
     shader image_shader(.fader(fader), .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
             .text_r(text_r), .text_g(text_g), .text_b(text_b), .text_alpha(text_alpha),
             .csb1_r(csb1_r), .csb1_g(csb1_g), .csb1_b(csb1_b), .csb1_alpha(csb1_alpha),
-            .sprite1_r(sprite1_r), .sprite1_g(sprite1_g), .sprite1_b(sprite1_b), .sprite1_a(sprite1_a),
+            .sprite1_r(sprite1_r), .sprite1_g(sprite1_g), .sprite1_b(sprite1_b), .sprite1_alpha(sprite1_alpha),
             .out_red(red), .out_green(green), .out_blue(blue));
     
     scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
@@ -167,6 +167,7 @@ module video_logic(input clk_100mhz, input rst,
             .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
             .bg_address_offset(bg_address_offset),
             .text_address_offset(text_address_offset),
+            .sprite1_address_offset(sprite1_address_offset),
             .show_text(show_text), .text_x(text_x), .text_y(text_y),
             .show_char_select_box1(show_csb1),
             .char_select_box1_x(csb1_x),
@@ -179,7 +180,7 @@ module video_logic(input clk_100mhz, input rst,
     // BRAM LOADER
     
     // Tracks which image loader is currently active.
-    wire [1:0] active_loader = {bg_load, text_load, sprite1_load};
+    wire [2:0] active_loader = {bg_load, text_load, sprite1_load};
 
     wire in_loading_phase = (phase == `PHASE_LOADING_START_SCREEN ||
                           phase == `PHASE_LOADING_CHARACTER_SELECT ||
@@ -210,7 +211,7 @@ module video_logic(input clk_100mhz, input rst,
                     if(is_bg_loaded == 0) begin
                         bg_load <= 1;
                         text_load <= 0;
-                        sprite1_load <= 0
+                        sprite1_load <= 0;
                     end
                     else if(is_text_loaded == 0) begin
                         bg_load <= 0;
@@ -293,7 +294,23 @@ module video_logic(input clk_100mhz, input rst,
                 sd_read = sprite1_sd_read;
                 sd_address = sprite1_sd_adr;
             end
-            default: begin
+            3'b000: begin
+                sd_read = 0;
+                sd_address = 0;
+            end
+            3'b011: begin
+                sd_read = 0;
+                sd_address = 0;
+            end
+            3'b101: begin
+                sd_read = 0;
+                sd_address = 0;
+            end
+            3'b110: begin
+                sd_read = 0;
+                sd_address = 0;
+            end
+            3'b111: begin
                 sd_read = 0;
                 sd_address = 0;
             end
