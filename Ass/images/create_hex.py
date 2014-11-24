@@ -44,3 +44,9 @@ def create_hex(filename):
 
 def bmpno_to_int(bmpstring):
   return int(bmpstring[::-1].encode('hex'), 16)
+
+
+create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/images/Sprites/yoshi_24.bmp')
+create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/images/Sprites/dk_24.bmp')
+create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/images/Sprites/wario_24.bmp')
+create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/images/Sprites/bowser_24.bmp')
