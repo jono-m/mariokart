@@ -19,7 +19,19 @@ module scene_logic(input clk_100mhz, input rst,
 
     output reg show_sprite1 = 0,
     output reg [9:0] sprite1_x = 0,
-    output reg [8:0] sprite1_y = 0
+    output reg [8:0] sprite1_y = 0,
+
+    output reg show_timer = 0,
+    output reg [9:0] timer_x = 0,
+    output reg [8:0] timer_y = 0,
+
+    output reg [9:0] latiku_oym_x = 0,
+    output reg [8:0] latiku_oym_y = 0,
+    output reg show_latiku_oym = 0,
+
+    output reg [9:0] latiku_final_lap_x = 0,
+    output reg [8:0] latiku_final_lap_y = 0,
+    output reg show_latiku_final_lap = 0
     );
   
   // Determine which images should be loaded for each scene.
@@ -51,15 +63,24 @@ module scene_logic(input clk_100mhz, input rst,
 
   always @(posedge clk_100mhz) begin
     if(rst == 1) begin
-      show_text <= 0;
       text_x <= 0;
       text_y <= 0;
-      show_char_select_box1 <= 0;
+      show_text <= 0;
       char_select_box1_x <= 0;
       char_select_box1_y <= 0;
-      show_sprite1 <= 0;
+      show_char_select_box1 <= 0;
       sprite1_x <= 0;
       sprite1_y <= 0;
+      show_sprite1 <= 0;
+      timer_x <= 0;
+      timer_y <= 0;
+      show_timer <= 0;
+      latiku_oym_x <= 0;
+      latiku_oym_y <= 0;
+      show_latiku_oym <= 0;
+      latiku_final_lap_x <= 0;
+      latiku_final_lap_y <= 0;
+      show_latiku_final_lap <= 0;
       counter <= 0;
     end
     else begin
@@ -68,6 +89,7 @@ module scene_logic(input clk_100mhz, input rst,
         `PHASE_START_SCREEN: begin
           show_char_select_box1 <= 0;
           show_sprite1 <= 0;
+          show_timer <= 0;
           if(counter == 50000000) begin
             show_text <= ~show_text;
             text_x <= 138;
@@ -78,6 +100,7 @@ module scene_logic(input clk_100mhz, input rst,
           show_text <= 0;
           show_sprite1 <= 0;
           show_char_select_box1 <= 1;
+          show_timer <= 0;
           char_select_box1_x <= 42 + (selected_character[1:0] * 139);
           char_select_box1_y <= 119 + (selected_character[2] * 165);
         end
@@ -85,6 +108,8 @@ module scene_logic(input clk_100mhz, input rst,
           show_text <= 0;
           show_char_select_box1 <= 0;
           show_sprite1 <= 1;
+          show_timer <= 1;
+          show_latiku_oym <= 1;
           sprite1_x <= car1_x - 10;
           sprite1_y <= car1_y - 10;
         end

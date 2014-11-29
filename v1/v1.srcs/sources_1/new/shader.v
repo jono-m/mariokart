@@ -6,24 +6,36 @@ module shader(input [4:0] fader,
         input [3:0] text_r, input [3:0] text_g, input [3:0] text_b, input text_alpha,
         input [3:0] csb1_r, input [3:0] csb1_g, input [3:0] csb1_b, input csb1_alpha,
         input [3:0] sprite1_r, input [3:0] sprite1_g, input [3:0] sprite1_b, input sprite1_alpha,
+        input [3:0] timer_r, input [3:0] timer_g, input [3:0] timer_b, input timer_alpha,
+        input [3:0] latiku_oym_r, input [3:0] latiku_oym_g, input [3:0] latiku_oym_b, input latiku_oym_alpha,
+        input [3:0] latiku_final_lap_r, input [3:0] latiku_final_lap_g, input [3:0] latiku_final_lap_b, input latiku_final_lap_alpha,
         
         output [3:0] out_red, output [3:0] out_green, output [3:0] out_blue);
     
     wire [3:0] shader_red = (text_alpha ? text_r : 
+            (latiku_oym_alpha ? latiku_oym_r :
+            (latiku_final_lap_alpha ? latiku_final_lap_r :
+            (timer_alpha ? timer_r :
             (sprite1_alpha ? sprite1_r : 
             (csb1_alpha ? csb1_r : 
             (bg_alpha ? bg_r : 
-            (0)))));
+            (0))))))));
     wire [3:0] shader_green = (text_alpha ? text_g : 
+            (latiku_oym_alpha ? latiku_oym_g :
+            (latiku_final_lap_alpha ? latiku_final_lap_g :
+            (timer_alpha ? timer_g :
             (sprite1_alpha ? sprite1_g : 
             (csb1_alpha ? csb1_g : 
             (bg_alpha ? bg_g : 
-            (0)))));
+            (0))))))));
     wire [3:0] shader_blue = (text_alpha ? text_b : 
+            (latiku_oym_alpha ? latiku_oym_g :
+            (latiku_final_lap_alpha ? latiku_final_lap_g :
+            (timer_alpha ? timer_b : 
             (sprite1_alpha ? sprite1_b :
             (csb1_alpha ? csb1_b : 
             (bg_alpha ? bg_b : 
-            (0)))));
+            (0))))))));
     
     wire [7:0] red_fade = (shader_red) * fader;
     wire [7:0] green_fade = (shader_green) * fader;

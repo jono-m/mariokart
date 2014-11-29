@@ -9,15 +9,21 @@ module game_logic(input clk_100mhz, input rst,
 		// State connections.
 		input phase_loaded, 
 		output reg [2:0] phase = `PHASE_LOADING_START_SCREEN,
-		output reg [2:0] selected_character = `CHARACTER_MARIO
+		output reg [2:0] selected_character = `CHARACTER_MARIO,
+		reg [1:0] laps_completed = 0,
+
+		input lap_completed
 	);
 
+	reg prev_lap_completed = 0;
 	always @(posedge clk_100mhz) begin
 		if(rst == 1) begin
 			phase <= `PHASE_LOADING_START_SCREEN;
 			selected_character <= `CHARACTER_MARIO;
+			laps_completed <= 0;
 		end
 		else begin
+			prev_lap_completed <= lap_completed;
 			case(phase)
 				`PHASE_LOADING_START_SCREEN: begin
 					if(phase_loaded == 1) begin
@@ -33,6 +39,7 @@ module game_logic(input clk_100mhz, input rst,
 					if(phase_loaded == 1) begin
 						phase <= `PHASE_CHARACTER_SELECT;
 					end
+					selected_character <= `CHARACTER_MARIO;
 				end
 				`PHASE_CHARACTER_SELECT: begin
 					if(A == 1 || start == 1) begin
@@ -63,9 +70,17 @@ module game_logic(input clk_100mhz, input rst,
 					if(phase_loaded == 1) begin
 						phase <= `PHASE_RACING;
 					end
+					laps_completed <= 0;
 				end
 				`PHASE_RACING: begin
-					
+					if(prev_lap_completed == 0 && lap_completed == 1) begin
+						if(laps_completed == 2) begin
+							phase <= `PHASE_LOADING_START_SCREEN;
+						end
+						else begin
+							laps_completed <= laps_completed + 1;
+						end
+					end
 				end
 				default: begin
 					phase <= `PHASE_START_SCREEN;
