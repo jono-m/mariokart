@@ -8,6 +8,9 @@ module video_logic(input clk_100mhz, input rst,
         input [2:0] selected_character,
         input load,
         output reg is_loaded = 0,
+        input race_begin,
+        input [1:0] oym_counter,
+        input [1:0] laps_completed,
 
         // SD card connections
         output reg sd_read, input [7:0] sd_byte, input sd_byte_available,
@@ -139,11 +142,11 @@ module video_logic(input clk_100mhz, input rst,
                     .bram_address(bram_sprite1_adr), .bram_read_data(bram_sprite1_read),
                     .bram_write_data(bram_sprite1_write), 
                     .bram_write_enable(bram_sprite1_we));
-    
+
     // Timer image loader
     // Loader connections.
     reg timer_load = 0;
-    wire reset_timer = 0;
+    wire reset_timer = ~race_begin;
     wire [3:0] timer_r;
     wire [3:0] timer_g;
     wire [3:0] timer_b;
@@ -170,7 +173,7 @@ module video_logic(input clk_100mhz, input rst,
     // Latiku on your marks image loader
     // Loader connections.
     reg latiku_oym_load = 0;
-    wire [1:0] light_state = 0;
+    wire [1:0] light_state = oym_counter;
     wire [3:0] latiku_oym_r;
     wire [3:0] latiku_oym_g;
     wire [3:0] latiku_oym_b;
@@ -178,7 +181,7 @@ module video_logic(input clk_100mhz, input rst,
     wire [9:0] latiku_oym_x;
     wire [8:0] latiku_oym_y;
     wire show_latiku_oym;
-    wire latiku_oym_alpha = 0;
+    wire latiku_oym_alpha = latiku_oym_a && show_latiku_oym;
     wire [31:0] latiku_oym_address_offset = `ADR_LATIKU_ON_YOUR_MARKS;
     wire is_latiku_oym_loaded;
     wire [31:0] latiku_oym_sd_adr;
@@ -193,34 +196,6 @@ module video_logic(input clk_100mhz, input rst,
             .sd_address(latiku_oym_sd_adr), .sd_do_read(latiku_oym_sd_read),
             .light_state(light_state));
 
-
-    // Latiku final lap image loader
-    // Loader connections.
-    reg latiku_final_lap_load = 0;
-    wire [3:0] latiku_final_lap_r;
-    wire [3:0] latiku_final_lap_g;
-    wire [3:0] latiku_final_lap_b;
-    wire latiku_final_lap_a;
-    wire [9:0] latiku_final_lap_x;
-    wire [8:0] latiku_final_lap_y;
-    wire show_latiku_final_lap;
-    wire latiku_final_lap_alpha = 0;
-    wire [31:0] latiku_final_lap_address_offset = `ADR_LATIKU_FINAL_LAP;
-    wire is_latiku_final_lap_loaded;
-    wire [31:0] latiku_final_lap_sd_adr;
-    wire latiku_final_lap_sd_read;
-    latiku_final_lap lfinal_lap(.clk_100mhz(clk_100mhz), .rst(rst_loader),
-            .load(latiku_final_lap_load),
-            .address_offset(latiku_final_lap_address_offset), 
-            .x(x-latiku_final_lap_x), .y(y-latiku_final_lap_y), 
-            .red(latiku_final_lap_r), .green(latiku_final_lap_g),
-            .blue(latiku_final_lap_b), .alpha(latiku_final_lap_a), 
-            .is_loaded(is_latiku_final_lap_loaded), 
-            .sd_byte_available(sd_byte_available), 
-            .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte), 
-            .sd_address(latiku_final_lap_sd_adr), 
-            .sd_do_read(latiku_final_lap_sd_read));
-
     wire [9:0] csb1_x;
     wire [8:0] csb1_y;
     wire [3:0] csb1_r;
@@ -230,9 +205,23 @@ module video_logic(input clk_100mhz, input rst,
     wire show_csb1;
     wire csb1_alpha = show_csb1 && csb1_a;
     character_select_box p1_select(.clk(clk_100mhz), .rst(rst),
-            .x(x-csb1_x), .y(y-csb1_y),
+            .x(x-csb1_x), .y(y-csb1_y), .filled(1),
             .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
             .alpha(csb1_a));
+
+    wire [9:0] laps1_x;
+    wire [8:0] laps1_y;
+    wire [3:0] laps1_r;
+    wire [3:0] laps1_g;
+    wire [3:0] laps1_b;
+    wire laps1_a;
+    wire show_laps1;
+    wire laps1_alpha = show_laps1 && laps1_a;
+    laps_display laps_display1 (.clk(clk_100mhz), .rst(rst),
+            .laps_completed(laps_completed),
+            .x(x-laps1_x), .y(y-laps1_y),
+            .color(12'hFFF), .red(laps1_r), .green(laps1_g), .blue(laps1_b),
+            .alpha(laps1_a));
 
     // -------
     // SHADER
@@ -243,12 +232,14 @@ module video_logic(input clk_100mhz, input rst,
             .sprite1_r(sprite1_r), .sprite1_g(sprite1_g), .sprite1_b(sprite1_b), .sprite1_alpha(sprite1_alpha),
             .timer_r(timer_r), .timer_g(timer_g), .timer_b(timer_b), .timer_alpha(timer_alpha),
             .latiku_oym_r(latiku_oym_r), .latiku_oym_g(latiku_oym_g), .latiku_oym_b(latiku_oym_b), .latiku_oym_alpha(latiku_oym_alpha),
-            .latiku_final_lap_r(latiku_final_lap_r), .latiku_final_lap_g(latiku_final_lap_g), .latiku_final_lap_b(latiku_final_lap_b), .latiku_final_lap_alpha(latiku_final_lap_alpha),
+            .laps1_r(laps1_r), .laps1_g(laps1_g), .laps1_b(laps1_b), .laps1_alpha(laps1_alpha),
             .out_red(red), .out_green(green), .out_blue(blue));
     
     scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
             .selected_character(selected_character),
             .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
+            .race_begin(race_begin), .faded(faded),
+            .laps_completed(laps_completed),
             .bg_address_offset(bg_address_offset),
             .text_address_offset(text_address_offset),
             .sprite1_address_offset(sprite1_address_offset),
@@ -265,22 +256,28 @@ module video_logic(input clk_100mhz, input rst,
             .latiku_oym_x(latiku_oym_x),
             .latiku_oym_y(latiku_oym_y),
             .show_latiku_oym(show_latiku_oym),
-            .latiku_final_lap_x(latiku_final_lap_x),
-            .latiku_final_lap_y(latiku_final_lap_y),
-            .show_latiku_final_lap(show_latiku_final_lap));
+            .laps1_x(laps1_x),
+            .laps1_y(laps1_y),
+            .show_laps1(show_laps1)
+            // .latiku_final_lap_x(latiku_final_lap_x),
+            // .latiku_final_lap_y(latiku_final_lap_y),
+            // .show_latiku_final_lap(show_latiku_final_lap)
+            );
 
     // ------
     // BRAM LOADER
     
     // Tracks which image loader is currently active.
-    wire [2:0] active_loader = {bg_load, text_load, sprite1_load, timer_load};
+    wire [4:0] active_loader = {bg_load, text_load, sprite1_load, timer_load,
+            latiku_oym_load};
 
     wire in_loading_phase = (phase == `PHASE_LOADING_START_SCREEN ||
                           phase == `PHASE_LOADING_CHARACTER_SELECT ||
                           phase == `PHASE_LOADING_RACING);
 
     wire are_all_loaders_unloaded = ~is_bg_loaded && 
-            ~is_text_loaded && ~is_sprite1_loaded && ~is_timer_loaded;
+            ~is_text_loaded && ~is_sprite1_loaded && ~is_timer_loaded &&
+            ~is_latiku_oym_loaded;
 
     // Reload images into BRAM.
     always @(posedge clk_100mhz) begin
@@ -290,6 +287,7 @@ module video_logic(input clk_100mhz, input rst,
             text_load <= 0;
             sprite1_load <= 0;
             timer_load <= 0;
+            latiku_oym_load <= 0;
 
             is_loaded <= 0;
             unload <= 0;
@@ -307,24 +305,35 @@ module video_logic(input clk_100mhz, input rst,
                         text_load <= 0;
                         sprite1_load <= 0;
                         timer_load <= 0;
+                        latiku_oym_load <= 0;
                     end
                     else if(is_text_loaded == 0) begin
                         bg_load <= 0;
                         text_load <= 1;
                         sprite1_load <= 0;
                         timer_load <= 0;
+                        latiku_oym_load <= 0;
                     end
                     else if(is_sprite1_loaded == 0) begin
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 1;
                         timer_load <= 0;
+                        latiku_oym_load <= 0;
                     end
                     else if(is_timer_loaded == 0) begin
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
                         timer_load <= 1;
+                        latiku_oym_load <= 0;
+                    end
+                    else if(is_latiku_oym_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 0;
+                        timer_load <= 0;
+                        latiku_oym_load <= 1;
                     end
                     else begin
                         // Done loading, clean up.
@@ -332,6 +341,7 @@ module video_logic(input clk_100mhz, input rst,
                         text_load <= 0;
                         sprite1_load <= 0;
                         timer_load <= 0;
+                        latiku_oym_load <= 0;
                         
                         if(fader == 5'b1_0000) begin
                             is_loaded <= 1;
@@ -386,21 +396,25 @@ module video_logic(input clk_100mhz, input rst,
     always @(*) begin
         case(active_loader)
             // Background loader
-            4'b1000: begin
+            5'b10000: begin
                 sd_read = bg_sd_read;
                 sd_address = bg_sd_adr;
             end
-            4'b0100: begin
+            5'b01000: begin
                 sd_read = text_sd_read;
                 sd_address = text_sd_adr;
             end
-            4'b0010: begin
+            5'b00100: begin
                 sd_read = sprite1_sd_read;
                 sd_address = sprite1_sd_adr;
             end
-            4'b0001: begin
+            5'b00010: begin
                 sd_read = timer_sd_read;
-                sd_address = timer_sd_adr;
+                sd_address = timer_sd_adr; 
+            end
+            5'b00001: begin
+                sd_read = latiku_oym_sd_read;
+                sd_address = latiku_oym_sd_adr; 
             end
             default: begin
                 sd_read = 0;

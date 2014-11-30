@@ -11,18 +11,12 @@ module car_simulator(input clk_100mhz, input rst,
   reg [18:0] counter = 0;
   reg clk_move = 1;
   always @(posedge clk_100mhz) begin
-    if(rst == 1) begin
+    if(counter == 470000) begin
         counter <= 0;
-        clk_move <= 1;
+        clk_move <= ~clk_move;
     end
     else begin
-        if(counter == 470000) begin
-            counter <= 0;
-            clk_move <= ~clk_move;
-        end
-        else begin
-            counter <= counter + 1;
-        end
+        counter <= counter + 1;
     end
   end
   

@@ -1,10 +1,10 @@
 -- Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2014.3 (win64) Build 1034051 Fri Oct  3 17:14:12 MDT 2014
--- Date        : Thu Nov 27 21:33:44 2014
+-- Date        : Sat Nov 29 23:20:58 2014
 -- Host        : PLASMA-VaioZ running 64-bit Service Pack 1  (build 7601)
 -- Command     : write_vhdl -force -mode synth_stub
---               c:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/sprite1_image_bram/sprite1_image_bram_stub.vhdl
+--               C:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/sprite1_image_bram/sprite1_image_bram_stub.vhdl
 -- Design      : sprite1_image_bram
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-3

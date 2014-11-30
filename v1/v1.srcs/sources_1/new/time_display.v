@@ -4,7 +4,7 @@ module time_display
     (input clk_100mhz, input rst, input load,
     input reset_timer,
     input [31:0] address_offset,
-    input [9:0] x, input [9:0] y,
+    input [9:0] x, input [8:0] y,
     output [3:0] red, output [3:0] green, output [3:0] blue, output alpha,
     output is_loaded,
 
@@ -23,7 +23,7 @@ module time_display
 
     parameter BMP_X = 20;
     parameter BMP_Y = 20;
-    parameter SPACING = 5;
+    parameter SPACING = 1;
 
     wire [10:0] bram_time_adr;
     wire [31:0] bram_time_write;
@@ -33,15 +33,12 @@ module time_display
             .dina(bram_time_write), .douta(bram_time_read), .wea(bram_time_we));
 
     // Loader connections.
-    wire [3:0] red;
-    wire [3:0] green;
-    wire [3:0] blue;
     wire time_a;
     wire [9:0] time_x;
-    wire [8:0] time_y;
+    wire [9:0] time_y;
     image_loader #(.WIDTH(20), .HEIGHT(220), .ROWS(1100), .BRAM_ADDWIDTH(10),
             .ALPHA(1)) 
-            time_loader(.clk(clk_100mhz), .rst(rst_loader), 
+            time_loader(.clk(clk_100mhz), .rst(rst), 
                     .load(load), .x(time_x), .y(time_y), .red(red), 
                     .green(green), .blue(blue), .alpha(time_a),
                     .address_offset(address_offset),
@@ -72,7 +69,7 @@ module time_display
     wire in_ms_ones = ms_ones_x < BMP_X;
 
     wire in_drawing = in_min_tens || in_min_ones || in_min_separator ||
-        in_sec_tens || in_sec_tens || in_sec_separator ||
+        in_sec_tens || in_sec_ones || in_sec_separator ||
         in_ms_tens || in_ms_ones;
     assign alpha = time_a && in_y && in_drawing;
 

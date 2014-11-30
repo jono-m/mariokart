@@ -169,6 +169,9 @@ module labkit(input clk,
 	wire [2:0] selected_character;
   wire lap_completed;
   wire [1:0] laps_completed;
+  wire race_begin;
+  wire [1:0] oym_counter;
+  wire correct_direction;
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
 			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
       .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
@@ -177,7 +180,8 @@ module labkit(input clk,
 			.stickRight(paused_stickRight), .stickX(stickX), .stickY(stickY), 
 			.phase_loaded(phase_loaded), .phase(phase),
 			.selected_character(selected_character), .lap_completed(lap_completed),
-      .laps_completed(laps_completed));
+      .laps_completed(laps_completed), .race_begin(race_begin),
+      .oym_counter(oym_counter));
 
   wire [9:0] car1_x;
   wire [8:0] car1_y;
@@ -202,7 +206,9 @@ module labkit(input clk,
 
 	video_logic vl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
 			.selected_character(selected_character), .load(video_load),
-			.is_loaded(video_loaded), .sd_read(video_sd_read), .sd_byte(sd_byte),
+			.is_loaded(video_loaded), .race_begin(race_begin), .oym_counter(oym_counter),
+      .laps_completed(laps_completed),
+      .sd_read(video_sd_read), .sd_byte(sd_byte),
 			.sd_byte_available(sd_byte_available), 
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
@@ -213,10 +219,11 @@ module labkit(input clk,
   wire [8:0] imap_y;
   wire [1:0] map_type;
 
-  physics_logic #(.UPDATE_CYCLES(1)) pl(.clk_100mhz(clk_100mhz), .rst(rst), 
-      .phase(phase), .selected_character(selected_character), .car1_x(car1_x),
-      .car1_y(car1_y), .lap_completed(lap_completed), .A(clean_A), 
-      .B(clean_B), .stickLeft(clean_stickLeft), .stickRight(clean_stickRight),
+  physics_logic pl(.clk_100mhz(clk_100mhz), .rst(rst), 
+      .phase(phase), .selected_character(selected_character), .race_begin(race_begin),
+      .car1_x(car1_x),
+      .car1_y(car1_y), .lap_completed(lap_completed), .correct_direction(correct_direction), 
+      .A(clean_A), .B(clean_B), .stickLeft(clean_stickLeft), .stickRight(clean_stickRight),
       .map_type(map_type), .imap_x(imap_x), .imap_y(imap_y),
       .forward(forward), .backward(backward), .turn_left(turn_left),
       .turn_right(turn_right), .speed(speed));
@@ -224,7 +231,7 @@ module labkit(input clk,
   wire imap_loaded;
   wire [31:0] imap_sd_adr;
   wire imap_sd_read;
-  information_map(.clk_100mhz(clk_100mhz), .rst(rst), .load(imap_load),
+  information_map imap(.clk_100mhz(clk_100mhz), .rst(rst), .load(imap_load),
       .address_offset(`ADR_TRACK_INFORMATION_IMAGE),
       .x(imap_x), .y(imap_y), .map_type(map_type), .is_loaded(imap_loaded),
       .sd_byte_available(sd_byte_available), 
@@ -239,7 +246,7 @@ module labkit(input clk,
   assign vgaBlue = at_display_area ? blue : 0;
     
   assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-      paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, 2'b11};
+      paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, correct_direction, 1'b1};
 
   // -----
   // Loaders

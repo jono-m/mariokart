@@ -1,7 +1,7 @@
 -- Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2014.3 (win64) Build 1034051 Fri Oct  3 17:14:12 MDT 2014
--- Date        : Thu Nov 27 21:42:33 2014
+-- Date        : Sat Nov 29 23:02:33 2014
 -- Host        : PLASMA-VaioZ running 64-bit Service Pack 1  (build 7601)
 -- Command     : write_vhdl -force -mode funcsim
 --               C:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/text_image_bram/text_image_bram_funcsim.vhdl
@@ -36,7 +36,6 @@ end text_image_bram_blk_mem_gen_mux;
 
 architecture STRUCTURE of text_image_bram_blk_mem_gen_mux is
   signal sel_pipe : STD_LOGIC;
-  signal sel_pipe_d1 : STD_LOGIC;
   attribute SOFT_HLUTNM : string;
   attribute SOFT_HLUTNM of \douta[10]_INST_0\ : label is "soft_lutpair2";
   attribute SOFT_HLUTNM of \douta[11]_INST_0\ : label is "soft_lutpair2";
@@ -72,7 +71,7 @@ begin
     port map (
       I0 => DOADO(4),
       I1 => I1(4),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(4)
     );
 \douta[11]_INST_0\: unisim.vcomponents.LUT3
@@ -82,7 +81,7 @@ begin
     port map (
       I0 => DOADO(5),
       I1 => I1(5),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(5)
     );
 \douta[12]_INST_0\: unisim.vcomponents.LUT3
@@ -92,7 +91,7 @@ begin
     port map (
       I0 => DOADO(6),
       I1 => I1(6),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(6)
     );
 \douta[13]_INST_0\: unisim.vcomponents.LUT3
@@ -102,7 +101,7 @@ begin
     port map (
       I0 => DOADO(7),
       I1 => I1(7),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(7)
     );
 \douta[14]_INST_0\: unisim.vcomponents.LUT3
@@ -112,7 +111,7 @@ begin
     port map (
       I0 => DOPADOP(0),
       I1 => I2(0),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(8)
     );
 \douta[15]_INST_0\: unisim.vcomponents.LUT3
@@ -122,7 +121,7 @@ begin
     port map (
       I0 => I3(0),
       I1 => I4(0),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(9)
     );
 \douta[16]_INST_0\: unisim.vcomponents.LUT3
@@ -132,7 +131,7 @@ begin
     port map (
       I0 => I3(1),
       I1 => I4(1),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(10)
     );
 \douta[17]_INST_0\: unisim.vcomponents.LUT3
@@ -142,7 +141,7 @@ begin
     port map (
       I0 => I3(2),
       I1 => I4(2),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(11)
     );
 \douta[18]_INST_0\: unisim.vcomponents.LUT3
@@ -152,7 +151,7 @@ begin
     port map (
       I0 => I3(3),
       I1 => I4(3),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(12)
     );
 \douta[19]_INST_0\: unisim.vcomponents.LUT3
@@ -162,7 +161,7 @@ begin
     port map (
       I0 => I3(4),
       I1 => I4(4),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(13)
     );
 \douta[20]_INST_0\: unisim.vcomponents.LUT3
@@ -172,7 +171,7 @@ begin
     port map (
       I0 => I3(5),
       I1 => I4(5),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(14)
     );
 \douta[21]_INST_0\: unisim.vcomponents.LUT3
@@ -182,7 +181,7 @@ begin
     port map (
       I0 => I3(6),
       I1 => I4(6),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(15)
     );
 \douta[22]_INST_0\: unisim.vcomponents.LUT3
@@ -192,7 +191,7 @@ begin
     port map (
       I0 => I3(7),
       I1 => I4(7),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(16)
     );
 \douta[23]_INST_0\: unisim.vcomponents.LUT3
@@ -202,7 +201,7 @@ begin
     port map (
       I0 => I5(0),
       I1 => I6(0),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(17)
     );
 \douta[24]_INST_0\: unisim.vcomponents.LUT3
@@ -212,7 +211,7 @@ begin
     port map (
       I0 => I7(0),
       I1 => I8(0),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(18)
     );
 \douta[25]_INST_0\: unisim.vcomponents.LUT3
@@ -222,7 +221,7 @@ begin
     port map (
       I0 => I7(1),
       I1 => I8(1),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(19)
     );
 \douta[26]_INST_0\: unisim.vcomponents.LUT3
@@ -232,7 +231,7 @@ begin
     port map (
       I0 => I7(2),
       I1 => I8(2),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(20)
     );
 \douta[27]_INST_0\: unisim.vcomponents.LUT3
@@ -242,7 +241,7 @@ begin
     port map (
       I0 => I7(3),
       I1 => I8(3),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(21)
     );
 \douta[28]_INST_0\: unisim.vcomponents.LUT3
@@ -252,7 +251,7 @@ begin
     port map (
       I0 => I7(4),
       I1 => I8(4),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(22)
     );
 \douta[29]_INST_0\: unisim.vcomponents.LUT3
@@ -262,7 +261,7 @@ begin
     port map (
       I0 => I7(5),
       I1 => I8(5),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(23)
     );
 \douta[30]_INST_0\: unisim.vcomponents.LUT3
@@ -272,7 +271,7 @@ begin
     port map (
       I0 => I7(6),
       I1 => I8(6),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(24)
     );
 \douta[31]_INST_0\: unisim.vcomponents.LUT3
@@ -282,7 +281,7 @@ begin
     port map (
       I0 => I7(7),
       I1 => I8(7),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(25)
     );
 \douta[6]_INST_0\: unisim.vcomponents.LUT3
@@ -292,7 +291,7 @@ begin
     port map (
       I0 => DOADO(0),
       I1 => I1(0),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(0)
     );
 \douta[7]_INST_0\: unisim.vcomponents.LUT3
@@ -302,7 +301,7 @@ begin
     port map (
       I0 => DOADO(1),
       I1 => I1(1),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(1)
     );
 \douta[8]_INST_0\: unisim.vcomponents.LUT3
@@ -312,7 +311,7 @@ begin
     port map (
       I0 => DOADO(2),
       I1 => I1(2),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(2)
     );
 \douta[9]_INST_0\: unisim.vcomponents.LUT3
@@ -322,19 +321,8 @@ begin
     port map (
       I0 => DOADO(3),
       I1 => I1(3),
-      I2 => sel_pipe_d1,
+      I2 => sel_pipe,
       O => douta(3)
-    );
-\no_softecc_norm_sel2.has_mem_regs.WITHOUT_ECC_PIPE.ce_pri.sel_pipe_d1_reg[0]\: unisim.vcomponents.FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => clka,
-      CE => '1',
-      D => sel_pipe,
-      Q => sel_pipe_d1,
-      R => '0'
     );
 \no_softecc_sel_reg.ce_pri.sel_pipe_reg[0]\: unisim.vcomponents.FDRE
     generic map(
@@ -374,7 +362,7 @@ architecture STRUCTURE of text_image_bram_blk_mem_gen_prim_wrapper is
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM18.ram\: unisim.vcomponents.RAMB18E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       INITP_00 => X"0000000000000000000000000000000000000000000000000000000000000000",
       INITP_01 => X"0000000000000000000000000000000000000000000000000000000000000000",
@@ -535,7 +523,7 @@ begin
       DOPBDOP(1 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM18.ram_DOPBDOP_UNCONNECTED\(1 downto 0),
       ENARDEN => '1',
       ENBWREN => '0',
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -581,7 +569,7 @@ architecture STRUCTURE of \text_image_bram_blk_mem_gen_prim_wrapper__parameteriz
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -865,7 +853,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -920,7 +908,7 @@ architecture STRUCTURE of \text_image_bram_blk_mem_gen_prim_wrapper__parameteriz
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -1202,7 +1190,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -1256,7 +1244,7 @@ architecture STRUCTURE of \text_image_bram_blk_mem_gen_prim_wrapper__parameteriz
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -1538,7 +1526,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -1595,7 +1583,7 @@ begin
   O1 <= \^o1\;
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -1877,7 +1865,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -1939,7 +1927,7 @@ architecture STRUCTURE of \text_image_bram_blk_mem_gen_prim_wrapper__parameteriz
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -2221,7 +2209,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -2276,7 +2264,7 @@ architecture STRUCTURE of \text_image_bram_blk_mem_gen_prim_wrapper__parameteriz
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -2558,7 +2546,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -2612,7 +2600,7 @@ architecture STRUCTURE of \text_image_bram_blk_mem_gen_prim_wrapper__parameteriz
 begin
 \DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram\: unisim.vcomponents.RAMB36E1
     generic map(
-      DOA_REG => 1,
+      DOA_REG => 0,
       DOB_REG => 0,
       EN_ECC_READ => false,
       EN_ECC_WRITE => false,
@@ -2894,7 +2882,7 @@ begin
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => '0',
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -3607,7 +3595,7 @@ entity \text_image_bram_blk_mem_gen_v8_2__parameterized0\ is
   attribute C_ADDRB_WIDTH : integer;
   attribute C_ADDRB_WIDTH of \text_image_bram_blk_mem_gen_v8_2__parameterized0\ : entity is 13;
   attribute C_HAS_MEM_OUTPUT_REGS_A : integer;
-  attribute C_HAS_MEM_OUTPUT_REGS_A of \text_image_bram_blk_mem_gen_v8_2__parameterized0\ : entity is 1;
+  attribute C_HAS_MEM_OUTPUT_REGS_A of \text_image_bram_blk_mem_gen_v8_2__parameterized0\ : entity is 0;
   attribute C_HAS_MEM_OUTPUT_REGS_B : integer;
   attribute C_HAS_MEM_OUTPUT_REGS_B of \text_image_bram_blk_mem_gen_v8_2__parameterized0\ : entity is 0;
   attribute C_HAS_MUX_OUTPUT_REGS_A : integer;
@@ -3797,7 +3785,7 @@ entity text_image_bram is
   attribute CHECK_LICENSE_TYPE : string;
   attribute CHECK_LICENSE_TYPE of text_image_bram : entity is "text_image_bram,blk_mem_gen_v8_2,{}";
   attribute core_generation_info : string;
-  attribute core_generation_info of text_image_bram : entity is "text_image_bram,blk_mem_gen_v8_2,{x_ipProduct=Vivado 2014.3,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=blk_mem_gen,x_ipVersion=8.2,x_ipCoreRevision=2,x_ipLanguage=VERILOG,C_FAMILY=artix7,C_XDEVICEFAMILY=artix7,C_ELABORATION_DIR=./,C_INTERFACE_TYPE=0,C_AXI_TYPE=1,C_AXI_SLAVE_TYPE=0,C_USE_BRAM_BLOCK=0,C_ENABLE_32BIT_ADDRESS=0,C_CTRL_ECC_ALGO=NONE,C_HAS_AXI_ID=0,C_AXI_ID_WIDTH=4,C_MEM_TYPE=0,C_BYTE_SIZE=9,C_ALGORITHM=1,C_PRIM_TYPE=1,C_LOAD_INIT_FILE=0,C_INIT_FILE_NAME=no_coe_file_loaded,C_INIT_FILE=text_image_bram.mem,C_USE_DEFAULT_DATA=0,C_DEFAULT_DATA=0,C_HAS_RSTA=0,C_RST_PRIORITY_A=CE,C_RSTRAM_A=0,C_INITA_VAL=0,C_HAS_ENA=0,C_HAS_REGCEA=0,C_USE_BYTE_WEA=0,C_WEA_WIDTH=1,C_WRITE_MODE_A=WRITE_FIRST,C_WRITE_WIDTH_A=32,C_READ_WIDTH_A=32,C_WRITE_DEPTH_A=8000,C_READ_DEPTH_A=8000,C_ADDRA_WIDTH=13,C_HAS_RSTB=0,C_RST_PRIORITY_B=CE,C_RSTRAM_B=0,C_INITB_VAL=0,C_HAS_ENB=0,C_HAS_REGCEB=0,C_USE_BYTE_WEB=0,C_WEB_WIDTH=1,C_WRITE_MODE_B=WRITE_FIRST,C_WRITE_WIDTH_B=32,C_READ_WIDTH_B=32,C_WRITE_DEPTH_B=8000,C_READ_DEPTH_B=8000,C_ADDRB_WIDTH=13,C_HAS_MEM_OUTPUT_REGS_A=1,C_HAS_MEM_OUTPUT_REGS_B=0,C_HAS_MUX_OUTPUT_REGS_A=0,C_HAS_MUX_OUTPUT_REGS_B=0,C_MUX_PIPELINE_STAGES=0,C_HAS_SOFTECC_INPUT_REGS_A=0,C_HAS_SOFTECC_OUTPUT_REGS_B=0,C_USE_SOFTECC=0,C_USE_ECC=0,C_EN_ECC_PIPE=0,C_HAS_INJECTERR=0,C_SIM_COLLISION_CHECK=ALL,C_COMMON_CLK=0,C_DISABLE_WARN_BHV_COLL=0,C_EN_SLEEP_PIN=0,C_DISABLE_WARN_BHV_RANGE=0,C_COUNT_36K_BRAM=7,C_COUNT_18K_BRAM=1,C_EST_POWER_SUMMARY=Estimated Power for IP     _     11.408575 mW}";
+  attribute core_generation_info of text_image_bram : entity is "text_image_bram,blk_mem_gen_v8_2,{x_ipProduct=Vivado 2014.3,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=blk_mem_gen,x_ipVersion=8.2,x_ipCoreRevision=2,x_ipLanguage=VERILOG,C_FAMILY=artix7,C_XDEVICEFAMILY=artix7,C_ELABORATION_DIR=./,C_INTERFACE_TYPE=0,C_AXI_TYPE=1,C_AXI_SLAVE_TYPE=0,C_USE_BRAM_BLOCK=0,C_ENABLE_32BIT_ADDRESS=0,C_CTRL_ECC_ALGO=NONE,C_HAS_AXI_ID=0,C_AXI_ID_WIDTH=4,C_MEM_TYPE=0,C_BYTE_SIZE=9,C_ALGORITHM=1,C_PRIM_TYPE=1,C_LOAD_INIT_FILE=0,C_INIT_FILE_NAME=no_coe_file_loaded,C_INIT_FILE=text_image_bram.mem,C_USE_DEFAULT_DATA=0,C_DEFAULT_DATA=0,C_HAS_RSTA=0,C_RST_PRIORITY_A=CE,C_RSTRAM_A=0,C_INITA_VAL=0,C_HAS_ENA=0,C_HAS_REGCEA=0,C_USE_BYTE_WEA=0,C_WEA_WIDTH=1,C_WRITE_MODE_A=WRITE_FIRST,C_WRITE_WIDTH_A=32,C_READ_WIDTH_A=32,C_WRITE_DEPTH_A=8000,C_READ_DEPTH_A=8000,C_ADDRA_WIDTH=13,C_HAS_RSTB=0,C_RST_PRIORITY_B=CE,C_RSTRAM_B=0,C_INITB_VAL=0,C_HAS_ENB=0,C_HAS_REGCEB=0,C_USE_BYTE_WEB=0,C_WEB_WIDTH=1,C_WRITE_MODE_B=WRITE_FIRST,C_WRITE_WIDTH_B=32,C_READ_WIDTH_B=32,C_WRITE_DEPTH_B=8000,C_READ_DEPTH_B=8000,C_ADDRB_WIDTH=13,C_HAS_MEM_OUTPUT_REGS_A=0,C_HAS_MEM_OUTPUT_REGS_B=0,C_HAS_MUX_OUTPUT_REGS_A=0,C_HAS_MUX_OUTPUT_REGS_B=0,C_MUX_PIPELINE_STAGES=0,C_HAS_SOFTECC_INPUT_REGS_A=0,C_HAS_SOFTECC_OUTPUT_REGS_B=0,C_USE_SOFTECC=0,C_USE_ECC=0,C_EN_ECC_PIPE=0,C_HAS_INJECTERR=0,C_SIM_COLLISION_CHECK=ALL,C_COMMON_CLK=0,C_DISABLE_WARN_BHV_COLL=0,C_EN_SLEEP_PIN=0,C_DISABLE_WARN_BHV_RANGE=0,C_COUNT_36K_BRAM=7,C_COUNT_18K_BRAM=1,C_EST_POWER_SUMMARY=Estimated Power for IP     _     11.408575 mW}";
 end text_image_bram;
 
 architecture STRUCTURE of text_image_bram is
@@ -3868,7 +3856,7 @@ architecture STRUCTURE of text_image_bram is
   attribute C_HAS_INJECTERR : integer;
   attribute C_HAS_INJECTERR of U0 : label is 0;
   attribute C_HAS_MEM_OUTPUT_REGS_A : integer;
-  attribute C_HAS_MEM_OUTPUT_REGS_A of U0 : label is 1;
+  attribute C_HAS_MEM_OUTPUT_REGS_A of U0 : label is 0;
   attribute C_HAS_MEM_OUTPUT_REGS_B : integer;
   attribute C_HAS_MEM_OUTPUT_REGS_B of U0 : label is 0;
   attribute C_HAS_MUX_OUTPUT_REGS_A : integer;

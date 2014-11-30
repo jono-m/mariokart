@@ -12,7 +12,9 @@ module game_logic(input clk_100mhz, input rst,
 		output reg [2:0] selected_character = `CHARACTER_MARIO,
 		reg [1:0] laps_completed = 0,
 
-		input lap_completed
+		input lap_completed,
+		output reg race_begin = 0,
+		output reg [1:0] oym_counter = 0
 	);
 
 	reg prev_lap_completed = 0;
@@ -42,7 +44,7 @@ module game_logic(input clk_100mhz, input rst,
 					selected_character <= `CHARACTER_MARIO;
 				end
 				`PHASE_CHARACTER_SELECT: begin
-					if(A == 1 || start == 1) begin
+					if(start == 1) begin
 						phase <= `PHASE_LOADING_RACING;
 					end
 					if(stickLeft == 1) begin
@@ -86,6 +88,33 @@ module game_logic(input clk_100mhz, input rst,
 					phase <= `PHASE_START_SCREEN;
 				end
 			endcase
+		end
+	end
+
+	reg [26:0] counter = 0;
+	always @(posedge clk_100mhz) begin
+		if(rst == 1 || phase == `PHASE_LOADING_START_SCREEN) begin
+			race_begin <= 0;
+			oym_counter <= 0;
+			counter <= 0;
+		end
+		else begin
+			if(phase == `PHASE_RACING) begin
+				if(race_begin == 0) begin
+					if(counter == 100000000) begin
+						counter <= 0;
+						if(oym_counter == 2) begin
+							race_begin <= 1;
+						end
+						else begin
+							oym_counter <= oym_counter + 1;
+						end
+					end
+					else begin
+						counter <= counter + 1;
+					end
+				end
+			end
 		end
 	end
 endmodule

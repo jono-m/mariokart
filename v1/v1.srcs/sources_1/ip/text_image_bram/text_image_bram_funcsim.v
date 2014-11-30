@@ -1,7 +1,7 @@
 // Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2014.3 (win64) Build 1034051 Fri Oct  3 17:14:12 MDT 2014
-// Date        : Thu Nov 27 21:42:33 2014
+// Date        : Sat Nov 29 23:02:32 2014
 // Host        : PLASMA-VaioZ running 64-bit Service Pack 1  (build 7601)
 // Command     : write_verilog -force -mode funcsim
 //               C:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/text_image_bram/text_image_bram_funcsim.v
@@ -13,7 +13,7 @@
 `timescale 1 ps / 1 ps
 
 (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "blk_mem_gen_v8_2,Vivado 2014.3" *) (* CHECK_LICENSE_TYPE = "text_image_bram,blk_mem_gen_v8_2,{}" *) 
-(* core_generation_info = "text_image_bram,blk_mem_gen_v8_2,{x_ipProduct=Vivado 2014.3,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=blk_mem_gen,x_ipVersion=8.2,x_ipCoreRevision=2,x_ipLanguage=VERILOG,C_FAMILY=artix7,C_XDEVICEFAMILY=artix7,C_ELABORATION_DIR=./,C_INTERFACE_TYPE=0,C_AXI_TYPE=1,C_AXI_SLAVE_TYPE=0,C_USE_BRAM_BLOCK=0,C_ENABLE_32BIT_ADDRESS=0,C_CTRL_ECC_ALGO=NONE,C_HAS_AXI_ID=0,C_AXI_ID_WIDTH=4,C_MEM_TYPE=0,C_BYTE_SIZE=9,C_ALGORITHM=1,C_PRIM_TYPE=1,C_LOAD_INIT_FILE=0,C_INIT_FILE_NAME=no_coe_file_loaded,C_INIT_FILE=text_image_bram.mem,C_USE_DEFAULT_DATA=0,C_DEFAULT_DATA=0,C_HAS_RSTA=0,C_RST_PRIORITY_A=CE,C_RSTRAM_A=0,C_INITA_VAL=0,C_HAS_ENA=0,C_HAS_REGCEA=0,C_USE_BYTE_WEA=0,C_WEA_WIDTH=1,C_WRITE_MODE_A=WRITE_FIRST,C_WRITE_WIDTH_A=32,C_READ_WIDTH_A=32,C_WRITE_DEPTH_A=8000,C_READ_DEPTH_A=8000,C_ADDRA_WIDTH=13,C_HAS_RSTB=0,C_RST_PRIORITY_B=CE,C_RSTRAM_B=0,C_INITB_VAL=0,C_HAS_ENB=0,C_HAS_REGCEB=0,C_USE_BYTE_WEB=0,C_WEB_WIDTH=1,C_WRITE_MODE_B=WRITE_FIRST,C_WRITE_WIDTH_B=32,C_READ_WIDTH_B=32,C_WRITE_DEPTH_B=8000,C_READ_DEPTH_B=8000,C_ADDRB_WIDTH=13,C_HAS_MEM_OUTPUT_REGS_A=1,C_HAS_MEM_OUTPUT_REGS_B=0,C_HAS_MUX_OUTPUT_REGS_A=0,C_HAS_MUX_OUTPUT_REGS_B=0,C_MUX_PIPELINE_STAGES=0,C_HAS_SOFTECC_INPUT_REGS_A=0,C_HAS_SOFTECC_OUTPUT_REGS_B=0,C_USE_SOFTECC=0,C_USE_ECC=0,C_EN_ECC_PIPE=0,C_HAS_INJECTERR=0,C_SIM_COLLISION_CHECK=ALL,C_COMMON_CLK=0,C_DISABLE_WARN_BHV_COLL=0,C_EN_SLEEP_PIN=0,C_DISABLE_WARN_BHV_RANGE=0,C_COUNT_36K_BRAM=7,C_COUNT_18K_BRAM=1,C_EST_POWER_SUMMARY=Estimated Power for IP     _     11.408575 mW}" *) 
+(* core_generation_info = "text_image_bram,blk_mem_gen_v8_2,{x_ipProduct=Vivado 2014.3,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=blk_mem_gen,x_ipVersion=8.2,x_ipCoreRevision=2,x_ipLanguage=VERILOG,C_FAMILY=artix7,C_XDEVICEFAMILY=artix7,C_ELABORATION_DIR=./,C_INTERFACE_TYPE=0,C_AXI_TYPE=1,C_AXI_SLAVE_TYPE=0,C_USE_BRAM_BLOCK=0,C_ENABLE_32BIT_ADDRESS=0,C_CTRL_ECC_ALGO=NONE,C_HAS_AXI_ID=0,C_AXI_ID_WIDTH=4,C_MEM_TYPE=0,C_BYTE_SIZE=9,C_ALGORITHM=1,C_PRIM_TYPE=1,C_LOAD_INIT_FILE=0,C_INIT_FILE_NAME=no_coe_file_loaded,C_INIT_FILE=text_image_bram.mem,C_USE_DEFAULT_DATA=0,C_DEFAULT_DATA=0,C_HAS_RSTA=0,C_RST_PRIORITY_A=CE,C_RSTRAM_A=0,C_INITA_VAL=0,C_HAS_ENA=0,C_HAS_REGCEA=0,C_USE_BYTE_WEA=0,C_WEA_WIDTH=1,C_WRITE_MODE_A=WRITE_FIRST,C_WRITE_WIDTH_A=32,C_READ_WIDTH_A=32,C_WRITE_DEPTH_A=8000,C_READ_DEPTH_A=8000,C_ADDRA_WIDTH=13,C_HAS_RSTB=0,C_RST_PRIORITY_B=CE,C_RSTRAM_B=0,C_INITB_VAL=0,C_HAS_ENB=0,C_HAS_REGCEB=0,C_USE_BYTE_WEB=0,C_WEB_WIDTH=1,C_WRITE_MODE_B=WRITE_FIRST,C_WRITE_WIDTH_B=32,C_READ_WIDTH_B=32,C_WRITE_DEPTH_B=8000,C_READ_DEPTH_B=8000,C_ADDRB_WIDTH=13,C_HAS_MEM_OUTPUT_REGS_A=0,C_HAS_MEM_OUTPUT_REGS_B=0,C_HAS_MUX_OUTPUT_REGS_A=0,C_HAS_MUX_OUTPUT_REGS_B=0,C_MUX_PIPELINE_STAGES=0,C_HAS_SOFTECC_INPUT_REGS_A=0,C_HAS_SOFTECC_OUTPUT_REGS_B=0,C_USE_SOFTECC=0,C_USE_ECC=0,C_EN_ECC_PIPE=0,C_HAS_INJECTERR=0,C_SIM_COLLISION_CHECK=ALL,C_COMMON_CLK=0,C_DISABLE_WARN_BHV_COLL=0,C_EN_SLEEP_PIN=0,C_DISABLE_WARN_BHV_RANGE=0,C_COUNT_36K_BRAM=7,C_COUNT_18K_BRAM=1,C_EST_POWER_SUMMARY=Estimated Power for IP     _     11.408575 mW}" *) 
 (* NotValidForBitStream *)
 module text_image_bram
    (clka,
@@ -75,7 +75,7 @@ module text_image_bram
    (* C_HAS_ENA = "0" *) 
    (* C_HAS_ENB = "0" *) 
    (* C_HAS_INJECTERR = "0" *) 
-   (* C_HAS_MEM_OUTPUT_REGS_A = "1" *) 
+   (* C_HAS_MEM_OUTPUT_REGS_A = "0" *) 
    (* C_HAS_MEM_OUTPUT_REGS_B = "0" *) 
    (* C_HAS_MUX_OUTPUT_REGS_A = "0" *) 
    (* C_HAS_MUX_OUTPUT_REGS_B = "0" *) 
@@ -368,7 +368,6 @@ module text_image_bram_blk_mem_gen_mux
   wire clka;
   wire [25:0]douta;
   wire sel_pipe;
-  wire sel_pipe_d1;
 
 (* SOFT_HLUTNM = "soft_lutpair2" *) 
    LUT3 #(
@@ -376,7 +375,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[10]_INST_0 
        (.I0(DOADO[4]),
         .I1(I1[4]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[4]));
 (* SOFT_HLUTNM = "soft_lutpair2" *) 
    LUT3 #(
@@ -384,7 +383,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[11]_INST_0 
        (.I0(DOADO[5]),
         .I1(I1[5]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[5]));
 (* SOFT_HLUTNM = "soft_lutpair3" *) 
    LUT3 #(
@@ -392,7 +391,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[12]_INST_0 
        (.I0(DOADO[6]),
         .I1(I1[6]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[6]));
 (* SOFT_HLUTNM = "soft_lutpair3" *) 
    LUT3 #(
@@ -400,7 +399,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[13]_INST_0 
        (.I0(DOADO[7]),
         .I1(I1[7]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[7]));
 (* SOFT_HLUTNM = "soft_lutpair4" *) 
    LUT3 #(
@@ -408,7 +407,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[14]_INST_0 
        (.I0(DOPADOP),
         .I1(I2),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[8]));
 (* SOFT_HLUTNM = "soft_lutpair4" *) 
    LUT3 #(
@@ -416,7 +415,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[15]_INST_0 
        (.I0(I3[0]),
         .I1(I4[0]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[9]));
 (* SOFT_HLUTNM = "soft_lutpair5" *) 
    LUT3 #(
@@ -424,7 +423,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[16]_INST_0 
        (.I0(I3[1]),
         .I1(I4[1]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[10]));
 (* SOFT_HLUTNM = "soft_lutpair5" *) 
    LUT3 #(
@@ -432,7 +431,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[17]_INST_0 
        (.I0(I3[2]),
         .I1(I4[2]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[11]));
 (* SOFT_HLUTNM = "soft_lutpair6" *) 
    LUT3 #(
@@ -440,7 +439,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[18]_INST_0 
        (.I0(I3[3]),
         .I1(I4[3]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[12]));
 (* SOFT_HLUTNM = "soft_lutpair6" *) 
    LUT3 #(
@@ -448,7 +447,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[19]_INST_0 
        (.I0(I3[4]),
         .I1(I4[4]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[13]));
 (* SOFT_HLUTNM = "soft_lutpair7" *) 
    LUT3 #(
@@ -456,7 +455,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[20]_INST_0 
        (.I0(I3[5]),
         .I1(I4[5]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[14]));
 (* SOFT_HLUTNM = "soft_lutpair7" *) 
    LUT3 #(
@@ -464,7 +463,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[21]_INST_0 
        (.I0(I3[6]),
         .I1(I4[6]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[15]));
 (* SOFT_HLUTNM = "soft_lutpair8" *) 
    LUT3 #(
@@ -472,7 +471,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[22]_INST_0 
        (.I0(I3[7]),
         .I1(I4[7]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[16]));
 (* SOFT_HLUTNM = "soft_lutpair8" *) 
    LUT3 #(
@@ -480,7 +479,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[23]_INST_0 
        (.I0(I5),
         .I1(I6),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[17]));
 (* SOFT_HLUTNM = "soft_lutpair9" *) 
    LUT3 #(
@@ -488,7 +487,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[24]_INST_0 
        (.I0(I7[0]),
         .I1(I8[0]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[18]));
 (* SOFT_HLUTNM = "soft_lutpair9" *) 
    LUT3 #(
@@ -496,7 +495,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[25]_INST_0 
        (.I0(I7[1]),
         .I1(I8[1]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[19]));
 (* SOFT_HLUTNM = "soft_lutpair10" *) 
    LUT3 #(
@@ -504,7 +503,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[26]_INST_0 
        (.I0(I7[2]),
         .I1(I8[2]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[20]));
 (* SOFT_HLUTNM = "soft_lutpair10" *) 
    LUT3 #(
@@ -512,7 +511,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[27]_INST_0 
        (.I0(I7[3]),
         .I1(I8[3]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[21]));
 (* SOFT_HLUTNM = "soft_lutpair11" *) 
    LUT3 #(
@@ -520,7 +519,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[28]_INST_0 
        (.I0(I7[4]),
         .I1(I8[4]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[22]));
 (* SOFT_HLUTNM = "soft_lutpair11" *) 
    LUT3 #(
@@ -528,7 +527,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[29]_INST_0 
        (.I0(I7[5]),
         .I1(I8[5]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[23]));
 (* SOFT_HLUTNM = "soft_lutpair12" *) 
    LUT3 #(
@@ -536,7 +535,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[30]_INST_0 
        (.I0(I7[6]),
         .I1(I8[6]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[24]));
 (* SOFT_HLUTNM = "soft_lutpair12" *) 
    LUT3 #(
@@ -544,7 +543,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[31]_INST_0 
        (.I0(I7[7]),
         .I1(I8[7]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[25]));
 (* SOFT_HLUTNM = "soft_lutpair0" *) 
    LUT3 #(
@@ -552,7 +551,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[6]_INST_0 
        (.I0(DOADO[0]),
         .I1(I1[0]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[0]));
 (* SOFT_HLUTNM = "soft_lutpair0" *) 
    LUT3 #(
@@ -560,7 +559,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[7]_INST_0 
        (.I0(DOADO[1]),
         .I1(I1[1]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[1]));
 (* SOFT_HLUTNM = "soft_lutpair1" *) 
    LUT3 #(
@@ -568,7 +567,7 @@ module text_image_bram_blk_mem_gen_mux
      \douta[8]_INST_0 
        (.I0(DOADO[2]),
         .I1(I1[2]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[2]));
 (* SOFT_HLUTNM = "soft_lutpair1" *) 
    LUT3 #(
@@ -576,16 +575,8 @@ module text_image_bram_blk_mem_gen_mux
      \douta[9]_INST_0 
        (.I0(DOADO[3]),
         .I1(I1[3]),
-        .I2(sel_pipe_d1),
+        .I2(sel_pipe),
         .O(douta[3]));
-FDRE #(
-    .INIT(1'b0)) 
-     \no_softecc_norm_sel2.has_mem_regs.WITHOUT_ECC_PIPE.ce_pri.sel_pipe_d1_reg[0] 
-       (.C(clka),
-        .CE(1'b1),
-        .D(sel_pipe),
-        .Q(sel_pipe_d1),
-        .R(1'b0));
 FDRE #(
     .INIT(1'b0)) 
      \no_softecc_sel_reg.ce_pri.sel_pipe_reg[0] 
@@ -865,7 +856,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper
 
 (* box_type = "PRIMITIVE" *) 
    RAMB18E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .INITP_00(256'h0000000000000000000000000000000000000000000000000000000000000000),
     .INITP_01(256'h0000000000000000000000000000000000000000000000000000000000000000),
@@ -979,7 +970,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper
         .DOPBDOP(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM18.ram_DOPBDOP_UNCONNECTED [1:0]),
         .ENARDEN(1'b1),
         .ENBWREN(1'b0),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -1020,7 +1011,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized0
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -1219,7 +1210,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized0
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -1267,7 +1258,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized1
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -1466,7 +1457,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized1
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -1511,7 +1502,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized2
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -1710,7 +1701,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized2
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -1758,7 +1749,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized3
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -1957,7 +1948,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized3
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -2007,7 +1998,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized4
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -2206,7 +2197,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized4
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -2252,7 +2243,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized5
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -2451,7 +2442,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized5
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -2494,7 +2485,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized6
 
 (* box_type = "PRIMITIVE" *) 
    RAMB36E1 #(
-    .DOA_REG(1),
+    .DOA_REG(0),
     .DOB_REG(0),
     .EN_ECC_READ("FALSE"),
     .EN_ECC_WRITE("FALSE"),
@@ -2693,7 +2684,7 @@ module text_image_bram_blk_mem_gen_prim_wrapper__parameterized6
         .INJECTDBITERR(1'b0),
         .INJECTSBITERR(1'b0),
         .RDADDRECC(\NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED [8:0]),
-        .REGCEAREGCE(1'b1),
+        .REGCEAREGCE(1'b0),
         .REGCEB(1'b0),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
@@ -2747,7 +2738,7 @@ endmodule
 (* C_HAS_ENB = "0" *) (* C_HAS_REGCEB = "0" *) (* C_USE_BYTE_WEB = "0" *) 
 (* C_WEB_WIDTH = "1" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) (* C_WRITE_WIDTH_B = "32" *) 
 (* C_READ_WIDTH_B = "32" *) (* C_WRITE_DEPTH_B = "8000" *) (* C_READ_DEPTH_B = "8000" *) 
-(* C_ADDRB_WIDTH = "13" *) (* C_HAS_MEM_OUTPUT_REGS_A = "1" *) (* C_HAS_MEM_OUTPUT_REGS_B = "0" *) 
+(* C_ADDRB_WIDTH = "13" *) (* C_HAS_MEM_OUTPUT_REGS_A = "0" *) (* C_HAS_MEM_OUTPUT_REGS_B = "0" *) 
 (* C_HAS_MUX_OUTPUT_REGS_A = "0" *) (* C_HAS_MUX_OUTPUT_REGS_B = "0" *) (* C_MUX_PIPELINE_STAGES = "0" *) 
 (* C_HAS_SOFTECC_INPUT_REGS_A = "0" *) (* C_HAS_SOFTECC_OUTPUT_REGS_B = "0" *) (* C_USE_SOFTECC = "0" *) 
 (* C_USE_ECC = "0" *) (* C_EN_ECC_PIPE = "0" *) (* C_HAS_INJECTERR = "0" *) 

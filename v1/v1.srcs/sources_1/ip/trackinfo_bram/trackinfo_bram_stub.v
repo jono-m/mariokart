@@ -1,10 +1,10 @@
 // Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2014.3 (win64) Build 1034051 Fri Oct  3 17:14:12 MDT 2014
-// Date        : Thu Nov 27 21:34:56 2014
+// Date        : Sat Nov 29 23:13:09 2014
 // Host        : PLASMA-VaioZ running 64-bit Service Pack 1  (build 7601)
 // Command     : write_verilog -force -mode synth_stub
-//               c:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/trackinfo_bram/trackinfo_bram_stub.v
+//               C:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/trackinfo_bram/trackinfo_bram_stub.v
 // Design      : trackinfo_bram
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a100tcsg324-3

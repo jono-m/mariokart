@@ -29,7 +29,7 @@ module latiku_on_your_marks
     wire latiku_oym_a;
     image_loader #(.WIDTH(100), .HEIGHT(100), .ROWS(2500), .BRAM_ADDWIDTH(11),
             .ALPHA(1)) 
-            latiku_oym_loader(.clk(clk_100mhz), .rst(rst_loader), 
+            latiku_oym_loader(.clk(clk_100mhz), .rst(rst), 
                     .load(load), .x(x), .y(y), .red(im_red), 
                     .green(im_green), .blue(im_blue), .alpha(latiku_oym_a),
                     .address_offset(address_offset),
