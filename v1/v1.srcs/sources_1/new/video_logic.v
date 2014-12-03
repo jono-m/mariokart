@@ -205,12 +205,14 @@ module video_logic(input clk_100mhz, input rst,
     wire show_csb1;
     wire csb1_alpha = show_csb1 && csb1_a;
     character_select_box p1_select(.clk(clk_100mhz), .rst(rst),
-            .x(x-csb1_x), .y(y-csb1_y), .filled(1),
+            .x(x-csb1_x), .y(y-csb1_y), .filled(0),
             .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
             .alpha(csb1_a));
 
     wire [9:0] laps1_x;
     wire [8:0] laps1_y;
+    wire [9:0] laps1_sprite_x;
+    wire [9:0] laps1_sprite_y;
     wire [3:0] laps1_r;
     wire [3:0] laps1_g;
     wire [3:0] laps1_b;
@@ -220,9 +222,19 @@ module video_logic(input clk_100mhz, input rst,
     laps_display laps_display1 (.clk(clk_100mhz), .rst(rst),
             .laps_completed(laps_completed),
             .x(x-laps1_x), .y(y-laps1_y),
+            .sprite_x(laps1_sprite_x), .sprite_y(laps1_sprite_y),
             .color(12'hFFF), .red(laps1_r), .green(laps1_g), .blue(laps1_b),
             .alpha(laps1_a));
 
+    wire [9:0] car_sprite1_x;
+    wire [9:0] car_sprite1_y;
+    wire car_sprite1_present;
+    sprite_painter sprite1_painter(.x(x), .y(y), .sprite_x(sprite1_x),
+            .sprite_y(sprite1_y), .sprite_is_present(show_sprite1),
+            .sprite1({car_sprite1_present, car_sprite1_x, car_sprite1_y}),
+            .sprite2({show_laps1, laps1_sprite_x, laps1_sprite_y}),
+            .sprite3(), .sprite4(), .sprite5(), sprite6(), sprite7(),
+            .sprite8(), .sprite9(), .sprite10());
     // -------
     // SHADER
     
@@ -247,9 +259,9 @@ module video_logic(input clk_100mhz, input rst,
             .show_char_select_box1(show_csb1),
             .char_select_box1_x(csb1_x),
             .char_select_box1_y(csb1_y),
-            .sprite1_x(sprite1_x),
-            .sprite1_y(sprite1_y),
-            .show_sprite1(show_sprite1),
+            .sprite1_x(car_sprite1_x),
+            .sprite1_y(car_sprite1_y),
+            .show_sprite1(car_sprite1_present),
             .timer_x(timer_x),
             .timer_y(timer_y),
             .show_timer(show_timer),

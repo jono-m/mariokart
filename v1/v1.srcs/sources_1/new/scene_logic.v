@@ -33,10 +33,6 @@ module scene_logic(input clk_100mhz, input rst,
     output reg [9:0] laps1_x = 0,
     output reg [8:0] laps1_y = 0,
     output reg show_laps1 = 0
-
-    /*output reg [9:0] latiku_final_lap_x = 0,
-    output reg [8:0] latiku_final_lap_y = 0,
-    output reg show_latiku_final_lap = 0*/
     );
   
   // Determine which images should be loaded for each scene.
@@ -86,9 +82,6 @@ module scene_logic(input clk_100mhz, input rst,
       laps1_x <= 0;
       laps1_y <= 0;
       show_laps1 <= 0;
-      /*latiku_final_lap_x <= 0;
-      latiku_final_lap_y <= 0;
-      show_latiku_final_lap <= 0;*/
       counter <= 0;
     end
     else begin
@@ -149,7 +142,7 @@ module scene_logic(input clk_100mhz, input rst,
               show_latiku_oym <= 0;
               show_laps1 <= 1;
               laps1_x <= 244;
-              laps1_y <= 235;
+              laps1_y <= 223;
             end
             counter <= counter + 1;
           end
