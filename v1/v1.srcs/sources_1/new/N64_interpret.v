@@ -1,9 +1,9 @@
-module N64_interpret(input clk_100mhz, rst, clk_1mhz,
+module N64_interpret(input clk_100mhz, rst, enabled, clk_1mhz,
 					output A, B, Z, start, L, R,
 					output dU, dD, dL, dR,
 					output cU, cD, cL, cR,
 					output [7:0] stickX, stickY, 
-					output controller_data);
+					inout controller_data);
 	parameter send = 1'd0;
 	parameter listen = 1'd1;
 
@@ -37,27 +37,27 @@ module N64_interpret(input clk_100mhz, rst, clk_1mhz,
 	/////////////////////////////////////////////////////////////////////////////////
 	// Output assignments /////
 	/////////////////////////////////////////////////////////////////////////////////
-	assign A = dataOut[31];
-	assign B = dataOut[30];
-	assign Z = dataOut[29];
-	assign start = dataOut[28];
-	assign dU = dataOut[27];
-	assign dD = dataOut[26];
-	assign dL = dataOut[25];
-	assign dR = dataOut[24];
+	assign A = enabled ? dataOut[31] : 0;
+	assign B = enabled ? dataOut[30] : 0;
+	assign Z = enabled ? dataOut[29] : 0;
+	assign start = enabled ? dataOut[28] : 0;
+	assign dU = enabled ? dataOut[27] : 0;
+	assign dD = enabled ? dataOut[26] : 0;
+	assign dL = enabled ? dataOut[25] : 0;
+	assign dR = enabled ? dataOut[24] : 0;
 
 	// dataOut[23] not used
 	// dataOut[22] not used 
-	assign L = dataOut[21];
-	assign R = dataOut[20];
-	assign cU = dataOut[19];
-	assign cD = dataOut[18];
-	assign cL = dataOut[17];
-	assign cR = dataOut[16];
+	assign L = enabled ? dataOut[21] : 0;
+	assign R = enabled ? dataOut[20] : 0;
+	assign cU = enabled ? dataOut[19] : 0;
+	assign cD = enabled ? dataOut[18] : 0;
+	assign cL = enabled ? dataOut[17] : 0;
+	assign cR = enabled ? dataOut[16] : 0;
 
-	assign stickX = dataOut[15:8];
+	assign stickX = enabled ? dataOut[15:8] : 0;
 
-	assign stickY = dataOut[7:0];
+	assign stickY = enabled ? dataOut[7:0] : 0;
 	/////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +70,7 @@ module N64_interpret(input clk_100mhz, rst, clk_1mhz,
 	// Modifies:	lbitCount	6'd32
 	/////////////////////////////////////////////////////////////////////////////////
 	
-	always @(negedge JD) begin
+	always @(negedge controller_data) begin
 		if(rst) begin
 			lbitCount <= 6'd32;
 		end	
@@ -97,7 +97,7 @@ module N64_interpret(input clk_100mhz, rst, clk_1mhz,
 	// Modifies:   dataOut 32'd0
 	/////////////////////////////////////////////////////////////////////////////////
 
-    always @(posedge JD) begin
+    always @(posedge controller_data) begin
         if(rst) begin
             dataOut = 32'd0;
         end
@@ -146,10 +146,10 @@ module N64_interpret(input clk_100mhz, rst, clk_1mhz,
 				end
 				
 				listen: begin
-                    if(JD) clockCount <= 9'd0;
+                    if(controller_data) clockCount <= 9'd0;
                     else clockCount <= clockCount + 1; 
                     
-                    if(~JD) notClockCount <= 9'd0;
+                    if(~controller_data) notClockCount <= 9'd0;
                     else notClockCount <= notClockCount + 1;
                 end
 			endcase

@@ -2,8 +2,9 @@
 
 module sprite_painter
     #(WIDTH = 20, HEIGHT = 20)
-    (input [9:0] x, input [9:0] y,
-    output [9:0] sprite_x, output [9:0] sprite_y,
+    (input [9:0] x, input [8:0] y,
+    output [9:0] sprite_x, output [8
+    :0] sprite_y,
     output sprite_is_present,
 
     input [20:0] sprite1,

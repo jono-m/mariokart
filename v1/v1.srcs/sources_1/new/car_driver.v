@@ -25,7 +25,7 @@ module car_driver(
     input forward, input backward, input turn_left, input turn_right,
     input [1:0] speed,
     output driver_forward, output driver_backward,
-    output driver_left, output driver_right,
+    output driver_left, output driver_right
     );
     
     // PWM signals
@@ -44,11 +44,11 @@ module car_driver(
     wire pwm_forward = (speed == `SPEED_STOP ? 0 :
                        (speed == `SPEED_SLOW ? pwm_forward_slow :
                        (speed == `SPEED_NORMAL ? pwm_forward_normal :
-                       (speed == `SPEED_BOOST ? pwm_forward_boost))));
+                       (speed == `SPEED_BOOST ? pwm_forward_boost : 0))));
     wire pwm_backward = (speed == `SPEED_STOP ? 0 :
                        (speed == `SPEED_SLOW ? pwm_backward_slow :
                        (speed == `SPEED_NORMAL ? pwm_backward_normal :
-                       (speed == `SPEED_BOOST ? pwm_backward_boost))));
+                       (speed == `SPEED_BOOST ? pwm_backward_boost : 0))));
 
     assign driver_forward = forward && pwm_forward;
     assign driver_backward = backward && pwm_backward;

@@ -735,26 +735,4 @@ connect_debug_port u_ila_0_0/clk [get_nets [list n_0_97_BUFG]]
 connect_debug_port dbg_hub/clk [get_nets n_0_97_BUFG]
 
 
-create_debug_core u_ila_0 ila
-set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
-set_property ALL_PROBE_SAME_MU_CNT 2 [get_debug_cores u_ila_0]
-set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
-set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
-set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0]
-set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
-set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
-set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
-set_property port_width 1 [get_debug_ports u_ila_0/clk]
-connect_debug_port u_ila_0/clk [get_nets [list {n_2_JB_OBUF[0]_inst_i_1}]]
-set_property port_width 12 [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {blue[0]} {blue[1]} {blue[2]} {blue[3]} {blue[4]} {blue[5]} {blue[6]} {blue[7]} {blue[8]} {blue[9]} {blue[10]} {blue[11]}]]
-create_debug_port u_ila_0 probe
-set_property port_width 12 [get_debug_ports u_ila_0/probe1]
-connect_debug_port u_ila_0/probe1 [get_nets [list {green[0]} {green[1]} {green[2]} {green[3]} {green[4]} {green[5]} {green[6]} {green[7]} {green[8]} {green[9]} {green[10]} {green[11]}]]
-create_debug_port u_ila_0 probe
-set_property port_width 12 [get_debug_ports u_ila_0/probe2]
-connect_debug_port u_ila_0/probe2 [get_nets [list {red[0]} {red[1]} {red[2]} {red[3]} {red[4]} {red[5]} {red[6]} {red[7]} {red[8]} {red[9]} {red[10]} {red[11]}]]
-set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
-set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
-set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
-connect_debug_port dbg_hub/clk [get_nets n_2_JB_OBUF[0]_inst_i_1]
+

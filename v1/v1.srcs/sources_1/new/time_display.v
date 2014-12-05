@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module time_display
-    (input clk_100mhz, input rst, input load,
+    (input clk_100mhz, input clk_50mhz, input rst, input load,
     input reset_timer,
     input [31:0] address_offset,
     input [9:0] x, input [8:0] y,
@@ -29,7 +29,7 @@ module time_display
     wire [31:0] bram_time_write;
     wire [31:0] bram_time_read;
     wire bram_time_we;   
-    time_image_bram time_bram(.clka(clk_100mhz), .addra(bram_time_adr), 
+    time_image_bram time_bram(.clka(clk_50mhz), .addra(bram_time_adr), 
             .dina(bram_time_write), .douta(bram_time_read), .wea(bram_time_we));
 
     // Loader connections.
@@ -107,7 +107,7 @@ module time_display
         counter <= 0;
       end
       else begin
-        if(counter == 1000000) begin
+        if(counter == 500000) begin
           counter <= 0;
           if(ms_ones == 9) begin
             ms_ones <= 0;

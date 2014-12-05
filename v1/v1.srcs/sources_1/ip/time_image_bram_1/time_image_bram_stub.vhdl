@@ -1,10 +1,10 @@
 -- Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2014.3 (win64) Build 1034051 Fri Oct  3 17:14:12 MDT 2014
--- Date        : Sat Nov 29 23:15:58 2014
--- Host        : PLASMA-VaioZ running 64-bit Service Pack 1  (build 7601)
+-- Tool Version: Vivado v.2014.2 (win64) Build 932637 Wed Jun 11 13:33:10 MDT 2014
+-- Date        : Tue Dec 02 19:45:24 2014
+-- Host        : brad-windows running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
---               C:/Users/JMM/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/time_image_bram_1/time_image_bram_stub.vhdl
+--               C:/Users/brad_000/Documents/GitHub/mariokart/v1/v1.srcs/sources_1/ip/time_image_bram_1/time_image_bram_stub.vhdl
 -- Design      : time_image_bram
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-3
@@ -29,6 +29,6 @@ attribute black_box_pad_pin : string;
 attribute syn_black_box of stub : architecture is true;
 attribute black_box_pad_pin of stub : architecture is "clka,wea[0:0],addra[10:0],dina[31:0],douta[31:0]";
 attribute x_core_info : string;
-attribute x_core_info of stub : architecture is "blk_mem_gen_v8_2,Vivado 2014.3";
+attribute x_core_info of stub : architecture is "blk_mem_gen_v8_2,Vivado 2014.2";
 begin
 end;

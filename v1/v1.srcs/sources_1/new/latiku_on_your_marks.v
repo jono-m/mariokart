@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module latiku_on_your_marks
-    (input clk_100mhz, input rst, input load,
+    (input clk_100mhz, input clk_50mhz, input rst, input load,
     input [31:0] address_offset,
     input [9:0] x, input [9:0] y,
     output [3:0] red, output [3:0] green, output [3:0] blue, output alpha,
@@ -19,7 +19,7 @@ module latiku_on_your_marks
     wire [31:0] bram_latiku_oym_write;
     wire [31:0] bram_latiku_oym_read;
     wire bram_latiku_oym_we;   
-    latiku_oym_image_bram latiku_oym_bram(.clka(clk_100mhz), .addra(bram_latiku_oym_adr), 
+    latiku_oym_image_bram latiku_oym_bram(.clka(clk_50mhz), .addra(bram_latiku_oym_adr), 
             .dina(bram_latiku_oym_write), .douta(bram_latiku_oym_read), .wea(bram_latiku_oym_we));
 
     // Loader connections.

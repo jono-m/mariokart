@@ -67,11 +67,11 @@ module labkit(input clk,
   wire sd_MOSI;
   wire sd_CS;
 
-	reg sd_read;
+	wire sd_read;
 	wire [7:0] sd_byte;
 	wire sd_byte_available;
 	wire sd_ready_for_read;
-	reg [31:0] sd_address;
+	wire [31:0] sd_address;
 
 	sd_controller sdcont(.clk(clk_25mhz), .cs(sd_CS), .mosi(sd_MOSI), 
 			.miso(sd_MISO), .sclk(sd_CLK), .rd(sd_read), .wr(0), .dm_in(0), 
@@ -92,9 +92,11 @@ module labkit(input clk,
 	// Button and N64 input.
 
   wire A_ctrl;
-	wire A = btnC || A_ctrl;
-	wire B;
-	wire start;
+	wire A = btnU || A_ctrl;
+  wire B_ctrl;
+	wire B = btnD || B_ctrl;
+  wire start_ctrl;
+	wire start = btnC || start_ctrl;
 	wire Z;
 	wire R;
 	wire L;
@@ -114,10 +116,10 @@ module labkit(input clk,
 	wire [7:0] stickY;
   wire controller_data;
 
-  N64_interpret(.clk_100mhz(clk_100mhz), .rst(rst), .clk_1mhz(clk_1mhz),
-      .A(A_ctrl), .B(B), .start(start), .L(L), .R(R), .dU(dU), .dD(dD), .dL(dL),
+  N64_interpret(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(0), .clk_1mhz(clk_1mhz),
+      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L), .R(R), .Z(Z), .dU(dU), .dD(dD), .dL(dL),
       .dR(dR), .cU(cU), .cD(cD), .cL(cL), .cR(cR), .stickX(stickX), 
-      .stickY(stickY) .controller_data(controller_data));
+      .stickY(stickY), .controller_data(controller_data));
 
   wire clean_A;
   wire clean_B;
@@ -174,22 +176,48 @@ module labkit(input clk,
 
 	wire phase_loaded;
 	wire [2:0] phase;
+  wire in_loading_phase;
 	wire [2:0] selected_character;
   wire lap_completed;
   wire [1:0] laps_completed;
   wire race_begin;
   wire [1:0] oym_counter;
   wire correct_direction;
+  wire [20:0] imap_item_box1;
+  wire [20:0] imap_item_box2;
+  wire [20:0] imap_item_box3;
+  wire [20:0] imap_item_box4;
+  wire [20:0] imap_item_box5;
+  wire [20:0] imap_item_box6;
+  wire [20:0] imap_item_box7;
+  wire [20:0] imap_item_box8;
+  wire [20:0] item_box1;
+  wire [20:0] item_box2;
+  wire [20:0] item_box3;
+  wire [20:0] item_box4;
+  wire [20:0] item_box5;
+  wire [20:0] item_box6;
+  wire [20:0] item_box7;
+  wire [20:0] item_box8;
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
 			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
       .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
       .cL(clean_cL), .cR(clean_cR), .stickUp(paused_stickUp), 
       .stickDown(paused_stickDown), .stickLeft(paused_stickLeft), 
 			.stickRight(paused_stickRight), .stickX(stickX), .stickY(stickY), 
-			.phase_loaded(phase_loaded), .phase(phase),
+			.phase_loaded(phase_loaded), .in_loading_phase(in_loading_phase),
+      .phase(phase),
 			.selected_character(selected_character), .lap_completed(lap_completed),
       .laps_completed(laps_completed), .race_begin(race_begin),
-      .oym_counter(oym_counter));
+      .oym_counter(oym_counter),
+      .imap_item_box1(imap_item_box1), .imap_item_box2(imap_item_box2),
+      .imap_item_box3(imap_item_box3), .imap_item_box4(imap_item_box4),
+      .imap_item_box5(imap_item_box5), .imap_item_box6(imap_item_box6),
+      .imap_item_box7(imap_item_box7), .imap_item_box8(imap_item_box8),
+      .item_box1(item_box1), .item_box2(item_box2),
+      .item_box3(item_box3), .item_box4(item_box4),
+      .item_box5(item_box5), .item_box6(item_box6),
+      .item_box7(item_box7), .item_box8(item_box8));
 
   // -----------------------------------
   // Car drivers and simulators.
@@ -212,14 +240,15 @@ module labkit(input clk,
   wire driver_right;
 
   car_driver car1_real(.clk(clk_100mhz), .rst(rst), .forward(forward), 
-      .backward(backward), .left(turn_left), .right(turn_right), .speed(speed), 
-      .driver_forward(driver_forward), .driver_backward(driver_backward),
-      .driver_left(driver_left), .driver_right(driver_right));
+      .backward(backward), .turn_left(turn_left), .turn_right(turn_right), 
+      .speed(speed), .driver_forward(driver_forward), 
+      .driver_backward(driver_backward), .driver_left(driver_left), 
+      .driver_right(driver_right));
 
   // ---------------------
 	// Video logic.
 
-  reg video_load = 0;
+  wire video_load;
   wire video_loaded;
 	wire [3:0] red;
 	wire [3:0] green;
@@ -227,20 +256,25 @@ module labkit(input clk,
   wire [31:0] video_sd_adr;
   wire video_sd_read;
 
-	video_logic vl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
+	video_logic vl(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst), .phase(phase),
 			.selected_character(selected_character), .load(video_load),
+      .in_loading_phase(in_loading_phase),
 			.is_loaded(video_loaded), .race_begin(race_begin), .oym_counter(oym_counter),
       .laps_completed(laps_completed),
       .sd_read(video_sd_read), .sd_byte(sd_byte),
 			.sd_byte_available(sd_byte_available), 
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
-      .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present));
+      .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
+      .item_box1(item_box1), .item_box2(item_box2),
+      .item_box3(item_box3), .item_box4(item_box4),
+      .item_box5(item_box5), .item_box6(item_box6),
+      .item_box7(item_box7), .item_box8(item_box8));
 
   // ------------------------
   // Track information map.
 
-  reg imap_load = 0;
+  wire imap_load;
   wire [9:0] imap_x;
   wire [8:0] imap_y;
   wire [1:0] map_type;
@@ -249,11 +283,16 @@ module labkit(input clk,
   wire [31:0] imap_sd_adr;
   wire imap_sd_read;
   information_map imap(.clk_100mhz(clk_100mhz), .rst(rst), .load(imap_load),
+      .in_loading_phase(in_loading_phase),
       .address_offset(`ADR_TRACK_INFORMATION_IMAGE),
       .x(imap_x), .y(imap_y), .map_type(map_type), .is_loaded(imap_loaded),
       .sd_byte_available(sd_byte_available), 
       .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
-      .sd_address(imap_sd_adr), .sd_do_read(imap_sd_read));
+      .sd_address(imap_sd_adr), .sd_do_read(imap_sd_read),
+      .item_box1(imap_item_box1), .item_box2(imap_item_box2),
+      .item_box3(imap_item_box3), .item_box4(imap_item_box4),
+      .item_box5(imap_item_box5), .item_box6(imap_item_box6),
+      .item_box7(imap_item_box7), .item_box8(imap_item_box8));
 
   // -----------------------
   // Physics logic.
@@ -270,16 +309,16 @@ module labkit(input clk,
   // ------------------------------------------
   // SD card loader.
 
-  sd_loader sl(.clk_100mhz(clk_100mhz), .rst(rst),
-               .imap_loaded(imap_loaded) ,.imap_load(imap_load),
-               .video_loaded(video_loaded), .video_load(video_load),
+  sd_loader sl(.clk_100mhz(clk_100mhz), .rst(rst), .in_loading_phase(in_loading_phase),
+               .imap_loaded(imap_loaded) ,.imap_load(imap_load), .imap_sd_adr(imap_sd_adr), .imap_sd_read(imap_sd_read),
+               .video_loaded(video_loaded), .video_load(video_load), .video_sd_adr(video_sd_adr), .video_sd_read(video_sd_read),
                .all_loaded(phase_loaded), .sd_address(sd_address),
                .sd_read(sd_read));
   
   // -----------------
   // Labkit outputs
 
-  assign vgaRed = at_display_area ? red : 0;
+  assign vgaRed = at_display_area ? (red || x == item_box1[19:10] || y == item_box1[8:0]) : 0;
   assign vgaGreen = at_display_area ? green : 0;
   assign vgaBlue = at_display_area ? blue : 0;
     
@@ -304,5 +343,5 @@ module labkit(input clk,
       controller_data};
 
   assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-      paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, correct_direction, 1'b1};
+      paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, imap_loaded, video_loaded, 3'b111};
 endmodule
