@@ -36,41 +36,36 @@ module labkit(input clk,
 		output[15:0] led, 
 
 		// Switches
-		input [15:0] sw
+		input [15:0] sw,
+
+    // PMOD
+    inout [4:0] JD 
 	);
-	// Set up clocks
+
+  // ---------------------
+	// Set up clocks.
+
 	wire clk_100mhz = clk;
   wire clk_50mhz;
   wire clk_25mhz;
+  wire clk_1mhz;
 
   clock_divider div1(clk_100mhz, clk_50mhz);
   clock_divider div2(clk_50mhz, clk_25mhz);
+  us_divider usdiv(.clk_100mhz(clk_100mhz), .clk_1mhz(clk_1mhz));
 
-  // Set up reset switch.
+  // -----------------
+  // Set up software reset.
+
   wire rst = ~btnCpuReset;
 
-  // Set up SD mapping.
+  // ------------------
+  // SD card.
+
   wire sd_CLK;
   wire sd_MISO;
   wire sd_MOSI;
   wire sd_CS;
-  
-  // MicroSD SPI/SD Mode/Nexys 4
-  // 1: Unused / DAT2 / sdData[2]
-  // 2: CS / DAT3 / sdData[3]
-  // 3: MOSI / CMD / sdCmd
-  // 4: VDD / VDD / ~sdReset
-  // 5: SCLK / SCLK / sdSCK
-  // 6: GND / GND / - 
-  // 7: MISO / DAT0 / sdData[0]
-  // 8: UNUSED / DAT1 / sdData[1]
-  assign sdData[2] = 1;
-  assign sdData[3] = sd_CS;
-  assign sdCmd = sd_MOSI;
-  assign sdReset = 0;
-  assign sdSCK = sd_CLK;
-  assign sd_MISO = sdData[0];
-  assign sdData[1] = 1;
 
 	reg sd_read;
 	wire [7:0] sd_byte;
@@ -84,34 +79,45 @@ module labkit(input clk,
 			.byte_available(sd_byte_available), .ready_for_read(sd_ready_for_read), 
 			.address(sd_address), .status());
 
-	// Set up VGA output.
+  // -------------------------
+	// VGA.
+
 	wire [9:0] x;
 	wire [9:0] y;
 	wire at_display_area;
 	vga vga_module(.vga_clock(clk_25mhz), .x(x), .y(y), .vsync(Vsync),
 			.hsync(Hsync), .at_display_area(at_display_area));
 
-	// Set up controller
-	wire A = btnU;
-	wire B = btnD;
-	wire start = btnC;
-	wire Z = 0;
-	wire R = 0;
-	wire L = 0;
-	wire dU = 0;
-	wire dD = 0;
-	wire dL = 0;
-	wire dR = 0;
-	wire cU = 0;
-	wire cD = 0;
-	wire cL = 0;
-	wire cR = 0;
+  // -----------------------
+	// Button and N64 input.
+
+  wire A_ctrl;
+	wire A = btnC || A_ctrl;
+	wire B;
+	wire start;
+	wire Z;
+	wire R;
+	wire L;
+	wire dU;
+	wire dD;
+	wire dL;
+	wire dR;
+	wire cU;
+	wire cD;
+	wire cL;
+	wire cR;
 	wire stickUp = btnU;
 	wire stickDown = btnD;
 	wire stickLeft = btnL;
 	wire stickRight = btnR;
-	wire [7:0] stickX = 0;
-	wire [7:0] stickY = 0;
+	wire [7:0] stickX;
+	wire [7:0] stickY;
+  wire controller_data;
+
+  N64_interpret(.clk_100mhz(clk_100mhz), .rst(rst), .clk_1mhz(clk_1mhz),
+      .A(A_ctrl), .B(B), .start(start), .L(L), .R(R), .dU(dU), .dD(dD), .dL(dL),
+      .dR(dR), .cU(cU), .cD(cD), .cL(cL), .cR(cR), .stickX(stickX), 
+      .stickY(stickY) .controller_data(controller_data));
 
   wire clean_A;
   wire clean_B;
@@ -163,7 +169,9 @@ module labkit(input clk,
   pause_repeater p4(rst, clk_100mhz, clean_stickLeft, paused_stickLeft);
   pause_repeater p5(rst, clk_100mhz, clean_stickRight, paused_stickRight);
 
-	// Set up game logic.
+  // ---------------
+	// Game logic.
+
 	wire phase_loaded;
 	wire [2:0] phase;
 	wire [2:0] selected_character;
@@ -183,6 +191,9 @@ module labkit(input clk,
       .laps_completed(laps_completed), .race_begin(race_begin),
       .oym_counter(oym_counter));
 
+  // -----------------------------------
+  // Car drivers and simulators.
+
   wire [9:0] car1_x;
   wire [8:0] car1_y;
   wire [1:0] speed;
@@ -195,7 +206,19 @@ module labkit(input clk,
       .backward(backward), .left(turn_left), .right(turn_right), .speed(speed), 
       .car1_x(car1_x), .car1_y(car1_y));
 
-	// Set up video logic.
+  wire driver_forward;
+  wire driver_backward;
+  wire driver_left;
+  wire driver_right;
+
+  car_driver car1_real(.clk(clk_100mhz), .rst(rst), .forward(forward), 
+      .backward(backward), .left(turn_left), .right(turn_right), .speed(speed), 
+      .driver_forward(driver_forward), .driver_backward(driver_backward),
+      .driver_left(driver_left), .driver_right(driver_right));
+
+  // ---------------------
+	// Video logic.
+
   reg video_load = 0;
   wire video_loaded;
 	wire [3:0] red;
@@ -214,19 +237,13 @@ module labkit(input clk,
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
       .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present));
 
+  // ------------------------
+  // Track information map.
+
   reg imap_load = 0;
   wire [9:0] imap_x;
   wire [8:0] imap_y;
   wire [1:0] map_type;
-
-  physics_logic pl(.clk_100mhz(clk_100mhz), .rst(rst), 
-      .phase(phase), .selected_character(selected_character), .race_begin(race_begin),
-      .car1_x(car1_x),
-      .car1_y(car1_y), .lap_completed(lap_completed), .correct_direction(correct_direction), 
-      .A(clean_A), .B(clean_B), .stickLeft(clean_stickLeft), .stickRight(clean_stickRight),
-      .map_type(map_type), .imap_x(imap_x), .imap_y(imap_y),
-      .forward(forward), .backward(backward), .turn_left(turn_left),
-      .turn_right(turn_right), .speed(speed));
   
   wire imap_loaded;
   wire [31:0] imap_sd_adr;
@@ -238,49 +255,54 @@ module labkit(input clk,
       .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
       .sd_address(imap_sd_adr), .sd_do_read(imap_sd_read));
 
-  wire [1:0] loaders = {imap_load, video_load};
-  assign phase_loaded = imap_loaded && video_loaded;
+  // -----------------------
+  // Physics logic.
+
+  physics_logic pl(.clk_100mhz(clk_100mhz), .rst(rst), 
+      .phase(phase), .selected_character(selected_character), .race_begin(race_begin),
+      .car1_x(car1_x),
+      .car1_y(car1_y), .lap_completed(lap_completed), .correct_direction(correct_direction), 
+      .A(clean_A), .B(clean_B), .stickLeft(clean_stickLeft), .stickRight(clean_stickRight),
+      .map_type(map_type), .imap_x(imap_x), .imap_y(imap_y),
+      .forward(forward), .backward(backward), .turn_left(turn_left),
+      .turn_right(turn_right), .speed(speed));
+
+  // ------------------------------------------
+  // SD card loader.
+
+  sd_loader sl(.clk_100mhz(clk_100mhz), .rst(rst),
+               .imap_loaded(imap_loaded) ,.imap_load(imap_load),
+               .video_loaded(video_loaded), .video_load(video_load),
+               .all_loaded(phase_loaded), .sd_address(sd_address),
+               .sd_read(sd_read));
   
-	assign vgaRed = at_display_area ? red : 0;
+  // -----------------
+  // Labkit outputs
+
+  assign vgaRed = at_display_area ? red : 0;
   assign vgaGreen = at_display_area ? green : 0;
   assign vgaBlue = at_display_area ? blue : 0;
     
+  // MicroSD SPI/SD Mode/Nexys 4
+  // 1: Unused / DAT2 / sdData[2]
+  // 2: CS / DAT3 / sdData[3]
+  // 3: MOSI / CMD / sdCmd
+  // 4: VDD / VDD / ~sdReset
+  // 5: SCLK / SCLK / sdSCK
+  // 6: GND / GND / - 
+  // 7: MISO / DAT0 / sdData[0]
+  // 8: UNUSED / DAT1 / sdData[1]
+  assign sdData[2] = 1;
+  assign sdData[3] = sd_CS;
+  assign sdCmd = sd_MOSI;
+  assign sdReset = 0;
+  assign sdSCK = sd_CLK;
+  assign sd_MISO = sdData[0];
+  assign sdData[1] = 1;
+  
+  assign JD = {driver_forward, driver_backward, driver_left, driver_right, 
+      controller_data};
+
   assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
       paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, correct_direction, 1'b1};
-
-  // -----
-  // Loaders
-  always @(posedge clk_100mhz) begin
-    if(rst == 1) begin
-      imap_load <= 1;
-      video_load <= 0;
-    end
-    else begin
-      if(imap_loaded == 1) begin
-        imap_load <= 0;
-        video_load <= 1;
-      end
-    end
-  end
-
-  always @(*) begin
-    case (loaders)
-      2'b01: begin
-        sd_address = video_sd_adr;
-        sd_read = video_sd_read;
-      end
-      2'b10: begin
-        sd_address = imap_sd_adr;
-        sd_read = imap_sd_read;
-      end
-      2'b00: begin
-        sd_address = 0;
-        sd_read = 0;
-      end
-      2'b11: begin
-        sd_address = 0;
-        sd_read = 0;
-      end
-    endcase
-  end
 endmodule

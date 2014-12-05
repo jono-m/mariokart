@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+ `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -22,26 +22,30 @@
 
 module driver_PWM(
     input clk,
-    input btnCpuReset,
-    input [26:0] period, dutyCycle,
-    output reg signal
+    input rst,
+    input [26:0] period, input [26:0] dutyCycle,
+    output reg signal = 0
     );
-    
-
     reg [26:0] count = 27'd0; 
     
     always @(posedge clk) begin
-        if(count <= dutyCycle*(period >> 3)) signal <= 1;
-        else signal <= 0;
-        
-        if(count >= period) count <= 0;
-        else count <= count + 1;
-    end
-        
-    
-    
-    
-    
-    
-    
+        if(rst == 1) begin
+            count <= 0;
+            signal <= 0;
+        end
+        else begin
+            if(count <= dutyCycle*(period >> 3)) begin
+                signal <= 1;
+            end
+            else begin
+                signal <= 0;
+            end
+            if(count >= period) begin
+                count <= 0;
+            end
+            else begin
+                count <= count + 1;
+            end
+        end
+    end    
 endmodule

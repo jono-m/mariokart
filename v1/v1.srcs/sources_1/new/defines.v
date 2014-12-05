@@ -37,3 +37,12 @@
 `define MAPTYPE_GRASS					          1
 `define MAPTYPE_WALL					          2
 `define MAPTYPE_FINISH					        3
+
+`define PWM_P_FORWARD_SLOW              0
+`define PWM_DS_FORWARD_SLOW             0
+`define PWM_P_FORWARD_NORMAL            0
+`define PWM_DS_FORWARD_NORMAL           0
+`define PWM_P_BACKWARD_SLOW             0
+`define PWM_DS_BACKWARD_SLOW            0
+`define PWM_P_BACKWARD_NORMAL           0
+`define PWM_DS_BACKWARD_NORMAL          0

@@ -1,12 +1,9 @@
-module N64_interpret(input clk, btnCpuReset, clock_1MHz,
-					output A, B, Z, Start, L, R,
-					output dUp, dDown, dLeft, dRight,
-					output cUp, cDown, cLeft, cRight,
-					output [7:0] xAxis, yAxis, 
-					inout JD);
-
-
-
+module N64_interpret(input clk_100mhz, rst, clk_1mhz,
+					output A, B, Z, start, L, R,
+					output dU, dD, dL, dR,
+					output cU, cD, cL, cR,
+					output [7:0] stickX, stickY, 
+					output controller_data);
 	parameter send = 1'd0;
 	parameter listen = 1'd1;
 
@@ -16,11 +13,10 @@ module N64_interpret(input clk, btnCpuReset, clock_1MHz,
 	reg [7:0] command = 8'h01;
 	
 	reg dataReg = 1'bZ;
-	assign JD = dataReg;
+	assign controller_data = dataReg;
 
 	reg state = send; 
 	reg send2listen = 0;
-	
 	
 	/////////////////////////////////////////////////////////////////////////////////
 	// Counter registers //////
@@ -44,24 +40,24 @@ module N64_interpret(input clk, btnCpuReset, clock_1MHz,
 	assign A = dataOut[31];
 	assign B = dataOut[30];
 	assign Z = dataOut[29];
-	assign Start = dataOut[28];
-	assign dUp = dataOut[27];
-	assign dDown = dataOut[26];
-	assign dLeft = dataOut[25];
-	assign dRight = dataOut[24];
+	assign start = dataOut[28];
+	assign dU = dataOut[27];
+	assign dD = dataOut[26];
+	assign dL = dataOut[25];
+	assign dR = dataOut[24];
 
 	// dataOut[23] not used
 	// dataOut[22] not used 
 	assign L = dataOut[21];
 	assign R = dataOut[20];
-	assign cUp = dataOut[19];
-	assign cDown = dataOut[18];
-	assign cLeft = dataOut[17];
-	assign cRight = dataOut[16];
+	assign cU = dataOut[19];
+	assign cD = dataOut[18];
+	assign cL = dataOut[17];
+	assign cR = dataOut[16];
 
-	assign xAxis = dataOut[15:8];
+	assign stickX = dataOut[15:8];
 
-	assign yAxis = dataOut[7:0];
+	assign stickY = dataOut[7:0];
 	/////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////
 
@@ -75,7 +71,7 @@ module N64_interpret(input clk, btnCpuReset, clock_1MHz,
 	/////////////////////////////////////////////////////////////////////////////////
 	
 	always @(negedge JD) begin
-		if(btnCpuReset) begin
+		if(rst) begin
 			lbitCount <= 6'd32;
 		end	
 		else begin										
@@ -102,7 +98,7 @@ module N64_interpret(input clk, btnCpuReset, clock_1MHz,
 	/////////////////////////////////////////////////////////////////////////////////
 
     always @(posedge JD) begin
-        if(btnCpuReset) begin
+        if(rst) begin
             dataOut = 32'd0;
         end
         else begin
@@ -134,8 +130,8 @@ module N64_interpret(input clk, btnCpuReset, clock_1MHz,
 	//              holdCount 25'd0
 	/////////////////////////////////////////////////////////////////////////////////
 
-	always @(posedge clk) begin
-		if(btnCpuReset) begin 
+	always @(posedge clk_100mhz) begin
+		if(rst) begin 
 			state <= send;
 			clockCount <= 9'd0;
 			notClockCount <= 9'd0;
@@ -184,8 +180,8 @@ module N64_interpret(input clk, btnCpuReset, clock_1MHz,
 
 	reg dataLow = 1'd0;
 
-	always @(posedge clock_1MHz) begin
-		if(btnCpuReset) begin
+	always @(posedge clk_1mhz) begin
+		if(rst) begin
 			dataLow <= 1'b0;
 			sbitCount <= 4'd7;
 			usCount <= 2'd0;
