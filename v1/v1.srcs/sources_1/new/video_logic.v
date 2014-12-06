@@ -23,6 +23,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
 
         // Car connections
         input [9:0] car1_x, input [8:0] car1_y, input car1_present,
+        input [1:0] owned_item,
 
         // More logic connections,
         input [20:0] item_box1,
@@ -135,7 +136,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite1_x;
     wire [8:0] sprite1_y;
     wire show_sprite1;
-    wire sprite1_alpha = show_sprite1 && sprite1_a;
+    wire sprite1_alpha = show_sprite1 && sprite1_a && (owned_item == `ITEM_NONE);
     wire [31:0] sprite1_address_offset;
     wire is_sprite1_loaded;
     wire [31:0] sprite1_sd_adr;
@@ -283,6 +284,146 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite7(item_box7), .sprite8(item_box8),
                        .sprite9(0), .sprite10(0));
 
+    // --------------------------
+    // Banana image loader
+    //
+    // BRAM connections.
+    wire [6:0] bram_banana_adr;
+    wire [31:0] bram_banana_write;
+    wire [31:0] bram_banana_read;
+    wire bram_banana_we;   
+    banana_image_bram banana_bram(.clka(clk_50mhz), .addra(bram_banana_adr), 
+            .dina(bram_banana_write), .douta(bram_banana_read), .wea(bram_banana_we));
+    // Loader connections.
+    reg banana_load = 0;
+    wire [3:0] banana_r;
+    wire [3:0] banana_g;
+    wire [3:0] banana_b;
+    wire banana_a;
+    wire [9:0] banana_x;
+    wire [8:0] banana_y;
+    wire show_banana;
+    wire banana_alpha = show_banana && banana_a && (phase == `PHASE_RACING);
+    wire [31:0] banana_address_offset;
+    wire is_banana_loaded;
+    wire [31:0] banana_sd_adr;
+    wire banana_sd_read;
+    image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
+            .ALPHA(1)) 
+            banana_loader(.clk(clk_100mhz), .rst(rst_loader), 
+                    .load(banana_load), .x(banana_x), .y(banana_y), .red(banana_r), 
+                    .green(banana_g), .blue(banana_b), .alpha(banana_a),
+                    .address_offset(`ADR_BANANA_IMAGE),
+                    .is_loaded(is_banana_loaded), 
+                    .sd_byte_available(sd_byte_available), 
+                    .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+                    .sd_address(banana_sd_adr), .sd_do_read(banana_sd_read),
+                    .bram_address(bram_banana_adr), .bram_read_data(bram_banana_read),
+                    .bram_write_data(bram_banana_write), 
+                    .bram_write_enable(bram_banana_we));
+
+    sprite_painter banana_p(.x(x), .y(y), .sprite_x(banana_x), .sprite_y(banana_y),
+                       .sprite_is_present(show_banana),
+                       .sprite1(0), .sprite2(0),
+                       .sprite3(0), .sprite4(0),
+                       .sprite5(0), .sprite6(0),
+                       .sprite7(0), .sprite8(0),
+                       .sprite9({(owned_item == `ITEM_BANANA ? 1'b1, 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10(0));
+
+    // --------------------------
+    // Mushroom image loader
+    //
+    // BRAM connections.
+    wire [6:0] bram_mushroom_adr;
+    wire [31:0] bram_mushroom_write;
+    wire [31:0] bram_mushroom_read;
+    wire bram_mushroom_we;   
+    mushroom_image_bram mushroom_bram(.clka(clk_50mhz), .addra(bram_mushroom_adr), 
+            .dina(bram_mushroom_write), .douta(bram_mushroom_read), .wea(bram_mushroom_we));
+    // Loader connections.
+    reg mushroom_load = 0;
+    wire [3:0] mushroom_r;
+    wire [3:0] mushroom_g;
+    wire [3:0] mushroom_b;
+    wire mushroom_a;
+    wire [9:0] mushroom_x;
+    wire [8:0] mushroom_y;
+    wire show_mushroom;
+    wire mushroom_alpha = show_mushroom && mushroom_a && (phase == `PHASE_RACING);
+    wire [31:0] mushroom_address_offset;
+    wire is_mushroom_loaded;
+    wire [31:0] mushroom_sd_adr;
+    wire mushroom_sd_read;
+    image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
+            .ALPHA(1)) 
+            mushroom_loader(.clk(clk_100mhz), .rst(rst_loader), 
+                    .load(mushroom_load), .x(mushroom_x), .y(mushroom_y), .red(mushroom_r), 
+                    .green(mushroom_g), .blue(mushroom_b), .alpha(mushroom_a),
+                    .address_offset(`ADR_MUSHROOM_IMAGE),
+                    .is_loaded(is_mushroom_loaded), 
+                    .sd_byte_available(sd_byte_available), 
+                    .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+                    .sd_address(mushroom_sd_adr), .sd_do_read(mushroom_sd_read),
+                    .bram_address(bram_mushroom_adr), .bram_read_data(bram_mushroom_read),
+                    .bram_write_data(bram_mushroom_write), 
+                    .bram_write_enable(bram_mushroom_we));
+
+    sprite_painter mushroom_p(.x(x), .y(y), .sprite_x(mushroom_x), .sprite_y(mushroom_y),
+                       .sprite_is_present(show_mushroom),
+                       .sprite1(0), .sprite2(0),
+                       .sprite3(0), .sprite4(0),
+                       .sprite5(0), .sprite6(0),
+                       .sprite7(0), .sprite8(0),
+                       .sprite9({(owned_item == `ITEM_MUSHROOM ? 1'b1, 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10(0));
+
+    // --------------------------
+    // Lightning image loader
+    //
+    // BRAM connections.
+    wire [6:0] bram_lightning_adr;
+    wire [31:0] bram_lightning_write;
+    wire [31:0] bram_lightning_read;
+    wire bram_lightning_we;   
+    lightning_image_bram lightning_bram(.clka(clk_50mhz), .addra(bram_lightning_adr), 
+            .dina(bram_lightning_write), .douta(bram_lightning_read), .wea(bram_lightning_we));
+    // Loader connections.
+    reg lightning_load = 0;
+    wire [3:0] lightning_r;
+    wire [3:0] lightning_g;
+    wire [3:0] lightning_b;
+    wire lightning_a;
+    wire [9:0] lightning_x;
+    wire [8:0] lightning_y;
+    wire show_lightning;
+    wire lightning_alpha = show_lightning && lightning_a && (phase == `PHASE_RACING);
+    wire [31:0] lightning_address_offset;
+    wire is_lightning_loaded;
+    wire [31:0] lightning_sd_adr;
+    wire lightning_sd_read;
+    image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
+            .ALPHA(1)) 
+            lightning_loader(.clk(clk_100mhz), .rst(rst_loader), 
+                    .load(lightning_load), .x(lightning_x), .y(lightning_y), .red(lightning_r), 
+                    .green(lightning_g), .blue(lightning_b), .alpha(lightning_a),
+                    .address_offset(`ADR_LIGHTNING_IMAGE),
+                    .is_loaded(is_lightning_loaded), 
+                    .sd_byte_available(sd_byte_available), 
+                    .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+                    .sd_address(lightning_sd_adr), .sd_do_read(lightning_sd_read),
+                    .bram_address(bram_lightning_adr), .bram_read_data(bram_lightning_read),
+                    .bram_write_data(bram_lightning_write), 
+                    .bram_write_enable(bram_lightning_we));
+
+    sprite_painter lightning_p(.x(x), .y(y), .sprite_x(lightning_x), .sprite_y(lightning_y),
+                       .sprite_is_present(show_lightning),
+                       .sprite1(0), .sprite2(0),
+                       .sprite3(0), .sprite4(0),
+                       .sprite5(0), .sprite6(0),
+                       .sprite7(0), .sprite8(0),
+                       .sprite9({(owned_item == `ITEM_LIGHTNING ? 1'b1, 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10(0));
 
     // -------
     // SHADER
@@ -292,6 +433,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .csb1_r(csb1_r), .csb1_g(csb1_g), .csb1_b(csb1_b), .csb1_alpha(csb1_alpha),
             .sprite1_r(sprite1_r), .sprite1_g(sprite1_g), .sprite1_b(sprite1_b), .sprite1_alpha(sprite1_alpha),
             .item_box_r(item_box_r), .item_box_g(item_box_g), .item_box_b(item_box_b), .item_box_alpha(item_box_alpha),
+            .banana_r(banana_r), .banana_g(banana_g), .banana_b(banana_b), .banana_alpha(banana_alpha),
+            .mushroom_r(mushroom_r), .mushroom_g(mushroom_g), .mushroom_b(mushroom_b), .mushroom_alpha(mushroom_alpha),
+            .lightning_r(lightning_r), .lightning_g(lightning_g), .lightning_b(lightning_b), .lightning_alpha(lightning_alpha),
             .timer_r(timer_r), .timer_g(timer_g), .timer_b(timer_b), .timer_alpha(timer_alpha),
             .latiku_oym_r(latiku_oym_r), .latiku_oym_g(latiku_oym_g), .latiku_oym_b(latiku_oym_b), .latiku_oym_alpha(latiku_oym_alpha),
             .laps1_r(laps1_r), .laps1_g(laps1_g), .laps1_b(laps1_b), .laps1_alpha(laps1_alpha),
@@ -327,12 +471,14 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     // BRAM LOADER
     
     // Tracks which image loader is currently active.
-    wire [5:0] active_loader = {bg_load, text_load, sprite1_load, timer_load,
-            latiku_oym_load, item_box_load};
+    wire [8:0] active_loader = {bg_load, text_load, sprite1_load, timer_load,
+            latiku_oym_load, item_box_load, banana_load, mushroom_load,
+            lightning_load};
 
     wire are_all_loaders_unloaded = ~is_bg_loaded && 
             ~is_text_loaded && ~is_sprite1_loaded && ~is_timer_loaded &&
-            ~is_latiku_oym_loaded && ~is_item_box_loaded;
+            ~is_latiku_oym_loaded && ~is_item_box_loaded && ~is_banana_loaded &&
+            ~is_mushroom_loaded && ~is_lightning_loaded;
 
     // Reload images into BRAM.
     always @(posedge clk_100mhz) begin
@@ -344,6 +490,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             timer_load <= 0;
             latiku_oym_load <= 0;
             item_box_load <= 0;
+            banana_load <= 0;
+            mushroom_load <= 0;
+            lightning_load <= 0;
 
             is_loaded <= 0;
             unload <= 0;
@@ -363,6 +512,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
                     end
                     else if(is_text_loaded == 0) begin
                         bg_load <= 0;
@@ -371,6 +523,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
                     end
                     else if(is_sprite1_loaded == 0) begin
                         bg_load <= 0;
@@ -379,6 +534,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
                     end
                     else if(is_timer_loaded == 0) begin
                         bg_load <= 0;
@@ -387,6 +545,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 1;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
                     end
                     else if(is_latiku_oym_loaded == 0) begin
                         bg_load <= 0;
@@ -395,6 +556,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 0;
                         latiku_oym_load <= 1;
                         item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
                     end
                     else if(is_item_box_loaded == 0) begin
                         bg_load <= 0;
@@ -403,6 +567,42 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 1;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
+                    end
+                    else if(is_banana_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 0;
+                        timer_load <= 0;
+                        latiku_oym_load <= 0;
+                        item_box_load <= 0;
+                        banana_load <= 1;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
+                    end
+                    else if(is_mushroom_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 0;
+                        timer_load <= 0;
+                        latiku_oym_load <= 0;
+                        item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 1;
+                        lightning_load <= 0;
+                    end
+                    else if(is_lightning_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 0;
+                        timer_load <= 0;
+                        latiku_oym_load <= 0;
+                        item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 1;
                     end
                     else begin
                         // Done loading, clean up.
@@ -412,6 +612,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
                         
                         if(fader == 5'b1_0000) begin
                             is_loaded <= 1;
@@ -466,29 +669,41 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     always @(*) begin
         case(active_loader)
             // Background loader
-            6'b100000: begin
+            9'b100000000: begin
                 sd_read = bg_sd_read;
                 sd_address = bg_sd_adr;
             end
-            6'b010000: begin
+            9'b010000000: begin
                 sd_read = text_sd_read;
                 sd_address = text_sd_adr;
             end
-            6'b001000: begin
+            9'b001000000: begin
                 sd_read = sprite1_sd_read;
                 sd_address = sprite1_sd_adr;
             end
-            6'b000100: begin
+            9'b000100000: begin
                 sd_read = timer_sd_read;
                 sd_address = timer_sd_adr; 
             end
-            6'b000010: begin
+            9'b000010000: begin
                 sd_read = latiku_oym_sd_read;
                 sd_address = latiku_oym_sd_adr; 
             end
-            6'b000001: begin
+            9'b000001000: begin
                 sd_read = item_box_sd_read;
                 sd_address = item_box_sd_adr; 
+            end
+            9'b000000100: begin
+                sd_read = banana_sd_read;
+                sd_address = banana_sd_adr; 
+            end
+            9'b000000010: begin
+                sd_read = mushroom_sd_read;
+                sd_address = mushroom_sd_adr; 
+            end
+            9'b000000001: begin
+                sd_read = lightning_sd_read;
+                sd_address = lightning_sd_adr; 
             end
             default: begin
                 sd_read = 0;

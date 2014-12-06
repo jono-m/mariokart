@@ -46,4 +46,4 @@ def bmpno_to_int(bmpstring):
   return int(bmpstring[::-1].encode('hex'), 16)
 
 
-create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/images/timer/timer_24.bmp')
+create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/images/Sprites/lightning_24.bmp')

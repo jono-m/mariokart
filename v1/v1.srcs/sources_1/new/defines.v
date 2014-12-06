@@ -49,3 +49,17 @@
 `define PWM_DS_BACKWARD_NORMAL          0
 
 `define ITEM_BOX_RESPAWN_SECONDS        5
+`define ITEM_PICK_TIME_SECONDS          4
+`define MUSHROOM_BOOST_SECONDS          2
+`define BANANA_SECONDS                  1
+`define LIGHTNING_SECONDS               3
+
+`define `ITEM_NONE                      0
+`define `ITEM_BANANA                    1
+`define `ITEM_MUSHROOM                  2
+`define `ITEM_LIGHTNING                 3
+
+`define `BUFF_NONE                      0
+`define `BUFF_BANANA                    1
+`define `BUFF_MUSHROOM                  2
+`define `BUFF_LIGHTNING                 3

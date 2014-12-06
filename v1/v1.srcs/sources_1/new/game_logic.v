@@ -17,8 +17,11 @@ module game_logic(input clk_100mhz, input rst,
 		output reg race_begin = 0,
 		output reg [1:0] oym_counter = 0,
 
-		// Information map connections,
+		output wire [1:0] owned_item,
+		output wire picking_item,
+		//output wire [1:0] buff,
 
+		// Information map connections,
     input [20:0] imap_item_box1,
     input [20:0] imap_item_box2,
     input [20:0] imap_item_box3,
@@ -48,13 +51,17 @@ module game_logic(input clk_100mhz, input rst,
     input item_box5_hit,
     input item_box6_hit,
     input item_box7_hit,
-    input item_box8_hit
+    input item_box8_hit,
 	);
+	// Loading phases
+
 	assign in_loading_phase = (phase == `PHASE_LOADING_START_SCREEN ||
 	                    phase == `PHASE_LOADING_CHARACTER_SELECT ||
 	                    phase == `PHASE_LOADING_RACING);
 	reg prev_lap_completed = 0;
 
+	// --------------------
+	// Phase transitions
 
 	always @(posedge clk_100mhz) begin
 		if(rst == 1) begin
@@ -145,6 +152,7 @@ module game_logic(input clk_100mhz, input rst,
 		end
 	end
 
+	// Race on-your-marks timer.
 	reg [26:0] counter = 0;
 	always @(posedge clk_100mhz) begin
 		if(rst == 1 || phase == `PHASE_LOADING_START_SCREEN) begin
@@ -171,6 +179,9 @@ module game_logic(input clk_100mhz, input rst,
 			end
 		end
 	end
+
+	// ------------------
+	// Item box spawner
 
 	reg [3:0] item_box1_timer = `ITEM_BOX_RESPAWN_SECONDS;
 	reg [3:0] item_box2_timer = `ITEM_BOX_RESPAWN_SECONDS;
@@ -222,4 +233,11 @@ module game_logic(input clk_100mhz, input rst,
 		item_box7[20] = (item_box7_timer == `ITEM_BOX_RESPAWN_SECONDS) && imap_item_box7[20];
 		item_box8[20] = (item_box8_timer == `ITEM_BOX_RESPAWN_SECONDS) && imap_item_box8[20];
 	end
+
+	// -----------------
+	// Item and buff managers
+
+	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
+			.item_box_hit(item_box_hit), .Z(Z), .owned_item(owned_item),
+			.picking_item());
 endmodule

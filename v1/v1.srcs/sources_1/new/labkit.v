@@ -208,6 +208,8 @@ module labkit(input clk,
   wire item_box6_hit;
   wire item_box7_hit;
   wire item_box8_hit;
+
+  wire [1:0] owned_item;
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
 			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
       .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
@@ -219,6 +221,7 @@ module labkit(input clk,
 			.selected_character(selected_character), .lap_completed(lap_completed),
       .laps_completed(laps_completed), .race_begin(race_begin),
       .oym_counter(oym_counter),
+      .owned_item(owned_item), .picking_item(),
       .imap_item_box1(imap_item_box1), .imap_item_box2(imap_item_box2),
       .imap_item_box3(imap_item_box3), .imap_item_box4(imap_item_box4),
       .imap_item_box5(imap_item_box5), .imap_item_box6(imap_item_box6),
@@ -280,6 +283,7 @@ module labkit(input clk,
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
       .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
+      .owned_item(owned_item),
       .item_box1(item_box1), .item_box2(item_box2),
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
