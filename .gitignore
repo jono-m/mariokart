@@ -7,4 +7,4 @@
 *.runs
 *.sim
 *.DS_Store
-ip
+/ip/
