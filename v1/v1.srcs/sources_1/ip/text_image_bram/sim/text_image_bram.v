@@ -48,7 +48,7 @@
 
 
 // IP VLNV: xilinx.com:ip:blk_mem_gen:8.2
-// IP Revision: 1
+// IP Revision: 2
 
 `timescale 1ns/1ps
 
@@ -139,7 +139,7 @@ output wire [31 : 0] douta;
     .C_DISABLE_WARN_BHV_RANGE(0),
     .C_COUNT_36K_BRAM("7"),
     .C_COUNT_18K_BRAM("1"),
-    .C_EST_POWER_SUMMARY("Estimated Power for IP     :     13.835025 mW")
+    .C_EST_POWER_SUMMARY("Estimated Power for IP     :     11.408575 mW")
   ) inst (
     .clka(clka),
     .rsta(1'D0),

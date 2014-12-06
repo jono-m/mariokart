@@ -47,3 +47,5 @@
 `define PWM_DS_BACKWARD_SLOW            0
 `define PWM_P_BACKWARD_NORMAL           0
 `define PWM_DS_BACKWARD_NORMAL          0
+
+`define ITEM_BOX_RESPAWN_SECONDS        5

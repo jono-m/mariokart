@@ -21,6 +21,26 @@ module physics_logic (input clk_100mhz, input rst,
     output reg [9:0] imap_x = 0,
     output reg [8:0] imap_y = 0,
 
+    input [20:0] item_box1,
+    input [20:0] item_box2,
+    input [20:0] item_box3,
+    input [20:0] item_box4,
+    input [20:0] item_box5,
+    input [20:0] item_box6,
+    input [20:0] item_box7,
+    input [20:0] item_box8,
+
+    output item_box_hit,
+
+    output item_box1_hit,
+    output item_box2_hit,
+    output item_box3_hit,
+    output item_box4_hit,
+    output item_box5_hit,
+    output item_box6_hit,
+    output item_box7_hit,
+    output item_box8_hit,
+
     // Driver connections
     output forward,
     output backward,
@@ -40,18 +60,6 @@ module physics_logic (input clk_100mhz, input rst,
             counter_deltas <= counter_deltas + 1;
         end
     end
-
-    /*reg [18:0] counter_map = 0;
-    reg clk_update_map = 1;
-    always @(posedge clk_100mhz) begin
-        if(counter_map == 0) begin
-            counter_map <= 0;
-            clk_update_map <= ~clk_update_map;
-        end
-        else begin
-            counter_map <= counter_map + 1;
-        end
-    end*/
 
     // -----------------
     // Compute deltas
@@ -254,4 +262,38 @@ module physics_logic (input clk_100mhz, input rst,
     assign backward = B && (~wall_backward || (wall_forward && wall_backward)) && race_begin;
     assign turn_left = stickLeft && (~wall_turn_left || (wall_turn_left && wall_turn_right)) && race_begin;
     assign turn_right = stickRight && (~wall_turn_right || (wall_turn_left && wall_turn_right)) && race_begin;
+
+    // -------
+    // Collision with items
+    
+    wire car1_item_box1;
+    wire car1_item_box2;
+    wire car1_item_box3;
+    wire car1_item_box4;
+    wire car1_item_box5;
+    wire car1_item_box6;
+    wire car1_item_box7;
+    wire car1_item_box8;
+    collision_detect cib1(.object(item_box1), .collided(car1_item_box1), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib2(.object(item_box2), .collided(car1_item_box2), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib3(.object(item_box3), .collided(car1_item_box3), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib4(.object(item_box4), .collided(car1_item_box4), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib5(.object(item_box5), .collided(car1_item_box5), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib6(.object(item_box6), .collided(car1_item_box6), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib7(.object(item_box7), .collided(car1_item_box7), .car_x(car1_x), .car_y(car1_y));
+    collision_detect cib8(.object(item_box8), .collided(car1_item_box8), .car_x(car1_x), .car_y(car1_y));
+
+    assign item_box_hit = car1_item_box1 || car1_item_box2 ||
+                          car1_item_box3 || car1_item_box4 ||
+                          car1_item_box5 || car1_item_box6 ||
+                          car1_item_box7 || car1_item_box8;
+
+    assign item_box1_hit = car1_item_box1;
+    assign item_box2_hit = car1_item_box2;
+    assign item_box3_hit = car1_item_box3;
+    assign item_box4_hit = car1_item_box4;
+    assign item_box5_hit = car1_item_box5;
+    assign item_box6_hit = car1_item_box6;
+    assign item_box7_hit = car1_item_box7;
+    assign item_box8_hit = car1_item_box8;
 endmodule    

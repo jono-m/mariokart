@@ -107,7 +107,7 @@ module time_display
         counter <= 0;
       end
       else begin
-        if(counter == 500000) begin
+        if(counter == 1000000) begin
           counter <= 0;
           if(ms_ones == 9) begin
             ms_ones <= 0;

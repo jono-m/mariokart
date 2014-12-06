@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module laps_display
-        #(DOT_SIZE = 20, DOT_THICKNESS = 2, DOT_SPACING = 64)
+        #(DOT_SIZE = 4, DOT_THICKNESS = 1, DOT_SPACING = 7)
         (input clk, input rst,
         input [1:0] laps_completed,
         input [9:0] x, input [9:0] y,

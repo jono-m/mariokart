@@ -39,7 +39,7 @@ module car_driver(
     driver_PWM PWM1_FS (.period(`PWM_P_FORWARD_SLOW), .dutyCycle(`PWM_DS_FORWARD_SLOW), .clk(clk), .rst(rst), .signal(pwm_forward_slow));
     driver_PWM PWM1_FN (.period(`PWM_P_FORWARD_NORMAL), .dutyCycle(`PWM_DS_FORWARD_NORMAL), .clk(clk), .rst(rst), .signal(pwm_forward_normal));
     driver_PWM PWM1_BS (.period(`PWM_P_BACKWARD_SLOW), .dutyCycle(`PWM_DS_BACKWARD_SLOW), .clk(clk), .rst(rst), .signal(pwm_backward_slow));
-    driver_PWM PWM1_BN (.period(`PWM_P_BACKWARD_NORMAL), .dutyCycle(`PWM_DS_BACKWARD_NORMAL), .clk(clk), .rst(rst), .signal(pwm_backward_boost));
+    driver_PWM PWM1_BN (.period(`PWM_P_BACKWARD_NORMAL), .dutyCycle(`PWM_DS_BACKWARD_NORMAL), .clk(clk), .rst(rst), .signal(pwm_backward_normal));
 
     wire pwm_forward = (speed == `SPEED_STOP ? 0 :
                        (speed == `SPEED_SLOW ? pwm_forward_slow :

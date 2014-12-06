@@ -308,15 +308,15 @@ set_property PACKAGE_PIN G3 [get_ports {JD[3]}]
 #Bank = 35, Pin name = IO_L15P_T2_DQS_35,					Sch name = JD7
 set_property PACKAGE_PIN H2 [get_ports {JD[4]}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {JD[4]}]
-#Bank = 35, Pin name = IO_L20P_T3_35,						Sch name = JD8
-set_property PACKAGE_PIN G4 [get_ports {JD[5]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {JD[5]}]
-#Bank = 35, Pin name = IO_L15N_T2_DQS_35,					Sch name = JD9
-set_property PACKAGE_PIN G2 [get_ports {JD[6]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {JD[6]}]
-#Bank = 35, Pin name = IO_L13N_T2_MRCC_35,					Sch name = JD10
-set_property PACKAGE_PIN F3 [get_ports {JD[7]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {JD[7]}]
+##Bank = 35, Pin name = IO_L20P_T3_35,						Sch name = JD8
+#set_property PACKAGE_PIN G4 [get_ports {JD[5]}]					
+#	set_property IOSTANDARD LVCMOS33 [get_ports {JD[5]}]
+##Bank = 35, Pin name = IO_L15N_T2_DQS_35,					Sch name = JD9
+#set_property PACKAGE_PIN G2 [get_ports {JD[6]}]					
+#	set_property IOSTANDARD LVCMOS33 [get_ports {JD[6]}]
+##Bank = 35, Pin name = IO_L13N_T2_MRCC_35,					Sch name = JD10
+#set_property PACKAGE_PIN F3 [get_ports {JD[7]}]					
+#	set_property IOSTANDARD LVCMOS33 [get_ports {JD[7]}]
  
 
 

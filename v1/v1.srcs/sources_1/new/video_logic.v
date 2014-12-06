@@ -253,10 +253,10 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [3:0] item_box_g;
     wire [3:0] item_box_b;
     wire item_box_a;
-    wire [9:0] item_box_x = item_box1[19:10];
-    wire [8:0] item_box_y = item_box1[8:0];
-    wire show_item_box = 1;
-    wire item_box_alpha = show_item_box && item_box_a;
+    wire [9:0] item_box_x;
+    wire [8:0] item_box_y;
+    wire show_item_box;
+    wire item_box_alpha = show_item_box && item_box_a && (phase == `PHASE_RACING);
     wire [31:0] item_box_address_offset;
     wire is_item_box_loaded;
     wire [31:0] item_box_sd_adr;
@@ -264,7 +264,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
             .ALPHA(1)) 
             item_box_loader(.clk(clk_100mhz), .rst(rst_loader), 
-                    .load(item_box_load), .x(x-item_box_x), .y(y-item_box_y), .red(item_box_r), 
+                    .load(item_box_load), .x(item_box_x), .y(item_box_y), .red(item_box_r), 
                     .green(item_box_g), .blue(item_box_b), .alpha(item_box_a),
                     .address_offset(`ADR_ITEM_BOX_IMAGE),
                     .is_loaded(is_item_box_loaded), 
@@ -275,13 +275,13 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_item_box_write), 
                     .bram_write_enable(bram_item_box_we));
 
-    /*sprite_painter ibp(.x(x), .y(y), .sprite_x(item_box_x), .sprite_y(item_box_y),
+    sprite_painter ibp(.x(x), .y(y), .sprite_x(item_box_x), .sprite_y(item_box_y),
                        .sprite_is_present(show_item_box),
                        .sprite1(item_box1), .sprite2(item_box2),
                        .sprite3(item_box3), .sprite4(item_box4),
                        .sprite5(item_box5), .sprite6(item_box6),
                        .sprite7(item_box7), .sprite8(item_box8),
-                       .sprite9(0), .sprite10(0));*/
+                       .sprite9(0), .sprite10(0));
 
 
     // -------

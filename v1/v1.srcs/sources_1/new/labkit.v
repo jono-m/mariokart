@@ -42,6 +42,11 @@ module labkit(input clk,
     inout [4:0] JD 
 	);
 
+  // -----------------
+  // Set up software reset.
+
+  wire rst = ~btnCpuReset;
+
   // ---------------------
 	// Set up clocks.
 
@@ -52,12 +57,7 @@ module labkit(input clk,
 
   clock_divider div1(clk_100mhz, clk_50mhz);
   clock_divider div2(clk_50mhz, clk_25mhz);
-  us_divider usdiv(.clk_100mhz(clk_100mhz), .clk_1mhz(clk_1mhz));
-
-  // -----------------
-  // Set up software reset.
-
-  wire rst = ~btnCpuReset;
+  us_divider usdiv(.clk_100mhz(clk_100mhz), .rst(rst), .clk_1mhz(clk_1mhz));
 
   // ------------------
   // SD card.
@@ -116,7 +116,7 @@ module labkit(input clk,
 	wire [7:0] stickY;
   wire controller_data;
 
-  N64_interpret(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(0), .clk_1mhz(clk_1mhz),
+  N64_interpret controller1(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(0), .clk_1mhz(clk_1mhz),
       .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L), .R(R), .Z(Z), .dU(dU), .dD(dD), .dL(dL),
       .dR(dR), .cU(cU), .cD(cD), .cL(cL), .cR(cR), .stickX(stickX), 
       .stickY(stickY), .controller_data(controller_data));
@@ -199,6 +199,15 @@ module labkit(input clk,
   wire [20:0] item_box6;
   wire [20:0] item_box7;
   wire [20:0] item_box8;
+  wire item_box_hit;
+  wire item_box1_hit;
+  wire item_box2_hit;
+  wire item_box3_hit;
+  wire item_box4_hit;
+  wire item_box5_hit;
+  wire item_box6_hit;
+  wire item_box7_hit;
+  wire item_box8_hit;
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
 			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
       .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
@@ -217,7 +226,12 @@ module labkit(input clk,
       .item_box1(item_box1), .item_box2(item_box2),
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
-      .item_box7(item_box7), .item_box8(item_box8));
+      .item_box7(item_box7), .item_box8(item_box8),
+      .item_box_hit(item_box_hit),
+      .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
+      .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
+      .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
+      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit));
 
   // -----------------------------------
   // Car drivers and simulators.
@@ -304,7 +318,16 @@ module labkit(input clk,
       .A(clean_A), .B(clean_B), .stickLeft(clean_stickLeft), .stickRight(clean_stickRight),
       .map_type(map_type), .imap_x(imap_x), .imap_y(imap_y),
       .forward(forward), .backward(backward), .turn_left(turn_left),
-      .turn_right(turn_right), .speed(speed));
+      .turn_right(turn_right), .speed(speed),
+      .item_box1(item_box1), .item_box2(item_box2),
+      .item_box3(item_box3), .item_box4(item_box4),
+      .item_box5(item_box5), .item_box6(item_box6),
+      .item_box7(item_box7), .item_box8(item_box8),
+      .item_box_hit(item_box_hit),
+      .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
+      .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
+      .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
+      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit));
 
   // ------------------------------------------
   // SD card loader.
@@ -318,7 +341,7 @@ module labkit(input clk,
   // -----------------
   // Labkit outputs
 
-  assign vgaRed = at_display_area ? (red || x == item_box1[19:10] || y == item_box1[8:0]) : 0;
+  assign vgaRed = at_display_area ? red : 0;
   assign vgaGreen = at_display_area ? green : 0;
   assign vgaBlue = at_display_area ? blue : 0;
     
