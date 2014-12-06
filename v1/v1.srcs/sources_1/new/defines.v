@@ -19,11 +19,14 @@
 `define ADR_RACING_BG				            614400   // LEN 307200      
 `define ADR_PRESS_START_TEXT            921600   // LEN 332256
 `define ADR_CHARACTER_SPRITE1           953856   // LEN 512*8
-`define ADR_TRACK_INFORMATION_IMAGE		957952	 // LEN 77312
-`define ADR_TIMER_TEXT_IMAGE            1035264     // LEN 4608
+`define ADR_TRACK_INFORMATION_IMAGE		  957952	 // LEN 77312
+`define ADR_TIMER_TEXT_IMAGE            1035264  // LEN 4608
 `define ADR_LATIKU_ON_YOUR_MARKS        1039872  // LEN 10240
 `define ADR_LATIKU_FINAL_LAP            1050112  // LEN 10240
 `define ADR_ITEM_BOX_IMAGE              1060352  // LEN 512
+`define ADR_BANANA_IMAGE                1060864  // LEN 512
+`define ADR_MUSHROOM_IMAGE              1061376  // LEN 512
+`define ADR_LIGHTNING_IMAGE             1061888  // LEN 512
   
 `define TURN_LEFT                       0
 `define TURN_STRAIGHT                   1
