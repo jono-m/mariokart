@@ -97,7 +97,8 @@ module labkit(input clk,
 	wire B = btnD || B_ctrl;
   wire start_ctrl;
 	wire start = btnC || start_ctrl;
-	wire Z;
+  wire Z_ctrl;
+	wire Z = btnC || Z_ctrl;
 	wire R;
 	wire L;
 	wire dU;
@@ -117,7 +118,7 @@ module labkit(input clk,
   wire controller_data;
 
   N64_interpret controller1(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(0), .clk_1mhz(clk_1mhz),
-      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L), .R(R), .Z(Z), .dU(dU), .dD(dD), .dL(dL),
+      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L), .R(R), .Z(Z_ctrl), .dU(dU), .dD(dD), .dL(dL),
       .dR(dR), .cU(cU), .cD(cD), .cL(cL), .cR(cR), .stickX(stickX), 
       .stickY(stickY), .controller_data(controller_data));
 
