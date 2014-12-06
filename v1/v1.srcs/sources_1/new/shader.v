@@ -26,7 +26,7 @@ module shader(input [4:0] fader,
             (timer_alpha ? timer_r :
             (csb1_alpha ? csb1_r : 
             (bg_alpha ? bg_r : 
-            (0)))))))));
+            (0))))))))))));
     wire [3:0] shader_green = (text_alpha ? text_g : 
             (latiku_oym_alpha ? latiku_oym_g :
             (laps1_alpha ? laps1_g :
@@ -38,7 +38,7 @@ module shader(input [4:0] fader,
             (timer_alpha ? timer_g :
             (csb1_alpha ? csb1_g : 
             (bg_alpha ? bg_g : 
-            (0)))))))));
+            (0))))))))))));
     wire [3:0] shader_blue = (text_alpha ? text_b : 
             (latiku_oym_alpha ? latiku_oym_b :
             (laps1_alpha ? laps1_g :
@@ -50,7 +50,7 @@ module shader(input [4:0] fader,
             (timer_alpha ? timer_b : 
             (csb1_alpha ? csb1_b : 
             (bg_alpha ? bg_b : 
-            (0)))))))));
+            (0))))))))))));
     
     wire [7:0] red_fade = (shader_red) * fader;
     wire [7:0] green_fade = (shader_green) * fader;

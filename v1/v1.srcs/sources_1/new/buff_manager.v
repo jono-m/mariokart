@@ -11,11 +11,11 @@ module buff_item_manager(input clk_100mhz, input rst,
     //output reg use_lightning
     );
 
-  reg [2:0] item_pick_counter <= 0;
-  reg [26:0] item_pick_clk_counter <= 0;
-  reg [26:0] item_rotation_clk_counter <= 0;
+  reg [2:0] item_pick_counter = 0;
+  reg [26:0] item_pick_clk_counter = 0;
+  reg [26:0] item_rotation_clk_counter = 0;
 
-  //reg buff_expired <= 1;
+  //reg buff_expired = 1;
 
   always @(posedge clk_100mhz) begin
     if(rst == 1) begin
@@ -39,10 +39,12 @@ module buff_item_manager(input clk_100mhz, input rst,
       if(picking_item == 1) begin
         if(item_pick_clk_counter < 100000000) begin
           item_pick_clk_counter <= item_pick_clk_counter + 1;
+        end
         else begin
           item_pick_clk_counter <= 0;
           if(item_pick_counter < `ITEM_PICK_TIME_SECONDS) begin
             item_pick_counter <= item_pick_counter + 1;
+          end
           else begin
             picking_item <= 0;
             item_pick_counter <= 0;

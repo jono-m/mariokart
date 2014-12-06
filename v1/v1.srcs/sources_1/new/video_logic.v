@@ -328,7 +328,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item == `ITEM_BANANA ? 1'b1, 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite9({(owned_item == `ITEM_BANANA ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
                        .sprite10(0));
 
     // --------------------------
@@ -375,7 +375,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item == `ITEM_MUSHROOM ? 1'b1, 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite9({(owned_item == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
                        .sprite10(0));
 
     // --------------------------
@@ -422,7 +422,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item == `ITEM_LIGHTNING ? 1'b1, 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite9({(owned_item == `ITEM_LIGHTNING ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
                        .sprite10(0));
 
     // -------

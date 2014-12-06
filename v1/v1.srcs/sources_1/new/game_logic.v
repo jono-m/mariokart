@@ -31,18 +31,18 @@ module game_logic(input clk_100mhz, input rst,
     input [20:0] imap_item_box7,
     input [20:0] imap_item_box8,
 
-		output reg [20:0] item_box1 = 0,
-		output reg [20:0] item_box2 = 0,
-		output reg [20:0] item_box3 = 0,
-		output reg [20:0] item_box4 = 0,
-		output reg [20:0] item_box5 = 0,
-		output reg [20:0] item_box6 = 0,
-		output reg [20:0] item_box7 = 0,
-		output reg [20:0] item_box8 = 0,
+	output reg [20:0] item_box1 = 0,
+	output reg [20:0] item_box2 = 0,
+	output reg [20:0] item_box3 = 0,
+	output reg [20:0] item_box4 = 0,
+	output reg [20:0] item_box5 = 0,
+	output reg [20:0] item_box6 = 0,
+	output reg [20:0] item_box7 = 0,
+	output reg [20:0] item_box8 = 0,
 
-		// Physics logic connections,
+	// Physics logic connections,
 
-		input item_box_hit,
+	input item_box_hit,
 
     input item_box1_hit,
     input item_box2_hit,
@@ -51,7 +51,7 @@ module game_logic(input clk_100mhz, input rst,
     input item_box5_hit,
     input item_box6_hit,
     input item_box7_hit,
-    input item_box8_hit,
+    input item_box8_hit
 	);
 	// Loading phases
 
