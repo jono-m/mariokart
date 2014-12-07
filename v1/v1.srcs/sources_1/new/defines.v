@@ -56,7 +56,8 @@
 `define MUSHROOM_BOOST_SECONDS          1
 `define BANANA_SECONDS                  1
 `define LIGHTNING_SECONDS               3
-`define LIGHTNING_FLASH_MS				250
+`define LIGHTNING_FLASH_MS				500
+`define BANANA_GRACE_CYCLES				50000000
 
 `define ITEM_NONE                      0
 `define ITEM_BANANA                    1

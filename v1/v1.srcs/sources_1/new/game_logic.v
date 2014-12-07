@@ -404,6 +404,16 @@ module game_logic(input clk_100mhz, input rst,
 			(banana6[20] == 0 ? 6 :
 			(banana7[20] == 0 ? 7 :
 			(banana8[20] == 0 ? 8 : 1))))))));
+
+	reg [26:0] banana1_clock = 0;
+	reg [26:0] banana2_clock = 0;
+	reg [26:0] banana3_clock = 0;
+	reg [26:0] banana4_clock = 0;
+	reg [26:0] banana5_clock = 0;
+	reg [26:0] banana6_clock = 0;
+	reg [26:0] banana7_clock = 0;
+	reg [26:0] banana8_clock = 0;
+
 	always @(posedge clk_100mhz) begin
 		if(rst == 1) begin
 			banana1 <= 0;
@@ -427,6 +437,16 @@ module game_logic(input clk_100mhz, input rst,
 					7: banana7 <= {1'b1, car1_x, 1'b0, car1_y};
 					8: banana8 <= {1'b1, car1_x, 1'b0, car1_y};
 				endcase
+				case(next_free_banana_slot)
+					1: banana1_clock <= `BANANA_GRACE_CYCLES;
+					2: banana2_clock <= `BANANA_GRACE_CYCLES;
+					3: banana3_clock <= `BANANA_GRACE_CYCLES;
+					4: banana4_clock <= `BANANA_GRACE_CYCLES;
+					5: banana5_clock <= `BANANA_GRACE_CYCLES;
+					6: banana6_clock <= `BANANA_GRACE_CYCLES;
+					7: banana7_clock <= `BANANA_GRACE_CYCLES;
+					8: banana8_clock <= `BANANA_GRACE_CYCLES;
+				endcase
 			end
 			if(car2_place_banana) begin
 				case(next_free_banana_slot)
@@ -439,15 +459,33 @@ module game_logic(input clk_100mhz, input rst,
 					7: banana7 <= {1'b1, car2_x, 1'b0, car2_y};
 					8: banana8 <= {1'b1, car2_x, 1'b0, car2_y};
 				endcase
+				case(next_free_banana_slot)
+					1: banana1_clock <= `BANANA_GRACE_CYCLES;
+					2: banana2_clock <= `BANANA_GRACE_CYCLES;
+					3: banana3_clock <= `BANANA_GRACE_CYCLES;
+					4: banana4_clock <= `BANANA_GRACE_CYCLES;
+					5: banana5_clock <= `BANANA_GRACE_CYCLES;
+					6: banana6_clock <= `BANANA_GRACE_CYCLES;
+					7: banana7_clock <= `BANANA_GRACE_CYCLES;
+					8: banana8_clock <= `BANANA_GRACE_CYCLES;
+				endcase
 			end
-			if(banana1_hit) banana1 <= 0;
-			if(banana2_hit) banana2 <= 0;
-			if(banana3_hit) banana3 <= 0;
-			if(banana4_hit) banana4 <= 0;
-			if(banana5_hit) banana5 <= 0;
-			if(banana6_hit) banana6 <= 0;
-			if(banana7_hit) banana7 <= 0;
-			if(banana8_hit) banana8 <= 0;
+			if(banana1_hit && banana1_clock == 0) banana1 <= 0;
+			if(banana2_hit && banana2_clock == 0) banana2 <= 0;
+			if(banana3_hit && banana3_clock == 0) banana3 <= 0;
+			if(banana4_hit && banana4_clock == 0) banana4 <= 0;
+			if(banana5_hit && banana5_clock == 0) banana5 <= 0;
+			if(banana6_hit && banana6_clock == 0) banana6 <= 0;
+			if(banana7_hit && banana7_clock == 0) banana7 <= 0;
+			if(banana8_hit && banana8_clock == 0) banana8 <= 0;
+			if(banana1_clock > 0) banana1_clock <= banana1_clock - 1;
+			if(banana2_clock > 0) banana2_clock <= banana2_clock - 1;
+			if(banana3_clock > 0) banana3_clock <= banana3_clock - 1;
+			if(banana4_clock > 0) banana4_clock <= banana4_clock - 1;
+			if(banana5_clock > 0) banana5_clock <= banana5_clock - 1;
+			if(banana6_clock > 0) banana6_clock <= banana6_clock - 1;
+			if(banana7_clock > 0) banana7_clock <= banana7_clock - 1;
+			if(banana8_clock > 0) banana8_clock <= banana8_clock - 1;
 		end
 	end
 endmodule
