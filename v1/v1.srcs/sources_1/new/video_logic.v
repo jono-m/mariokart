@@ -138,7 +138,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite1_x;
     wire [8:0] sprite1_y;
     wire show_sprite1;
-    wire sprite1_alpha = show_sprite1 && sprite1_a && (owned_item == `ITEM_NONE);
+    wire sprite1_alpha = show_sprite1 && sprite1_a && (owned_item1 == `ITEM_NONE);
     wire [31:0] sprite1_address_offset;
     wire is_sprite1_loaded;
     wire [31:0] sprite1_sd_adr;
@@ -176,7 +176,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite2_x;
     wire [8:0] sprite2_y;
     wire show_sprite2;
-    wire sprite2_alpha = show_sprite2 && sprite2_a && (owned_item == `ITEM_NONE);
+    wire sprite2_alpha = show_sprite2 && sprite2_a && (owned_item2 == `ITEM_NONE);
     wire [31:0] sprite2_address_offset;
     wire is_sprite2_loaded;
     wire [31:0] sprite2_sd_adr;
