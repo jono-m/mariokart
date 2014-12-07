@@ -285,7 +285,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire show_laps1;
     wire laps1_alpha = show_laps1 && laps1_a;
     laps_display laps_display1 (.clk(clk_100mhz), .rst(rst),
-            .laps_completed1(laps_completed1),
+            .laps_completed(laps_completed1),
             .x(x-laps1_x), .y(y-laps1_y),
             .sprite_x(laps1_sprite_x), .sprite_y(laps1_sprite_y),
             .color(12'hFFF), .red(laps1_r), .green(laps1_g), .blue(laps1_b),
@@ -302,7 +302,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire show_laps2;
     wire laps2_alpha = show_laps2 && laps2_a;
     laps_display laps_display2 (.clk(clk_100mhz), .rst(rst),
-            .laps_completed2(laps_completed2),
+            .laps_completed(laps_completed2),
             .x(x-laps2_x), .y(y-laps2_y),
             .sprite_x(laps2_sprite_x), .sprite_y(laps2_sprite_y),
             .color(12'hFFF), .red(laps2_r), .green(laps2_g), .blue(laps2_b),
