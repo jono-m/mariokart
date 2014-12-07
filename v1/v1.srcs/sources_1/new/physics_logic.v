@@ -439,7 +439,6 @@ module physics_logic (input clk_100mhz, input rst,
       (car1_current_map_type == `MAPTYPE_FINISH ? finish_speed1 :
       (car1_current_map_type == `MAPTYPE_GRASS ? grass_speed1 :
       (car1_current_map_type == `MAPTYPE_WALL ? wall_speed1 : ))));
-    ))));
 
     wire [1:0] road_speed2 = (car2_mushroom_buff ? `SPEED_BOOST :
             (car2_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL));
@@ -450,7 +449,6 @@ module physics_logic (input clk_100mhz, input rst,
       (car2_current_map_type == `MAPTYPE_FINISH ? finish_speed2 :
       (car2_current_map_type == `MAPTYPE_GRASS ? grass_speed2 :
       (car2_current_map_type == `MAPTYPE_WALL ? wall_speed2 : ))));
-    ))));
 
     // -------
     // Detect wall collision
