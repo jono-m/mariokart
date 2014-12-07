@@ -3,6 +3,7 @@
 module scene_logic(input clk_100mhz, input rst,
     input [2:0] phase,
     input [2:0] selected_character1, input [2:0] selected_character2,
+    input ready_for_race,
     input [9:0] car1_x, input [8:0] car1_y, input car1_present,
     input [9:0] car2_x, input [8:0] car2_y, input car2_present,
     input race_begin, input faded, input [1:0] laps_completed1,
@@ -150,6 +151,16 @@ module scene_logic(input clk_100mhz, input rst,
           char_select_box1_y <= 119 + (selected_character1[2] * 165);
           char_select_box2_x <= 44 + (selected_character2[1:0] * 139);
           char_select_box2_y <= 119 + (selected_character2[2] * 165);
+          if(ready_for_race) begin
+            show_text <= 1;
+            if(counter == 50000000) begin
+              show_text <= ~show_text;
+            end
+            counter <= counter + 1;
+          end
+          else begin
+            show_text <= 0;
+          end
         end
         `PHASE_LOADING_RACING: begin
           if(faded == 1) begin

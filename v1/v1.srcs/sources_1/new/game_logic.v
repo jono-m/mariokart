@@ -16,6 +16,10 @@ module game_logic(input clk_100mhz, input rst,
 		output reg [2:0] phase = `PHASE_LOADING_START_SCREEN,
 		output reg [2:0] selected_character1 = `CHARACTER_MARIO,
 		output reg [2:0] selected_character2 = `CHARACTER_LUIGI,
+		output reg character_selected1 = 0,
+		output reg character_selected2 = 0,
+		output reg ready_for_race = 0;
+
 		reg [1:0] laps_completed1 = 0,
 		reg [1:0] laps_completed2 = 0,
 
@@ -78,7 +82,10 @@ module game_logic(input clk_100mhz, input rst,
 		if(rst == 1) begin
 			phase <= `PHASE_LOADING_START_SCREEN;
 			selected_character1 <= `CHARACTER_MARIO;
-			selected_character2 <= `CHARACTER_MARIO;
+			selected_character2 <= `CHARACTER_LUIGI;
+			character_selected1 <= 0;
+			character_selected2 <= 0;
+			ready_for_race <= 0;
 			laps_completed1 <= 0;
 			laps_completed2 <= 0;
       item_box1[19:0] <= 0;
@@ -110,9 +117,18 @@ module game_logic(input clk_100mhz, input rst,
 					end
 					selected_character1 <= `CHARACTER_MARIO;
 					selected_character2 <= `CHARACTER_LUIGI;
+					ready_for_race <= 0;
+					character_selected1 <= 0;
+					character_selected2 <= 0;
 				end
 				`PHASE_CHARACTER_SELECT: begin
-					if(start1 == 1 || start2 == 1) begin
+					if(character_selected1 == 1 && character_selected2 == 2) begin
+						ready_for_race <= 1;
+					end 
+					else begin
+						ready_for_race <= 0;
+					end
+					if(ready_for_race && (start1 || start2)) begin
 						phase <= `PHASE_LOADING_RACING;
 						item_box1[19:0] <= imap_item_box1;
 						item_box2[19:0] <= imap_item_box2;
@@ -123,53 +139,73 @@ module game_logic(input clk_100mhz, input rst,
 						item_box7[19:0] <= imap_item_box7;
 						item_box8[19:0] <= imap_item_box8;
 					end
-					if(stickLeft1 == 1) begin
-						if(selected_character1[1:0] != 2'b00 && 
-							selected_character1 - 1 != selected_character2) begin
-							selected_character1 <= selected_character1 - 1;
+					if(~character_selected1) begin
+						if(stickLeft1 == 1) begin
+							if(selected_character1[1:0] != 2'b00 && 
+								selected_character1 - 1 != selected_character2) begin
+								selected_character1 <= selected_character1 - 1;
+							end
+						end
+						if(stickRight1 == 1) begin
+							if(selected_character1[1:0] != 2'b11 && 
+								selected_character1 + 1 != selected_character2) begin
+								selected_character1 <= selected_character1 + 1;
+							end
+						end
+						if(stickDown1 == 1) begin
+							if(selected_character1[2] != 1'b1 && 
+								selected_character1 + 3'b100 != selected_character2) begin
+								selected_character1 <= selected_character1 + 3'b100;
+							end
+						end
+						if(stickUp1 == 1) begin
+							if(selected_character1[2] != 1'b0 && 
+								selected_character1 - 3'b100 != selected_character2) begin
+								selected_character1 <= selected_character1 - 3'b100;
+							end
+						end
+						if(A1 == 1) begin
+							character_selected1 <= 1;
 						end
 					end
-					if(stickRight1 == 1) begin
-						if(selected_character1[1:0] != 2'b11 && 
-							selected_character1 + 1 != selected_character2) begin
-							selected_character1 <= selected_character1 + 1;
-						end
-					end
-					if(stickDown1 == 1) begin
-						if(selected_character1[2] != 1'b1 && 
-							selected_character1 + 3'b100 != selected_character2) begin
-							selected_character1 <= selected_character1 + 3'b100;
-						end
-					end
-					if(stickUp1 == 1) begin
-						if(selected_character1[2] != 1'b0 && 
-							selected_character1 - 3'b100 != selected_character2) begin
-							selected_character1 <= selected_character1 - 3'b100;
+					else begin
+						if(B1 == 1) begin
+							character_selected1 <= 0;
 						end
 					end
 					// 2
-					if(stickLeft2 == 1) begin
-						if(selected_character2[1:0] != 2'b00 && 
-							selected_character2 - 1 != selected_character1) begin
-							selected_character2 <= selected_character2 - 1;
+					if(~character_selected2) begin
+						if(stickLeft2 == 1) begin
+							if(selected_character2[1:0] != 2'b00 && 
+								selected_character2 - 1 != selected_character1) begin
+								selected_character2 <= selected_character2 - 1;
+							end
+						end
+						if(stickRight2 == 1) begin
+							if(selected_character2[1:0] != 2'b11 && 
+								selected_character2 + 1 != selected_character1) begin
+								selected_character2 <= selected_character2 + 1;
+							end
+						end
+						if(stickDown2 == 1) begin
+							if(selected_character2[2] != 1'b1 && 
+								selected_character2 + 3'b100 != selected_character1) begin
+								selected_character2 <= selected_character2 + 3'b100;
+							end
+						end
+						if(stickUp2 == 1) begin
+							if(selected_character2[2] != 1'b0 && 
+								selected_character2 - 3'b100 != selected_character1) begin
+								selected_character2 <= selected_character2 - 3'b100;
+							end
+						end
+						if(A2 == 1) begin
+							character_selected2 <= 1;
 						end
 					end
-					if(stickRight2 == 1) begin
-						if(selected_character2[1:0] != 2'b11 && 
-							selected_character2 + 1 != selected_character1) begin
-							selected_character2 <= selected_character2 + 1;
-						end
-					end
-					if(stickDown2 == 1) begin
-						if(selected_character2[2] != 1'b1 && 
-							selected_character2 + 3'b100 != selected_character1) begin
-							selected_character2 <= selected_character2 + 3'b100;
-						end
-					end
-					if(stickUp2 == 1) begin
-						if(selected_character2[2] != 1'b0 && 
-							selected_character2 - 3'b100 != selected_character1) begin
-							selected_character2 <= selected_character2 - 3'b100;
+					else begin
+						if(B2 == 1) begin
+							character_selected2 <= 0;
 						end
 					end
 				end

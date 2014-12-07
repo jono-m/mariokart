@@ -6,6 +6,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         // Game logic connections
         input [2:0] phase,
         input [2:0] selected_character1, input [2:0] selected_character2,
+        input character_selected1, input character_selected2,
+        input ready_for_race,
         input load,
         input in_loading_phase,
         output reg is_loaded = 0,
@@ -258,7 +260,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire csb1_alpha = show_csb1 && csb1_a;
     character_select_box p1_select(.clk(clk_100mhz), .rst(rst),
             .x(x-csb1_x), .y(y-csb1_y), .filled(0),
-            .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
+            .color(character_selected1 ? 12'h007 : 12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
             .alpha(csb1_a));
 
     wire [9:0] csb2_x;
@@ -271,7 +273,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire csb2_alpha = show_csb2 && csb2_a;
     character_select_box p2_select(.clk(clk_100mhz), .rst(rst),
             .x(x-csb2_x), .y(y-csb2_y), .filled(0),
-            .color(12'h00F), .red(csb2_r), .green(csb2_g), .blue(csb2_b),
+            .color(character_selected2 ? 12'h700 : 12'hF00), .red(csb2_r), .green(csb2_g), .blue(csb2_b),
             .alpha(csb2_a));
 
     wire [9:0] laps1_x;
@@ -517,6 +519,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
             .selected_character1(selected_character1),
             .selected_character2(selected_character2),
+            .ready_for_race(ready_for_race),
             .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
             .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
             .race_begin(race_begin), .faded(faded),

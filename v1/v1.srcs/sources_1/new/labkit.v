@@ -254,6 +254,9 @@ module labkit(input clk,
   wire in_loading_phase;
 	wire [2:0] selected_character1;
   wire [2:0] selected_character2;
+  wire character_selected1;
+  wire character_selected2;
+  wire ready_for_race;
   wire lap_completed1;
   wire [1:0] laps_completed1;
   wire lap_completed2;
@@ -306,6 +309,8 @@ module labkit(input clk,
 			.phase_loaded(phase_loaded), .in_loading_phase(in_loading_phase),
       .phase(phase),
 			.selected_character1(selected_character1), .selected_character2(selected_character2),
+      .character_selected1(character_selected1), .character_selected2(character_selected2),
+      .ready_for_race(ready_for_race),
       .lap_completed1(lap_completed1), .lap_completed2(lap_completed2),
       .laps_completed1(laps_completed1), .laps_completed2(laps_completed2), 
       .race_begin(race_begin),
@@ -390,6 +395,8 @@ module labkit(input clk,
 
 	video_logic vl(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst), .phase(phase),
 			.selected_character1(selected_character1), .selected_character2(selected_character2), 
+      .character_selected1(character_selected1), .character_selected2(character_selected2),
+      .ready_for_race(ready_for_race),
       .load(video_load),
       .in_loading_phase(in_loading_phase),
 			.is_loaded(video_loaded), .race_begin(race_begin), .oym_counter(oym_counter),
