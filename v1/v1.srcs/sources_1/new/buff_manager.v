@@ -7,7 +7,7 @@ module buff_item_manager(input clk_100mhz, input rst,
     output reg [1:0] owned_item = `ITEM_NONE,
     output reg picking_item = 0
     //output reg [1:0] buff = `BUFF_NONE,
-    //output reg place_banana,
+    output reg place_banana,
     //output reg use_lightning
     );
 
@@ -26,6 +26,8 @@ module buff_item_manager(input clk_100mhz, input rst,
       item_pick_counter <= 0;
       item_pick_clk_counter <= 0;
       item_rotation_clk_counter <= 0;
+      
+      place_banana <= 0;
     end
     else begin
       if(item_box_hit) begin
@@ -68,7 +70,7 @@ module buff_item_manager(input clk_100mhz, input rst,
         if(Z == 1) begin
           case(owned_item)
             `ITEM_BANANA: begin
-              //place_banana <= 1;
+              place_banana <= 1;
               owned_item <= `ITEM_NONE;
             end
             `ITEM_MUSHROOM: begin
@@ -82,10 +84,9 @@ module buff_item_manager(input clk_100mhz, input rst,
           endcase
         end
       end
-      // else begin
-      //   place_banana <= 0;
-      //   use_lightning <= 0;
-      // end
+      else begin
+        place_banana <= 0;
+      end
 
       // // Update 
       // if(buff_expired == 1) begin

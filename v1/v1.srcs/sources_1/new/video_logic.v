@@ -37,7 +37,12 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input [20:0] item_box5,
         input [20:0] item_box6,
         input [20:0] item_box7,
-        input [20:0] item_box8
+        input [20:0] item_box8,
+
+        input [20:0] banana1, input [20:0] banana2,
+        input [20:0] banana3, input [20:0] banana4,
+        input [20:0] banana5, input [20:0] banana6,
+        input [20:0] banana7, input [20:0] banana8,
     );
 
     // Flag if image loaders should be unloaded.
@@ -396,10 +401,10 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
 
     sprite_painter banana_p(.x(x), .y(y), .sprite_x(banana_x), .sprite_y(banana_y),
                        .sprite_is_present(show_banana),
-                       .sprite1(0), .sprite2(0),
-                       .sprite3(0), .sprite4(0),
-                       .sprite5(0), .sprite6(0),
-                       .sprite7(0), .sprite8(0),
+                       .sprite1(banana1), .sprite2(banana2),
+                       .sprite3(banana3), .sprite4(banana4),
+                       .sprite5(banana5), .sprite6(banana6),
+                       .sprite7(banana7), .sprite8(banana8),
                        .sprite9({(owned_item1 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
                        .sprite10({(owned_item2 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 

@@ -65,7 +65,21 @@ module game_logic(input clk_100mhz, input rst,
 	    input item_box5_hit,
 	    input item_box6_hit,
 	    input item_box7_hit,
-	    input item_box8_hit
+	    input item_box8_hit,
+
+	    // Car connections,
+	    input [9:0] car1_x, input [8:0] car1_y,
+	    input [9:0] car2_x, input [8:0] car2_y,
+
+	    // Some more game state...
+	    output reg [20:0] banana1 = 0,
+	    output reg [20:0] banana2 = 0,
+	    output reg [20:0] banana3 = 0,
+	    output reg [20:0] banana4 = 0,
+	    output reg [20:0] banana5 = 0,
+	    output reg [20:0] banana6 = 0,
+	    output reg [20:0] banana7 = 0,
+	    output reg [20:0] banana8 = 0
 	);
 	// Loading phases
 
@@ -326,10 +340,60 @@ module game_logic(input clk_100mhz, input rst,
 	// -----------------
 	// Item and buff managers
 
+	wire car1_place_banana;
+	wire car2_place_banana;
 	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
 			.item_box_hit(item_box_hit1), .Z(Z1), .owned_item(owned_item1),
-			.picking_item(picking_item1));
+			.picking_item(picking_item1), .place_banana(car1_place_banana));
 	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
 			.item_box_hit(item_box_hit2), .Z(Z2), .owned_item(owned_item2),
-			.picking_item(picking_item2));
+			.picking_item(picking_item2), .place_banana(car2_place_banana));
+
+	wire [4:0] next_free_banana_slot = 
+			(banana1[20] == 0 ? 1 :
+			(banana2[20] == 0 ? 2 :
+			(banana3[20] == 0 ? 3 :
+			(banana4[20] == 0 ? 4 :
+			(banana5[20] == 0 ? 5 :
+			(banana6[20] == 0 ? 6 :
+			(banana7[20] == 0 ? 7 :
+			(banana8[20] == 0 ? 8 : 1))))))));
+	always @(posedge clk_100mhz) begin
+		if(rst == 1) begin
+			banana1 <= 0;
+			banana2 <= 0;
+			banana3 <= 0;
+			banana4 <= 0;
+			banana5 <= 0;
+			banana6 <= 0;
+			banana7 <= 0;
+			banana8 <= 0;
+		end
+		else begin
+			if(car1_place_banana) begin
+				case(next_free_banana_slot)
+					1: banana1 <= {1'b1, car1_x, 1'b0, car1_y};
+					2: banana2 <= {1'b1, car1_x, 1'b0, car1_y};
+					3: banana3 <= {1'b1, car1_x, 1'b0, car1_y};
+					4: banana4 <= {1'b1, car1_x, 1'b0, car1_y};
+					5: banana5 <= {1'b1, car1_x, 1'b0, car1_y};
+					6: banana6 <= {1'b1, car1_x, 1'b0, car1_y};
+					7: banana7 <= {1'b1, car1_x, 1'b0, car1_y};
+					8: banana8 <= {1'b1, car1_x, 1'b0, car1_y};
+				endcase
+			end
+			if(car2_place_banana) begin
+				case(next_free_banana_slot)
+					1: banana1 <= {1'b1, car2_x, 1'b0, car2_y};
+					2: banana2 <= {1'b1, car2_x, 1'b0, car2_y};
+					3: banana3 <= {1'b1, car2_x, 1'b0, car2_y};
+					4: banana4 <= {1'b1, car2_x, 1'b0, car2_y};
+					5: banana5 <= {1'b1, car2_x, 1'b0, car2_y};
+					6: banana6 <= {1'b1, car2_x, 1'b0, car2_y};
+					7: banana7 <= {1'b1, car2_x, 1'b0, car2_y};
+					8: banana8 <= {1'b1, car2_x, 1'b0, car2_y};
+				endcase
+			end
+		end
+	end
 endmodule

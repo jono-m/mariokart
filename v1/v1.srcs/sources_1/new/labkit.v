@@ -292,6 +292,15 @@ module labkit(input clk,
   wire item_box7_hit;
   wire item_box8_hit;
 
+  wire [20:0] banana1;
+  wire [20:0] banana2;
+  wire [20:0] banana3;
+  wire [20:0] banana4;
+  wire [20:0] banana5;
+  wire [20:0] banana6;
+  wire [20:0] banana7;
+  wire [20:0] banana8;
+
   wire [1:0] owned_item1;
   wire [1:0] owned_item2;
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(A1), .B1(clean_B1), 
@@ -329,7 +338,11 @@ module labkit(input clk,
       .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
       .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
       .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
-      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit));
+      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit),
+      .banana1(banana1), .banana2(banana2),
+      .banana3(banana3), .banana4(banana4),
+      .banana5(banana5), .banana6(banana6),
+      .banana7(banana7), .banana8(banana8));
 
   // -----------------------------------
   // Car drivers and simulators.
@@ -411,7 +424,11 @@ module labkit(input clk,
       .item_box1(item_box1), .item_box2(item_box2),
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
-      .item_box7(item_box7), .item_box8(item_box8));
+      .item_box7(item_box7), .item_box8(item_box8),
+      .banana1(banana1), .banana2(banana2),
+      .banana3(banana3), .banana4(banana4),
+      .banana5(banana5), .banana6(banana6),
+      .banana7(banana7), .banana8(banana8));
 
   // ------------------------
   // Track information map.
