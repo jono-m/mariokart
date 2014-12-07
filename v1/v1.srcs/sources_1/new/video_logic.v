@@ -21,7 +21,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input sd_ready_for_read, output reg [31:0] sd_address,
         
         // VGA connections
-        input [9:0] x, input [9:0] y,
+        input [9:0] x, input [8:0] y,
         output [3:0] red, output [3:0] green, output [3:0] blue,
 
         // Car connections

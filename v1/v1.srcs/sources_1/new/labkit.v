@@ -83,7 +83,7 @@ module labkit(input clk,
 	// VGA.
 
 	wire [9:0] x;
-	wire [9:0] y;
+	wire [8:0] y;
 	wire at_display_area;
 	vga vga_module(.vga_clock(clk_25mhz), .x(x), .y(y), .vsync(Vsync),
 			.hsync(Hsync), .at_display_area(at_display_area));

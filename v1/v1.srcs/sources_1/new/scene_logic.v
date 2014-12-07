@@ -240,9 +240,9 @@ module scene_logic(input clk_100mhz, input rst,
         end
         `PHASE_LOADING_RESULTS: begin
           show_char_select_box1 <= 0;
-          show_sprite1 <= 0;
+          show_sprite1 <= 1;
           show_char_select_box2 <= 0;
-          show_sprite2 <= 0;
+          show_sprite2 <= 1;
           show_timer <= 0;
           show_latiku_oym <= 0;
           show_laps1 <= 0;
@@ -259,11 +259,11 @@ module scene_logic(input clk_100mhz, input rst,
           end
           counter <= counter + 1;
           sprite1_x <= 250;
-          sprite2_x <= 250;
-          show_sprite1 <= 1;
-          show_sprite2 <= 1;
           sprite1_y <= (finish_place1 == 1) ? 346 : 386;
+          show_sprite1 <= 1;
+          sprite2_x <= 250;
           sprite2_y <= (finish_place2 == 1) ? 346 : 386;
+          show_sprite2 <= 1;
           timer_x <= 295;
           timer_y <= 348;
           show_timer <= 1;

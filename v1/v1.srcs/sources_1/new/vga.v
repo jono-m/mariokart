@@ -2,12 +2,13 @@
 
 module vga(input vga_clock,
             output [9:0] x,
-            output [9:0] y,
+            output [8:0] y,
             output vsync, hsync, at_display_area);
     reg [9:0] hcount = 0;    // pixel number on current line
     reg [9:0] vcount = 0;     // line number
     assign x = at_display_area ? (hcount-144) : 0;
-    assign y = at_display_area ? (vcount-35) : 0;
+    wire [9:0] y1 = at_display_area ? (vcount-35) : 0;
+    assign y = y1[8:0];
     // Counters.
     always @(posedge vga_clock) begin
         if (hcount == 799) begin
