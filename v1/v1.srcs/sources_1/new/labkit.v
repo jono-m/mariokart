@@ -254,6 +254,8 @@ module labkit(input clk,
   wire in_loading_phase;
 	wire [2:0] selected_character1;
   wire [2:0] selected_character2;
+  wire [9:0] car1_x;
+  wire [8:0] car1_y;
   wire character_selected1;
   wire character_selected2;
   wire ready_for_race;
@@ -342,13 +344,13 @@ module labkit(input clk,
       .banana1(banana1), .banana2(banana2),
       .banana3(banana3), .banana4(banana4),
       .banana5(banana5), .banana6(banana6),
-      .banana7(banana7), .banana8(banana8));
+      .banana7(banana7), .banana8(banana8),
+      .car1_x(car1_x), .car1_y(car1_y),
+      .car2_x(car2_x), .car2_y(car2_y));
 
   // -----------------------------------
   // Car drivers and simulators.
 
-  wire [9:0] car1_x;
-  wire [8:0] car1_y;
   wire [1:0] speed1;
   wire forward1;
   wire backward1;
