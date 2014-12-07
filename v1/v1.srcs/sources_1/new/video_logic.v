@@ -271,8 +271,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire csb2_alpha = show_csb2 && csb2_a;
     character_select_box p2_select(.clk(clk_100mhz), .rst(rst),
             .x(x-csb2_x), .y(y-csb2_y), .filled(0),
-            .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
-            .alpha(csb1_a));
+            .color(12'h00F), .red(csb2_r), .green(csb2_g), .blue(csb2_b),
+            .alpha(csb2_a));
 
     wire [9:0] laps1_x;
     wire [8:0] laps1_y;
