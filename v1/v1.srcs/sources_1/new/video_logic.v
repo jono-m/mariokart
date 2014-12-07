@@ -52,7 +52,21 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         output [3:0] sec_tens,
         output [3:0] sec_ones,
         output [3:0] ms_tens,
-        output [3:0] ms_ones
+        output [3:0] ms_ones,
+
+        input [3:0] fmin_tens1,
+        input [3:0] fmin_ones1,
+        input [3:0] fsec_tens1,
+        input [3:0] fsec_ones1,
+        input [3:0] fms_tens1,
+        input [3:0] fms_ones1,
+
+        input [3:0] fmin_tens2,
+        input [3:0] fmin_ones2,
+        input [3:0] fsec_tens2,
+        input [3:0] fsec_ones2,
+        input [3:0] fms_tens2,
+        input [3:0] fms_ones2
     );
 
     // Flag if image loaders should be unloaded.
@@ -242,6 +256,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] timer_sd_adr;
     wire timer_sd_read;
     time_display td(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst_loader),
+            .force_display(phase == `PHASE_RESULTS),
             .load(timer_load), .reset_timer(reset_timer), 
             .address_offset(timer_address_offset), .x(x-timer_x), 
             .y(y-timer_y), .red(timer_r), .green(timer_g), .blue(timer_b),
@@ -250,7 +265,11 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte), 
             .sd_address(timer_sd_adr), .sd_do_read(timer_sd_read),
             .min_tens(min_tens), .min_ones(min_ones), .sec_tens(sec_tens), .sec_ones(sec_ones),
-            .ms_tens(ms_tens), .ms_ones(ms_ones));
+            .ms_tens(ms_tens), .ms_ones(ms_ones),
+            .fmin_tens1(fmin_tens1), .fmin_ones1(fmin_ones1), .fsec_tens1(fsec_tens1), .fsec_ones1(sec_ones1),
+            .fms_tens1(fms_tens1), .fms_ones1(fms_ones1),
+            .fmin_tens2(fmin_tens2), .fmin_ones2(fmin_ones2), .fsec_tens2(fsec_tens2), .fsec_ones2(sec_ones2),
+            .fms_tens2(fms_tens2), .fms_ones2(fms_ones2));
     
     // Latiku on your marks image loader
     // Loader connections.
@@ -367,7 +386,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             item_box_loader(.clk(clk_100mhz), .rst(rst_loader), 
                     .load(item_box_load), .x(item_box_x), .y(item_box_y), .red(item_box_r), 
                     .green(item_box_g), .blue(item_box_b), .alpha(item_box_a),
-                    .address_offset(`ADR_TROPHY_IMAGE),
+                    .address_offset(`ADR_ITEM_BOX_IMAGE),
                     .is_loaded(is_item_box_loaded), 
                     .sd_byte_available(sd_byte_available), 
                     .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),

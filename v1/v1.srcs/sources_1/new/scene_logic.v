@@ -252,13 +252,22 @@ module scene_logic(input clk_100mhz, input rst,
           trophy_y <= 0;
           show_trophy <= 0;
           text_x <= 120;
-          text_y <= 226;
+          text_y <= 400;
         end
         `PHASE_RESULTS: begin
           if(counter == 50000000) begin
             show_text <= ~show_text;
           end
           counter <= counter + 1;
+          sprite1_x <= 250;
+          sprite2_x <= 250;
+          show_sprite1 <= 1;
+          show_sprite2 <= 1;
+          sprite1_y <= (finish_place1 == 1) ? 346 : 386;
+          sprite2_y <= (finish_place2 == 1) ? 346 : 386;
+          timer_x <= 295;
+          timer_y <= 348;
+          show_timer <= 1;
         end
       endcase
     end

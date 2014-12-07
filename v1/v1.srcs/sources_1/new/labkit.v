@@ -513,7 +513,11 @@ module labkit(input clk,
       .banana7(banana7), .banana8(banana8),
       .lightning_used(lightning_used),
       .min_tens(min_tens), .min_ones(min_ones), .sec_tens(sec_tens), .sec_ones(sec_ones),
-      .ms_tens(ms_tens), .ms_ones(ms_ones)
+      .ms_tens(ms_tens), .ms_ones(ms_ones),
+      .fmin_tens1(fmin_tens1), .fmin_ones1(fmin_ones1), .fsec_tens1(fsec_tens1), .fsec_ones1(fsec_ones1),
+      .fms_tens1(fms_tens1), .fms_ones1(fms_ones1),
+      .fmin_tens2(fmin_tens2), .fmin_ones2(fmin_ones2), .fsec_tens2(fsec_tens2), .fsec_ones2(fsec_ones2),
+      .fms_tens2(fms_tens2), .fms_ones2(fms_ones2)
       );
 
   // ------------------------
