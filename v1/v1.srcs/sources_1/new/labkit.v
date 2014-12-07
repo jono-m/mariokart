@@ -491,6 +491,6 @@ module labkit(input clk,
   
   assign JA = {controller_data1, controller_data2};
 
-  assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-      paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, imap_loaded, video_loaded, 3'b111};
+  assign led = {phase, phase_loaded, A1, sd_read, sd_ready_for_read, sd_byte_available, rst, 
+      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, imap_loaded, video_loaded, 3'b111};
 endmodule
