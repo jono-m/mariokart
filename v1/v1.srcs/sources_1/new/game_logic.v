@@ -332,7 +332,7 @@ module game_logic(input clk_100mhz, input rst,
 						end
 					end
 					if(finish_place1 != 0 && finish_place2 != 0) begin
-						phase <= `PHASE_LOADING_START_SCREEN;
+						phase <= `PHASE_LOADING_RESULTS;
 					end
 				end
 				`PHASE_LOADING_RESULTS: begin
