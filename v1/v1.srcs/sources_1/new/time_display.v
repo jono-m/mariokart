@@ -101,14 +101,14 @@ module time_display
         ))))))));
 
     wire [3:0] number_to_draw = 
-        (in_min_tens ? (force_display ? (in_y1 ? fmin_tens1 : fmin_tens2) : min_tens) : 
-        (in_min_ones ? (force_display ? (in_y1 ? fmin_ones1 : fmin_ones2) : min_ones) :
+        (in_min_tens ? (force_display ? (in_y2 ? fmin_tens2 : fmin_tens1) : min_tens) : 
+        (in_min_ones ? (force_display ? (in_y2 ? fmin_ones2 : fmin_ones1) : min_ones) :
         (in_min_separator ? 4'hA :
-        (in_sec_tens ? (force_display ? (in_y1 ? fsec_tens1 : fsec_tens2) : sec_tens) :
-        (in_sec_ones ? (force_display ? (in_y1 ? fsec_ones1 : fsec_ones2) : sec_ones) :
+        (in_sec_tens ? (force_display ? (in_y2 ? fsec_tens2 : fsec_tens1) : sec_tens) :
+        (in_sec_ones ? (force_display ? (in_y2 ? fsec_ones2 : fsec_ones1) : sec_ones) :
         (in_sec_separator ? 4'hA :
-        (in_ms_tens ? (force_display ? (in_y1 ? fms_tens1 : fms_tens2) : ms_tens) :
-        (in_ms_ones ? (force_display ? (in_y1 ? fms_ones1 : fms_ones2) : ms_ones) : 0
+        (in_ms_tens ? (force_display ? (in_y2 ? fms_tens2 : fms_tens1) : ms_tens) :
+        (in_ms_ones ? (force_display ? (in_y2 ? fms_ones2 : fms_ones1) : ms_ones) : 0
         ))))))));
 
     assign time_y = in_y ? (y + (number_to_draw * BMP_Y)) : (in_y2 ?
