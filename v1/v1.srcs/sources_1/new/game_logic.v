@@ -18,7 +18,7 @@ module game_logic(input clk_100mhz, input rst,
 		output reg [2:0] selected_character2 = `CHARACTER_LUIGI,
 		output reg character_selected1 = 0,
 		output reg character_selected2 = 0,
-		output reg ready_for_race = 0;
+		output reg ready_for_race = 0,
 
 		reg [1:0] laps_completed1 = 0,
 		reg [1:0] laps_completed2 = 0,
