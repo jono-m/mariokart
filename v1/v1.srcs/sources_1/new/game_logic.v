@@ -122,7 +122,7 @@ module game_logic(input clk_100mhz, input rst,
 					character_selected2 <= 0;
 				end
 				`PHASE_CHARACTER_SELECT: begin
-					if(character_selected1 == 1 && character_selected2 == 2) begin
+					if(character_selected1 == 1 && character_selected2 == 1) begin
 						ready_for_race <= 1;
 					end 
 					else begin

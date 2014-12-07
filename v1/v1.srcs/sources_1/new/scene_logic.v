@@ -152,7 +152,6 @@ module scene_logic(input clk_100mhz, input rst,
           char_select_box2_x <= 44 + (selected_character2[1:0] * 139);
           char_select_box2_y <= 119 + (selected_character2[2] * 165);
           if(ready_for_race) begin
-            show_text <= 1;
             if(counter == 50000000) begin
               show_text <= ~show_text;
             end
