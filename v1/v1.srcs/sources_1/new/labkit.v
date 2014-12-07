@@ -109,12 +109,12 @@ module labkit(input clk,
 	wire cD1;
 	wire cL1;
 	wire cR1;
-	wire [7:0] stickX1;
-	wire [7:0] stickY1;
-  wire stickUp1 = btnU || (stickY1 > 170);
-  wire stickDown1 = btnD || (stickY1 < 80);
-  wire stickLeft1 = btnL || (stickX1 < 80);
-  wire stickRight1 = btnR || (stickX1 > 170);
+	wire signed [7:0] stickX1;
+	wire signed [7:0] stickY1;
+  wire stickUp1 = btnU || (stickY1 > 50);
+  wire stickDown1 = btnD || (stickY1 < -50);
+  wire stickLeft1 = btnL || (stickX1 < -50);
+  wire stickRight1 = btnR || (stickX1 > 50);
   wire controller_data1;
 
   N64_interpret controller1(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_1mhz(clk_1mhz),
@@ -185,12 +185,12 @@ module labkit(input clk,
   wire cD2;
   wire cL2;
   wire cR2;
-  wire [7:0] stickX2;
-  wire [7:0] stickY2;
-  wire stickUp2 = (stickY2 > 270);
-  wire stickDown2 = (stickY2 < 80);
-  wire stickLeft2 = (stickX2 < 80);
-  wire stickRight2 = (stickX2 > 270);
+  wire signed [7:0] stickX2;
+  wire signed [7:0] stickY2;
+  wire stickUp2 = (stickY2 > 50);
+  wire stickDown2 = (stickY2 < -50);
+  wire stickLeft2 = (stickX2 < -50);
+  wire stickRight2 = (stickX2 > 50);
   wire controller_data2;
 
   N64_interpret controller2(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_1mhz(clk_1mhz),

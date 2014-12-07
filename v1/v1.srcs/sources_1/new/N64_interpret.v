@@ -2,7 +2,7 @@ module N64_interpret(input clk_100mhz, rst, enabled, clk_1mhz,
 					output A, B, Z, start, L, R,
 					output dU, dD, dL, dR,
 					output cU, cD, cL, cR,
-					output [7:0] stickX, stickY, 
+					output signed [7:0] stickX, output signed [7:0] stickY, 
 					inout controller_data);
 	parameter send = 1'd0;
 	parameter listen = 1'd1;
