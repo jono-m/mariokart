@@ -45,6 +45,7 @@ module lightning_display(input clk_100mhz, input rst,
 	    			flash_counter <= 0;
 	    			lightning_display <= ~lightning_display;
 	    		end
+            end
 	    	else begin
 	    		flash_counter <= 0;
 	    		lightning_display <= 0;
