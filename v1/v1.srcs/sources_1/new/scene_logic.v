@@ -64,8 +64,8 @@ module scene_logic(input clk_100mhz, input rst,
         end
         `PHASE_LOADING_RACING: begin
           bg_address_offset <= `ADR_RACING_BG;
-          sprite1_address_offset1 <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character1);
-          sprite1_address_offset2 <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character2);
+          sprite1_address_offset <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character1);
+          sprite2_address_offset <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character2);
         end
       endcase
     end
