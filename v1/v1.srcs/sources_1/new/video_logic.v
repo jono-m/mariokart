@@ -126,14 +126,16 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_text_write), 
                     .bram_write_enable(bram_text_we));
 
-    reg [26:0] powerup_counter = 0;
+    reg powerup_counter = 0;
+    reg [26:0] powerup_clk = 0;
 
     always @(posedge clk_100mhz) begin
-        if(powerup_counter == 25000000) begin
+        if(powerup_clk == 25000000) begin
             powerup_counter <= ~powerup_counter;
+            powerup_clk <= 0;
         end
         else begin
-            powerup_counter <= powerup_counter + 1;
+            powerup_clk <= powerup_clk + 1;
         end
     end
 
