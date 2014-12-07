@@ -127,7 +127,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_sprite1_write;
     wire [31:0] bram_sprite1_read;
     wire bram_sprite1_we;   
-    sprite_bram sprite1_bram(.clka(clk_50mhz), .addra(bram_sprite1_adr), 
+    sprite_image_bram sprite1_bram(.clka(clk_50mhz), .addra(bram_sprite1_adr), 
             .dina(bram_sprite1_write), .douta(bram_sprite1_read), .wea(bram_sprite1_we));
     // Loader connections.
     reg sprite1_load = 0;
@@ -165,7 +165,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [32:0] bram_sprite2_write;
     wire [32:0] bram_sprite2_read;
     wire bram_sprite2_we;   
-    sprite_bram sprite2_bram(.clka(clk_50mhz), .addra(bram_sprite2_adr), 
+    sprite_image_bram sprite2_bram(.clka(clk_50mhz), .addra(bram_sprite2_adr), 
             .dina(bram_sprite2_write), .douta(bram_sprite2_read), .wea(bram_sprite2_we));
     // Loader connections.
     reg sprite2_load = 0;
@@ -316,7 +316,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_item_box_write;
     wire [31:0] bram_item_box_read;
     wire bram_item_box_we;   
-    sprite_bram item_box_bram(.clka(clk_50mhz), .addra(bram_item_box_adr), 
+    sprite_image_bram item_box_bram(.clka(clk_50mhz), .addra(bram_item_box_adr), 
             .dina(bram_item_box_write), .douta(bram_item_box_read), .wea(bram_item_box_we));
     // Loader connections.
     reg item_box_load = 0;
@@ -362,7 +362,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_banana_write;
     wire [31:0] bram_banana_read;
     wire bram_banana_we;   
-    sprite_bram banana_bram(.clka(clk_50mhz), .addra(bram_banana_adr), 
+    sprite_image_bram banana_bram(.clka(clk_50mhz), .addra(bram_banana_adr), 
             .dina(bram_banana_write), .douta(bram_banana_read), .wea(bram_banana_we));
     // Loader connections.
     reg banana_load = 0;
@@ -409,7 +409,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_mushroom_write;
     wire [31:0] bram_mushroom_read;
     wire bram_mushroom_we;   
-    sprite_bram mushroom_bram(.clka(clk_50mhz), .addra(bram_mushroom_adr), 
+    sprite_image_bram mushroom_bram(.clka(clk_50mhz), .addra(bram_mushroom_adr), 
             .dina(bram_mushroom_write), .douta(bram_mushroom_read), .wea(bram_mushroom_we));
     // Loader connections.
     reg mushroom_load = 0;
@@ -456,7 +456,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_lightning_write;
     wire [31:0] bram_lightning_read;
     wire bram_lightning_we;   
-    sprite_bram lightning_bram(.clka(clk_50mhz), .addra(bram_lightning_adr), 
+    sprite_image_bram lightning_bram(.clka(clk_50mhz), .addra(bram_lightning_adr), 
             .dina(bram_lightning_write), .douta(bram_lightning_read), .wea(bram_lightning_we));
     // Loader connections.
     reg lightning_load = 0;
