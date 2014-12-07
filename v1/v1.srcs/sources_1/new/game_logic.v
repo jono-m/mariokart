@@ -440,6 +440,14 @@ module game_logic(input clk_100mhz, input rst,
 					8: banana8 <= {1'b1, car2_x, 1'b0, car2_y};
 				endcase
 			end
+			if(banana1_hit) banana1 <= 0;
+			if(banana2_hit) banana2 <= 0;
+			if(banana3_hit) banana3 <= 0;
+			if(banana4_hit) banana4 <= 0;
+			if(banana5_hit) banana5 <= 0;
+			if(banana6_hit) banana6 <= 0;
+			if(banana7_hit) banana7 <= 0;
+			if(banana8_hit) banana8 <= 0;
 		end
 	end
 endmodule

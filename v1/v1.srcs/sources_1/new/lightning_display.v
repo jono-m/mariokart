@@ -19,7 +19,7 @@ module lightning_display(input clk_100mhz, input rst,
                 lightning_counter <= `LIGHTNING_FLASH_MS;
             end
             if(displaying_lightning) begin
-            	if(lightning_clk_counter < 100000000) begin
+            	if(lightning_clk_counter < 100000) begin
             		lightning_clk_counter <= lightning_clk_counter + 1;
             	end
             	else begin

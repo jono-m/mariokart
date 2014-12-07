@@ -467,8 +467,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({((owned_item1 == `ITEM_MUSHROOM || (powerup_counter == 0 || picking1)) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({((owned_item2 == `ITEM_MUSHROOM || (powerup_counter == 0 || picking2)) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
+                       .sprite9({((owned_item1 == `ITEM_MUSHROOM && (powerup_counter == 0 || picking1)) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({((owned_item2 == `ITEM_MUSHROOM && (powerup_counter == 0 || picking2)) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // --------------------------
     // Lightning image loader
@@ -514,8 +514,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({((owned_item1 == `ITEM_LIGHTNING || powerup_counter == 0) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({((owned_item2 == `ITEM_LIGHTNING || powerup_counter == 0) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
+                       .sprite9({((owned_item1 == `ITEM_LIGHTNING && (powerup_counter == 0 || picking1) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({((owned_item2 == `ITEM_LIGHTNING && (powerup_counter == 0 || picking2) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     wire lightning_display;
     lightning_display ld(.clk_100mhz(clk_100mhz), .rst(rst),
