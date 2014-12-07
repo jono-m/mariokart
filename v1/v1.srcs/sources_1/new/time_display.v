@@ -111,8 +111,8 @@ module time_display
         (in_ms_ones ? (force_display ? (in_y1 ? fms_ones1 : fms_ones2) : ms_ones) : 0
         ))))))));
 
-    assign time_y = in_y ? (y + (number_to_draw * BMP_Y)) : in_y2 :
-        (y - 40 + (number_to_draw * BMP_Y));
+    assign time_y = in_y ? (y + (number_to_draw * BMP_Y)) : (in_y2 ?
+        (y - 40 + (number_to_draw * BMP_Y)) : 0);
 
     reg [19:0] counter = 0;
     always @(posedge clk_100mhz) begin
