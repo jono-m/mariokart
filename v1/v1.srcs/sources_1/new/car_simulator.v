@@ -5,7 +5,7 @@
 module car_simulator(input clk_100mhz, input rst, 
     input forward, input backward, input left, input right, input [1:0] speed,
 
-    output reg [9:0] car1_x = 364, output reg [8:0] car1_y = 364);
+    output reg [9:0] car_x = 364, output reg [8:0] car_y = 364);
   parameter SPEED_FACTOR = 1;
   
   reg [18:0] counter = 0;
@@ -22,22 +22,22 @@ module car_simulator(input clk_100mhz, input rst,
   
   always @(posedge clk_move) begin
     if(rst == 1) begin
-      car1_x <= 364;
-      car1_y <= 364;
+      car_x <= 364;
+      car_y <= 364;
       //angle <= 0;
     end
     else begin
       if(forward) begin
-        car1_y <= car1_y - speed;
+        car_y <= car_y - speed;
       end
       else if(backward) begin
-        car1_y <= car1_y + speed;
+        car_y <= car_y + speed;
       end
       else if(left) begin
-        car1_x <= car1_x - speed;
+        car_x <= car_x - speed;
       end
       else if(right) begin
-        car1_x <= car1_x + speed;
+        car_x <= car_x + speed;
       end
     end
   end

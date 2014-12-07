@@ -2,13 +2,16 @@
 
 module scene_logic(input clk_100mhz, input rst,
     input [2:0] phase,
-    input [2:0] selected_character,
+    input [2:0] selected_character1, input [2:0] selected_character2,
     input [9:0] car1_x, input [8:0] car1_y, input car1_present,
-    input race_begin, input faded, input [1:0] laps_completed,
+    input [9:0] car2_x, input [8:0] car2_y, input car2_present,
+    input race_begin, input faded, input [1:0] laps_completed1,
+    input [1:0] laps_completed2,
 
     output reg [31:0] bg_address_offset = `ADR_START_SCREEN_BG,
     output reg [31:0] text_address_offset = 0,
     output reg [31:0] sprite1_address_offset = 0,
+    output reg [31:0] sprite2_address_offset = 0,
 
     output reg show_text = 0,
     output reg [9:0] text_x = 0, 
@@ -17,10 +20,16 @@ module scene_logic(input clk_100mhz, input rst,
     output reg show_char_select_box1 = 0,
     output reg [9:0] char_select_box1_x = 0,
     output reg [8:0] char_select_box1_y = 0,
+    output reg show_char_select_box2 = 0,
+    output reg [9:0] char_select_box2_x = 0,
+    output reg [8:0] char_select_box2_y = 0,
 
     output reg show_sprite1 = 0,
     output reg [9:0] sprite1_x = 0,
     output reg [8:0] sprite1_y = 0,
+    output reg show_sprite2 = 0,
+    output reg [9:0] sprite2_x = 0,
+    output reg [8:0] sprite2_y = 0,
 
     output reg show_timer = 0,
     output reg [9:0] timer_x = 0,
@@ -32,7 +41,10 @@ module scene_logic(input clk_100mhz, input rst,
 
     output reg [9:0] laps1_x = 0,
     output reg [8:0] laps1_y = 0,
-    output reg show_laps1 = 0
+    output reg show_laps1 = 0,
+    output reg [9:0] laps2_x = 0,
+    output reg [8:0] laps2_y = 0,
+    output reg show_laps2 = 0
     );
   
   // Determine which images should be loaded for each scene.
@@ -52,7 +64,8 @@ module scene_logic(input clk_100mhz, input rst,
         end
         `PHASE_LOADING_RACING: begin
           bg_address_offset <= `ADR_RACING_BG;
-          sprite1_address_offset <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character);
+          sprite1_address_offset1 <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character1);
+          sprite1_address_offset2 <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character2);
         end
       endcase
     end
@@ -73,6 +86,12 @@ module scene_logic(input clk_100mhz, input rst,
       sprite1_x <= 0;
       sprite1_y <= 0;
       show_sprite1 <= 0;
+      char_select_box2_x <= 0;
+      char_select_box2_y <= 0;
+      show_char_select_box2 <= 0;
+      sprite2_x <= 0;
+      sprite2_y <= 0;
+      show_sprite2 <= 0;
       timer_x <= 0;
       timer_y <= 0;
       show_timer <= 0;
@@ -82,6 +101,9 @@ module scene_logic(input clk_100mhz, input rst,
       laps1_x <= 0;
       laps1_y <= 0;
       show_laps1 <= 0;
+      laps2_x <= 0;
+      laps2_y <= 0;
+      show_laps2 <= 0;
       counter <= 0;
     end
     else begin
@@ -93,9 +115,12 @@ module scene_logic(input clk_100mhz, input rst,
             text_y <= 306;
             show_char_select_box1 <= 0;
             show_sprite1 <= 0;
+            show_char_select_box2 <= 0;
+            show_sprite2 <= 0;
             show_timer <= 0;
             show_latiku_oym <= 0;
             show_laps1 <= 0;
+            show_laps2 <= 0;
             counter <= 0;
           end
         end
@@ -108,17 +133,23 @@ module scene_logic(input clk_100mhz, input rst,
         `PHASE_LOADING_CHARACTER_SELECT: begin
           if(faded == 1) begin
             show_text <= 0;
-            char_select_box1_x <= 44 + (selected_character[1:0] * 139);
-            char_select_box1_y <= 119 + (selected_character[2] * 165);
+            char_select_box1_x <= 44 + (selected_character1[1:0] * 139);
+            char_select_box1_y <= 119 + (selected_character1[2] * 165);
+            char_select_box2_x <= 44 + (selected_character2[1:0] * 139);
+            char_select_box2_y <= 119 + (selected_character2[2] * 165);
             show_char_select_box1 <= 1;
             show_sprite1 <= 0;
+            show_char_select_box2 <= 1;
+            show_sprite2 <= 0;
             show_timer <= 0;
             show_latiku_oym <= 0;
           end
         end
         `PHASE_CHARACTER_SELECT: begin
-          char_select_box1_x <= 44 + (selected_character[1:0] * 139);
-          char_select_box1_y <= 119 + (selected_character[2] * 165);
+          char_select_box1_x <= 44 + (selected_character1[1:0] * 139);
+          char_select_box1_y <= 119 + (selected_character1[2] * 165);
+          char_select_box2_x <= 44 + (selected_character2[1:0] * 139);
+          char_select_box2_y <= 119 + (selected_character2[2] * 165);
         end
         `PHASE_LOADING_RACING: begin
           if(faded == 1) begin
@@ -127,6 +158,10 @@ module scene_logic(input clk_100mhz, input rst,
             show_sprite1 <= 1;
             sprite1_x <= car1_x - 10;
             sprite1_y <= car1_y - 10;
+            show_char_select_box2 <= 0;
+            show_sprite2 <= 1;
+            sprite2_x <= car2_x - 10;
+            sprite2_y <= car2_y - 10;
             show_timer <= 1;
             timer_x <= 236;
             timer_y <= 17;
@@ -141,6 +176,7 @@ module scene_logic(input clk_100mhz, input rst,
             if(counter == 50000000) begin
               show_latiku_oym <= 0;
               show_laps1 <= 1;
+              show_laps2 <= 1;
             end
             counter <= counter + 1;
           end
@@ -148,9 +184,18 @@ module scene_logic(input clk_100mhz, input rst,
           sprite1_y <= car1_y - 10;
           laps1_x <= car1_x - 10;
           laps1_y <= car1_y + 15;
-          if(laps_completed == 2) begin
+          sprite2_x <= car2_x - 10;
+          sprite2_y <= car2_y - 10;
+          laps2_x <= car2_x - 10;
+          laps2_y <= car2_y + 15;
+          if(laps_completed1 == 2) begin
             if(counter == 25000000) begin
               show_laps1 <= 0;
+            end
+          end
+          if(laps_completed2 == 2) begin
+            if(counter == 25000000) begin
+              show_laps2 <= 0;
             end
           end
         end

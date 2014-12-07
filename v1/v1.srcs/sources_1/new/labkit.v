@@ -39,7 +39,7 @@ module labkit(input clk,
 		input [15:0] sw,
 
     // PMOD
-    inout [4:0] JD 
+    inout [1:0] JA
 	);
 
   // -----------------
@@ -92,85 +92,163 @@ module labkit(input clk,
 	// Button and N64 input.
 
   wire A_ctrl;
-	wire A = btnU || A_ctrl;
+	wire A1 = btnU || A_ctrl;
   wire B_ctrl;
-	wire B = btnD || B_ctrl;
+	wire B1 = btnD || B_ctrl;
   wire start_ctrl;
-	wire start = btnC || start_ctrl;
+	wire start1 = btnC || start_ctrl;
   wire Z_ctrl;
-	wire Z = btnC || Z_ctrl;
-	wire R;
-	wire L;
-	wire dU;
-	wire dD;
-	wire dL;
-	wire dR;
-	wire cU;
-	wire cD;
-	wire cL;
-	wire cR;
-	wire stickUp = btnU;
-	wire stickDown = btnD;
-	wire stickLeft = btnL;
-	wire stickRight = btnR;
-	wire [7:0] stickX;
-	wire [7:0] stickY;
-  wire controller_data;
+	wire Z1 = btnC || Z_ctrl;
+	wire R1;
+	wire L1;
+	wire dU1;
+	wire dD1;
+	wire dL1;
+	wire dR1;
+	wire cU1;
+	wire cD1;
+	wire cL1;
+	wire cR1;
+	wire [7:0] stickX1;
+	wire [7:0] stickY1;
+  wire stickUp1 = btnU || (stickY > 170);
+  wire stickDown1 = btnD || (stickY < 80);
+  wire stickLeft1 = btnL || (stickX < 80);
+  wire stickRight1 = btnR || (stickX > 170);
+  wire controller_data1;
 
-  N64_interpret controller1(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(0), .clk_1mhz(clk_1mhz),
-      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L), .R(R), .Z(Z_ctrl), .dU(dU), .dD(dD), .dL(dL),
-      .dR(dR), .cU(cU), .cD(cD), .cL(cL), .cR(cR), .stickX(stickX), 
-      .stickY(stickY), .controller_data(controller_data));
+  N64_interpret controller1(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_1mhz(clk_1mhz),
+      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L1), .R(R1), .Z(Z_ctrl), .dU(dU1), .dD(dD1), .dL(dL1),
+      .dR(dR1), .cU(cU1), .cD(cD1), .cL(cL1), .cR(cR1), .stickX(stickX1), 
+      .stickY(stickY1), .controller_data(controller_data1));
 
-  wire clean_A;
-  wire clean_B;
-  wire clean_start;
-  wire clean_Z;
-  wire clean_R;
-  wire clean_L;
-  wire clean_dU;
-  wire clean_dD;
-  wire clean_dL;
-  wire clean_dR;
-  wire clean_cU;
-  wire clean_cD;
-  wire clean_cL;
-  wire clean_cR;
-  wire clean_stickUp;
-  wire clean_stickDown;
-  wire clean_stickLeft;
-  wire clean_stickRight;
+  wire clean_A1;
+  wire clean_B1;
+  wire clean_start1;
+  wire clean_Z1;
+  wire clean_R1;
+  wire clean_L1;
+  wire clean_dU1;
+  wire clean_dD1;
+  wire clean_dL1;
+  wire clean_dR1;
+  wire clean_cU1;
+  wire clean_cD1;
+  wire clean_cL1;
+  wire clean_cR1;
+  wire clean_stickUp1;
+  wire clean_stickDown1;
+  wire clean_stickLeft1;
+  wire clean_stickRight1;
 
-  debounce debounceA(rst, clk_100mhz, A, clean_A);
-  debounce debounceB(rst, clk_100mhz, B, clean_B);
-  debounce debounceS(rst, clk_100mhz, start, clean_start);
-  debounce debounceZ(rst, clk_100mhz, Z, clean_Z);
-  debounce debounceR(rst, clk_100mhz, R, clean_R);
-  debounce debounceL(rst, clk_100mhz, L, clean_L);
-  debounce debounceDU(rst, clk_100mhz, dU, clean_dU);
-  debounce debounceDD(rst, clk_100mhz, dD, clean_dD);
-  debounce debounceDL(rst, clk_100mhz, dL, clean_dL);
-  debounce debounceDR(rst, clk_100mhz, dR, clean_dR);
-  debounce debounceCU(rst, clk_100mhz, cU, clean_cU);
-  debounce debounceCD(rst, clk_100mhz, cD, clean_cD);
-  debounce debounceCL(rst, clk_100mhz, cL, clean_cL);
-  debounce debounceCR(rst, clk_100mhz, cR, clean_cR);
-  debounce debounceSU(rst, clk_100mhz, stickUp, clean_stickUp);
-  debounce debounceSD(rst, clk_100mhz, stickDown, clean_stickDown);
-  debounce debounceSL(rst, clk_100mhz, stickLeft, clean_stickLeft);
-  debounce debounceSR(rst, clk_100mhz, stickRight, clean_stickRight);
+  debounce debounceA(rst, clk_100mhz, A1, clean_A1);
+  debounce debounceB(rst, clk_100mhz, B1, clean_B1);
+  debounce debounceS(rst, clk_100mhz, start1, clean_start1);
+  debounce debounceZ(rst, clk_100mhz, Z1, clean_Z1);
+  debounce debounceR(rst, clk_100mhz, R1, clean_R1);
+  debounce debounceL(rst, clk_100mhz, L1, clean_L1);
+  debounce debounceDU(rst, clk_100mhz, dU1, clean_dU1);
+  debounce debounceDD(rst, clk_100mhz, dD1, clean_dD1);
+  debounce debounceDL(rst, clk_100mhz, dL1, clean_dL1);
+  debounce debounceDR(rst, clk_100mhz, dR1, clean_dR1);
+  debounce debounceCU(rst, clk_100mhz, cU1, clean_cU1);
+  debounce debounceCD(rst, clk_100mhz, cD1, clean_cD1);
+  debounce debounceCL(rst, clk_100mhz, cL1, clean_cL1);
+  debounce debounceCR(rst, clk_100mhz, cR1, clean_cR1);
+  debounce debounceSU(rst, clk_100mhz, stickUp1, clean_stickUp1);
+  debounce debounceSD(rst, clk_100mhz, stickDown1, clean_stickDown1);
+  debounce debounceSL(rst, clk_100mhz, stickLeft1, clean_stickLeft1);
+  debounce debounceSR(rst, clk_100mhz, stickRight1, clean_stickRight1);
 
-  wire paused_stickUp;
-  wire paused_stickDown;
-  wire paused_stickLeft;
-  wire paused_stickRight;
-  wire paused_A;
+  wire paused_stickUp1;
+  wire paused_stickDown1;
+  wire paused_stickLeft1;
+  wire paused_stickRight1;
 
-  pause_repeater p1(rst, clk_100mhz, clean_A, paused_A);
-  pause_repeater p2(rst, clk_100mhz, clean_stickUp, paused_stickUp);
-  pause_repeater p3(rst, clk_100mhz, clean_stickDown, paused_stickDown);
-  pause_repeater p4(rst, clk_100mhz, clean_stickLeft, paused_stickLeft);
-  pause_repeater p5(rst, clk_100mhz, clean_stickRight, paused_stickRight);
+  pause_repeater pu1(rst, clk_100mhz, clean_stickUp1, paused_stickUp1);
+  pause_repeater pd1(rst, clk_100mhz, clean_stickDown1, paused_stickDown1);
+  pause_repeater pl1(rst, clk_100mhz, clean_stickLeft1, paused_stickLeft1);
+  pause_repeater pr1(rst, clk_100mhz, clean_stickRight1, paused_stickRight1);
+
+  // Player 2
+  wire A_ctrl;
+  wire A2 = btnU || A_ctrl;
+  wire B_ctrl;
+  wire B2 = btnD || B_ctrl;
+  wire start_ctrl;
+  wire start2 = btnC || start_ctrl;
+  wire Z_ctrl;
+  wire Z2 = btnC || Z_ctrl;
+  wire R2;
+  wire L2;
+  wire dU2;
+  wire dD2;
+  wire dL2;
+  wire dR2;
+  wire cU2;
+  wire cD2;
+  wire cL2;
+  wire cR2;
+  wire [7:0] stickX2;
+  wire [7:0] stickY2;
+  wire stickUp2 = btnU || (stickY > 270);
+  wire stickDown2 = btnD || (stickY < 80);
+  wire stickLeft2 = btnL || (stickX < 80);
+  wire stickRight2 = btnR || (stickX > 270);
+  wire controller_data2;
+
+  N64_interpret controller2(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_2mhz(clk_2mhz),
+      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L2), .R(R2), .Z(Z_ctrl), .dU(dU2), .dD(dD2), .dL(dL2),
+      .dR(dR2), .cU(cU2), .cD(cD2), .cL(cL2), .cR(cR2), .stickX(stickX2), 
+      .stickY(stickY2), .controller_data(controller_data2));
+
+  wire clean_A2;
+  wire clean_B2;
+  wire clean_start2;
+  wire clean_Z2;
+  wire clean_R2;
+  wire clean_L2;
+  wire clean_dU2;
+  wire clean_dD2;
+  wire clean_dL2;
+  wire clean_dR2;
+  wire clean_cU2;
+  wire clean_cD2;
+  wire clean_cL2;
+  wire clean_cR2;
+  wire clean_stickUp2;
+  wire clean_stickDown2;
+  wire clean_stickLeft2;
+  wire clean_stickRight2;
+
+  debounce debounceA(rst, clk_100mhz, A2, clean_A2);
+  debounce debounceB(rst, clk_100mhz, B2, clean_B2);
+  debounce debounceS(rst, clk_100mhz, start2, clean_start2);
+  debounce debounceZ(rst, clk_100mhz, Z2, clean_Z2);
+  debounce debounceR(rst, clk_100mhz, R2, clean_R2);
+  debounce debounceL(rst, clk_100mhz, L2, clean_L2);
+  debounce debounceDU(rst, clk_100mhz, dU2, clean_dU2);
+  debounce debounceDD(rst, clk_100mhz, dD2, clean_dD2);
+  debounce debounceDL(rst, clk_100mhz, dL2, clean_dL2);
+  debounce debounceDR(rst, clk_100mhz, dR2, clean_dR2);
+  debounce debounceCU(rst, clk_100mhz, cU2, clean_cU2);
+  debounce debounceCD(rst, clk_100mhz, cD2, clean_cD2);
+  debounce debounceCL(rst, clk_100mhz, cL2, clean_cL2);
+  debounce debounceCR(rst, clk_100mhz, cR2, clean_cR2);
+  debounce debounceSU(rst, clk_100mhz, stickUp2, clean_stickUp2);
+  debounce debounceSD(rst, clk_100mhz, stickDown2, clean_stickDown2);
+  debounce debounceSL(rst, clk_100mhz, stickLeft2, clean_stickLeft2);
+  debounce debounceSR(rst, clk_100mhz, stickRight2, clean_stickRight2);
+
+  wire paused_stickUp2;
+  wire paused_stickDown2;
+  wire paused_stickLeft2;
+  wire paused_stickRight2;
+
+  pause_repeater pu2(rst, clk_100mhz, clean_stickUp2, paused_stickUp2);
+  pause_repeater pd2(rst, clk_100mhz, clean_stickDown2, paused_stickDown2);
+  pause_repeater pl2(rst, clk_100mhz, clean_stickLeft2, paused_stickLeft2);
+  pause_repeater pr2(rst, clk_100mhz, clean_stickRight2, paused_stickRight2);
 
   // ---------------
 	// Game logic.
@@ -178,12 +256,16 @@ module labkit(input clk,
 	wire phase_loaded;
 	wire [2:0] phase;
   wire in_loading_phase;
-	wire [2:0] selected_character;
-  wire lap_completed;
-  wire [1:0] laps_completed;
+	wire [2:0] selected_character1;
+  wire [2:0] selected_character2;
+  wire lap_completed1;
+  wire [1:0] laps_completed2;
+  wire lap_completed2;
+  wire [1:0] laps_completed2;
   wire race_begin;
   wire [1:0] oym_counter;
-  wire correct_direction;
+  wire correct_direction1;
+  wire correct_direction2;
   wire [20:0] imap_item_box1;
   wire [20:0] imap_item_box2;
   wire [20:0] imap_item_box3;
@@ -200,7 +282,8 @@ module labkit(input clk,
   wire [20:0] item_box6;
   wire [20:0] item_box7;
   wire [20:0] item_box8;
-  wire item_box_hit;
+  wire item_box_hit1;
+  wire item_box_hit2;
   wire item_box1_hit;
   wire item_box2_hit;
   wire item_box3_hit;
@@ -210,19 +293,29 @@ module labkit(input clk,
   wire item_box7_hit;
   wire item_box8_hit;
 
-  wire [1:0] owned_item;
-	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A(paused_A), .B(clean_B), 
-			.start(clean_start), .Z(clean_Z), .R(clean_R), .L(clean_L), .dU(clean_dU),
-      .dD(clean_dD), .dL(clean_dL), .dR(clean_dR), .cU(clean_cU), .cD(clean_cD),
-      .cL(clean_cL), .cR(clean_cR), .stickUp(paused_stickUp), 
-      .stickDown(paused_stickDown), .stickLeft(paused_stickLeft), 
-			.stickRight(paused_stickRight), .stickX(stickX), .stickY(stickY), 
+  wire [1:0] owned_item1;
+  wire [1:0] owned_item2;
+	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(paused_A1), .B1(clean_B1), 
+			.start1(clean_start1), .Z1(clean_Z1), .R1(clean_R1), .L1(clean_L1), .dU1(clean_dU1),
+      .dD1(clean_dD1), .dL1(clean_dL1), .dR1(clean_dR1), .cU1(clean_cU1), .cD1(clean_cD1),
+      .cL1(clean_cL1), .cR1(clean_cR1), .stickUp1(paused_stickUp1), 
+      .stickDown1(paused_stickDown1), .stickLeft1(paused_stickLeft1), 
+			.stickRight1(paused_stickRight1), .stickX1(stickX1), .stickY1(stickY1), 
+      .A2(paused_A2), .B2(clean_B2), 
+      .start2(clean_start2), .Z2(clean_Z2), .R2(clean_R2), .L2(clean_L2), .dU2(clean_dU2),
+      .dD2(clean_dD2), .dL2(clean_dL2), .dR2(clean_dR2), .cU2(clean_cU2), .cD2(clean_cD2),
+      .cL2(clean_cL2), .cR2(clean_cR2), .stickUp2(paused_stickUp2), 
+      .stickDown2(paused_stickDown2), .stickLeft2(paused_stickLeft2), 
+      .stickRight2(paused_stickRight2), .stickX2(stickX2), .stickY2(stickY2), 
 			.phase_loaded(phase_loaded), .in_loading_phase(in_loading_phase),
       .phase(phase),
-			.selected_character(selected_character), .lap_completed(lap_completed),
-      .laps_completed(laps_completed), .race_begin(race_begin),
+			.selected_character1(selected_character1), .selected_character2(selected_character2)
+      .lap_completed1(lap_completed1), .lap_completed2(lap_completed2),
+      .laps_completed1(laps_completed1), .laps_completed2(laps_completed2), 
+      .race_begin(race_begin),
       .oym_counter(oym_counter),
-      .owned_item(owned_item), .picking_item(),
+      .owned_item1(owned_item1), .picking_item1(),
+      .owned_item2(owned_item2), .picking_item2(),
       .imap_item_box1(imap_item_box1), .imap_item_box2(imap_item_box2),
       .imap_item_box3(imap_item_box3), .imap_item_box4(imap_item_box4),
       .imap_item_box5(imap_item_box5), .imap_item_box6(imap_item_box6),
@@ -231,7 +324,7 @@ module labkit(input clk,
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
       .item_box7(item_box7), .item_box8(item_box8),
-      .item_box_hit(item_box_hit),
+      .item_box_hit1(item_box_hit1), .item_box_hit2(item_box_hit2),
       .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
       .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
       .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
@@ -242,26 +335,51 @@ module labkit(input clk,
 
   wire [9:0] car1_x;
   wire [8:0] car1_y;
-  wire [1:0] speed;
-  wire forward;
-  wire backward;
-  wire turn_left;
-  wire turn_right;
+  wire [1:0] speed1;
+  wire forward1;
+  wire backward1;
+  wire turn_left1;
+  wire turn_right1;
 
-  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward),
-      .backward(backward), .left(turn_left), .right(turn_right), .speed(speed), 
-      .car1_x(car1_x), .car1_y(car1_y));
+  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward1),
+      .backward(backward1), .left(turn_left1), .right(turn_right1), .speed(speed1), 
+      .car_x(car1_x), .car_y(car1_y));
 
-  wire driver_forward;
-  wire driver_backward;
-  wire driver_left;
-  wire driver_right;
+  wire driver_forward1;
+  wire driver_backward1;
+  wire driver_left1;
+  wire driver_right1;
 
-  car_driver car1_real(.clk(clk_100mhz), .rst(rst), .forward(forward), 
-      .backward(backward), .turn_left(turn_left), .turn_right(turn_right), 
-      .speed(speed), .driver_forward(driver_forward), 
-      .driver_backward(driver_backward), .driver_left(driver_left), 
-      .driver_right(driver_right));
+  car_driver car1_real(.clk(clk_100mhz), .rst(rst), .forward(forward1), 
+      .backward(backward1), .turn_left(turn_left1), .turn_right(turn_right1), 
+      .speed(speed1), .driver_forward(driver_forward1), 
+      .driver_backward(driver_backward1), .driver_left(driver_left1), 
+      .driver_right(driver_right1));
+
+  // Car 2
+
+  wire [9:0] car2_x;
+  wire [8:0] car2_y;
+  wire [1:0] speed2;
+  wire forward2;
+  wire backward2;
+  wire turn_left2;
+  wire turn_right2;
+
+  car_simulator car2(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward2),
+      .backward(backward2), .left(turn_left2), .right(turn_right2), .speed(speed2), 
+      .car_x(car2_x), .car_y(car2_y));
+
+  wire driver_forward2;
+  wire driver_backward2;
+  wire driver_left2;
+  wire driver_right2;
+
+  car_driver car2_real(.clk(clk_100mhz), .rst(rst), .forward(forward2), 
+      .backward(backward2), .turn_left(turn_left2), .turn_right(turn_right2), 
+      .speed(speed2), .driver_forward(driver_forward2), 
+      .driver_backward(driver_backward2), .driver_left(driver_left2), 
+      .driver_right(driver_right2));
 
   // ---------------------
 	// Video logic.
@@ -275,16 +393,18 @@ module labkit(input clk,
   wire video_sd_read;
 
 	video_logic vl(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst), .phase(phase),
-			.selected_character(selected_character), .load(video_load),
+			.selected_character1(selected_character1), .selected_character2(selected_character2), 
+      .load(video_load),
       .in_loading_phase(in_loading_phase),
 			.is_loaded(video_loaded), .race_begin(race_begin), .oym_counter(oym_counter),
-      .laps_completed(laps_completed),
+      .laps_completed1(laps_completed1), .laps_completed2(laps_completed2),
       .sd_read(video_sd_read), .sd_byte(sd_byte),
 			.sd_byte_available(sd_byte_available), 
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
       .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
-      .owned_item(owned_item),
+      .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
+      .owned_item1(owned_item1), .owned_item2(owned_item2),
       .item_box1(item_box1), .item_box2(item_box2),
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
@@ -317,18 +437,24 @@ module labkit(input clk,
   // Physics logic.
 
   physics_logic pl(.clk_100mhz(clk_100mhz), .rst(rst), 
-      .phase(phase), .selected_character(selected_character), .race_begin(race_begin),
+      .phase(phase), .selected_character1(selected_character1), 
+      .selected_character2(selected_character2), .race_begin(race_begin),
       .car1_x(car1_x),
-      .car1_y(car1_y), .lap_completed(lap_completed), .correct_direction(correct_direction), 
-      .A(clean_A), .B(clean_B), .stickLeft(clean_stickLeft), .stickRight(clean_stickRight),
+      .car1_y(car1_y), .lap_completed1(lap_completed1), .correct_direction1(correct_direction1), 
+      .A1(clean_A1), .B1(clean_B1), .stickLeft1(clean_stickLeft1), .stickRight1(clean_stickRight1),
+      .car2_x(car2_x),
+      .car2_y(car2_y), .lap_completed2(lap_completed2), .correct_direction2(correct_direction2), 
+      .A2(clean_A2), .B2(clean_B2), .stickLeft2(clean_stickLeft2), .stickRight2(clean_stickRight2),
       .map_type(map_type), .imap_x(imap_x), .imap_y(imap_y),
-      .forward(forward), .backward(backward), .turn_left(turn_left),
-      .turn_right(turn_right), .speed(speed),
+      .forward1(forward1), .backward1(backward1), .turn_left1(turn_left1),
+      .turn_right1(turn_right1), .speed1(speed1),
+      .forward2(forward2), .backward2(backward2), .turn_left2(turn_left2),
+      .turn_right2(turn_right2), .speed2(speed2),
       .item_box1(item_box1), .item_box2(item_box2),
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
       .item_box7(item_box7), .item_box8(item_box8),
-      .item_box_hit(item_box_hit),
+      .item_box_hit1(item_box_hit1), .item_box_hit2(item_box_hit2),
       .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
       .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
       .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
@@ -367,8 +493,7 @@ module labkit(input clk,
   assign sd_MISO = sdData[0];
   assign sdData[1] = 1;
   
-  assign JD = {driver_forward, driver_backward, driver_left, driver_right, 
-      controller_data};
+  assign JA = {controller_data1, controller_data2};
 
   assign led = {phase, phase_loaded, A, sd_read, sd_ready_for_read, sd_byte_available, rst, 
       paused_stickLeft, stickLeft, clean_stickLeft, laps_completed, imap_loaded, video_loaded, 3'b111};

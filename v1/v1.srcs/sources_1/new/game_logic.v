@@ -2,63 +2,74 @@
 
 module game_logic(input clk_100mhz, input rst,
 		// Controller connections.
-		input A, B, start, Z, R, L, dU, dD, dL, dR, cU, cD, cL, cR,
-		input stickUp, stickDown, stickLeft, stickRight,
-		input [7:0] stickX, input [7:0] stickY,
+		input A1, B1, start1, Z1, R1, L1, dU1, dD1, dL1, dR1, cU1, cD1, cL1, cR1,
+		input stickUp1, stickDown1, stickLeft1, stickRight1,
+		input [7:0] stickX1, input [7:0] stickY1,
+
+		input A2, B2, start2, Z2, R2, L2, dU2, dD2, dL2, dR2, cU2, cD2, cL2, cR2,
+		input stickUp2, stickDown2, stickLeft2, stickRight2,
+		input [7:0] stickX2, input [7:0] stickY2,
 
 		// State connections.
 		input phase_loaded,
 		output in_loading_phase,
 		output reg [2:0] phase = `PHASE_LOADING_START_SCREEN,
-		output reg [2:0] selected_character = `CHARACTER_MARIO,
-		reg [1:0] laps_completed = 0,
+		output reg [2:0] selected_character1 = `CHARACTER_MARIO,
+		output reg [2:0] selected_character2 = `CHARACTER_LUIGI,
+		reg [1:0] laps_completed1 = 0,
+		reg [1:0] laps_completed2 = 0,
 
-		input lap_completed,
+		input lap_completed1,
+		input lap_completed2,
 		output reg race_begin = 0,
 		output reg [1:0] oym_counter = 0,
 
-		output wire [1:0] owned_item,
-		output wire picking_item,
+		output wire [1:0] owned_item1,
+		output wire [1:0] owned_item2,
+		output wire picking_item1,
+		output wire picking_item2,
 		//output wire [1:0] buff,
 
 		// Information map connections,
-    input [20:0] imap_item_box1,
-    input [20:0] imap_item_box2,
-    input [20:0] imap_item_box3,
-    input [20:0] imap_item_box4,
-    input [20:0] imap_item_box5,
-    input [20:0] imap_item_box6,
-    input [20:0] imap_item_box7,
-    input [20:0] imap_item_box8,
+	    input [20:0] imap_item_box1,
+	    input [20:0] imap_item_box2,
+	    input [20:0] imap_item_box3,
+	    input [20:0] imap_item_box4,
+	    input [20:0] imap_item_box5,
+	    input [20:0] imap_item_box6,
+	    input [20:0] imap_item_box7,
+	    input [20:0] imap_item_box8,
 
-	output reg [20:0] item_box1 = 0,
-	output reg [20:0] item_box2 = 0,
-	output reg [20:0] item_box3 = 0,
-	output reg [20:0] item_box4 = 0,
-	output reg [20:0] item_box5 = 0,
-	output reg [20:0] item_box6 = 0,
-	output reg [20:0] item_box7 = 0,
-	output reg [20:0] item_box8 = 0,
+		output reg [20:0] item_box1 = 0,
+		output reg [20:0] item_box2 = 0,
+		output reg [20:0] item_box3 = 0,
+		output reg [20:0] item_box4 = 0,
+		output reg [20:0] item_box5 = 0,
+		output reg [20:0] item_box6 = 0,
+		output reg [20:0] item_box7 = 0,
+		output reg [20:0] item_box8 = 0,
 
-	// Physics logic connections,
+		// Physics logic connections,
 
-	input item_box_hit,
+		input item_box_hit1,
+		input item_box_hit2,
 
-    input item_box1_hit,
-    input item_box2_hit,
-    input item_box3_hit,
-    input item_box4_hit,
-    input item_box5_hit,
-    input item_box6_hit,
-    input item_box7_hit,
-    input item_box8_hit
+	    input item_box1_hit,
+	    input item_box2_hit,
+	    input item_box3_hit,
+	    input item_box4_hit,
+	    input item_box5_hit,
+	    input item_box6_hit,
+	    input item_box7_hit,
+	    input item_box8_hit
 	);
 	// Loading phases
 
 	assign in_loading_phase = (phase == `PHASE_LOADING_START_SCREEN ||
-	                    phase == `PHASE_LOADING_CHARACTER_SELECT ||
-	                    phase == `PHASE_LOADING_RACING);
-	reg prev_lap_completed = 0;
+		                    phase == `PHASE_LOADING_CHARACTER_SELECT ||
+		                    phase == `PHASE_LOADING_RACING);
+	reg prev_lap_completed1 = 0;
+	reg prev_lap_completed2 = 0;
 
 	// --------------------
 	// Phase transitions
@@ -66,8 +77,10 @@ module game_logic(input clk_100mhz, input rst,
 	always @(posedge clk_100mhz) begin
 		if(rst == 1) begin
 			phase <= `PHASE_LOADING_START_SCREEN;
-			selected_character <= `CHARACTER_MARIO;
-			laps_completed <= 0;
+			selected_character1 <= `CHARACTER_MARIO;
+			selected_character2 <= `CHARACTER_MARIO;
+			laps_completed1 <= 0;
+			laps_completed2 <= 0;
       item_box1[19:0] <= 0;
       item_box2[19:0] <= 0;
       item_box3[19:0] <= 0;
@@ -78,7 +91,8 @@ module game_logic(input clk_100mhz, input rst,
       item_box8[19:0] <= 0;
 		end
 		else begin
-			prev_lap_completed <= lap_completed;
+			prev_lap_completed1 <= lap_completed1;
+			prev_lap_completed2 <= lap_completed2;
 			case(phase)
 				`PHASE_LOADING_START_SCREEN: begin
 					if(phase_loaded == 1) begin
@@ -86,7 +100,7 @@ module game_logic(input clk_100mhz, input rst,
 					end
 				end
 				`PHASE_START_SCREEN: begin
-					if(A == 1 || start == 1) begin
+					if(A1 == 1 || start1 == 1 || A2 == 1 || start2 == 1) begin
 						phase <= `PHASE_LOADING_CHARACTER_SELECT;
 					end
 				end
@@ -94,7 +108,8 @@ module game_logic(input clk_100mhz, input rst,
 					if(phase_loaded == 1) begin
 						phase <= `PHASE_CHARACTER_SELECT;
 					end
-					selected_character <= `CHARACTER_MARIO;
+					selected_character1 <= `CHARACTER_MARIO;
+					selected_character2 <= `CHARACTER_LUIGI;
 				end
 				`PHASE_CHARACTER_SELECT: begin
 					if(start == 1) begin
@@ -108,24 +123,53 @@ module game_logic(input clk_100mhz, input rst,
 						item_box7[19:0] <= imap_item_box7;
 						item_box8[19:0] <= imap_item_box8;
 					end
-					if(stickLeft == 1) begin
-						if(selected_character[1:0] != 2'b00) begin
-							selected_character <= selected_character - 1;
+					if(stickLeft1 == 1) begin
+						if(selected_character1[1:0] != 2'b00 && 
+							selected_character1 - 1 != selected_character2) begin
+							selected_character1 <= selected_character1 - 1;
 						end
 					end
-					if(stickRight == 1) begin
-						if(selected_character[1:0] != 2'b11) begin
-							selected_character <= selected_character + 1;
+					if(stickRight1 == 1) begin
+						if(selected_character1[1:0] != 2'b11 && 
+							selected_character1 + 1 != selected_character2) begin
+							selected_character1 <= selected_character1 + 1;
 						end
 					end
-					if(stickDown == 1) begin
-						if(selected_character[2] != 1'b1) begin
-							selected_character <= selected_character + 3'b100;
+					if(stickDown1 == 1) begin
+						if(selected_character1[2] != 1'b1 && 
+							selected_character1 + 3'b100 != selected_character2) begin
+							selected_character1 <= selected_character1 + 3'b100;
 						end
 					end
-					if(stickUp == 1) begin
-						if(selected_character[2] != 1'b0) begin
-							selected_character <= selected_character - 3'b100;
+					if(stickUp1 == 1) begin
+						if(selected_character1[2] != 1'b0 && 
+							selected_character1 - 3'b100 != selected_character2) begin
+							selected_character1 <= selected_character1 - 3'b100;
+						end
+					end
+					// 2
+					if(stickLeft2 == 1) begin
+						if(selected_character2[1:0] != 2'b00 && 
+							selected_character2 - 1 != selected_character1) begin
+							selected_character2 <= selected_character2 - 1;
+						end
+					end
+					if(stickRight2 == 1) begin
+						if(selected_character2[1:0] != 2'b11 && 
+							selected_character2 + 1 != selected_character1) begin
+							selected_character2 <= selected_character2 + 1;
+						end
+					end
+					if(stickDown2 == 1) begin
+						if(selected_character2[2] != 1'b1 && 
+							selected_character2 + 3'b100 != selected_character1) begin
+							selected_character2 <= selected_character2 + 3'b100;
+						end
+					end
+					if(stickUp2 == 1) begin
+						if(selected_character2[2] != 1'b0 && 
+							selected_character2 - 3'b100 != selected_character1) begin
+							selected_character2 <= selected_character2 - 3'b100;
 						end
 					end
 				end
@@ -133,15 +177,24 @@ module game_logic(input clk_100mhz, input rst,
 					if(phase_loaded == 1) begin
 						phase <= `PHASE_RACING;
 					end
-					laps_completed <= 0;
+					laps_completed1 <= 0;
+					laps_completed2 <= 0;
 				end
 				`PHASE_RACING: begin
-					if(prev_lap_completed == 0 && lap_completed == 1) begin
-						if(laps_completed == 2) begin
+					if(prev_lap_completed1 == 0 && lap_completed1 == 1) begin
+						if(laps_completed1 == 2) begin
 							phase <= `PHASE_LOADING_START_SCREEN;
 						end
 						else begin
-							laps_completed <= laps_completed + 1;
+							laps_completed1 <= laps_completed1 + 1;
+						end
+					end
+					if(prev_lap_completed2 == 0 && lap_completed2 == 1) begin
+						if(laps_completed2 == 2) begin
+							phase <= `PHASE_LOADING_START_SCREEN;
+						end
+						else begin
+							laps_completed2 <= laps_completed2 + 1;
 						end
 					end
 				end
@@ -238,6 +291,9 @@ module game_logic(input clk_100mhz, input rst,
 	// Item and buff managers
 
 	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
-			.item_box_hit(item_box_hit), .Z(Z), .owned_item(owned_item),
-			.picking_item());
+			.item_box_hit(item_box_hit1), .Z(Z), .owned_item(owned_item1),
+			.picking_item(picking_item1));
+	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
+			.item_box_hit(item_box_hit2), .Z(Z), .owned_item(owned_item1),
+			.picking_item(picking_item2));
 endmodule

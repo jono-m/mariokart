@@ -5,13 +5,13 @@
 module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         // Game logic connections
         input [2:0] phase,
-        input [2:0] selected_character,
+        input [2:0] selected_character1, input [2:0] selected_character2,
         input load,
         input in_loading_phase,
         output reg is_loaded = 0,
         input race_begin,
         input [1:0] oym_counter,
-        input [1:0] laps_completed,
+        input [1:0] laps_completed1, input [1:0] laps_completed2,
 
         // SD card connections
         output reg sd_read, input [7:0] sd_byte, input sd_byte_available,
@@ -23,7 +23,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
 
         // Car connections
         input [9:0] car1_x, input [8:0] car1_y, input car1_present,
-        input [1:0] owned_item,
+        input [1:0] owned_item1,
+        input [9:0] car2_x, input [8:0] car2_y, input car2_present,
+        input [1:0] owned_ite2,
 
         // More logic connections,
         input [20:0] item_box1,
@@ -125,7 +127,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_sprite1_write;
     wire [31:0] bram_sprite1_read;
     wire bram_sprite1_we;   
-    sprite1_image_bram sprite1_bram(.clka(clk_50mhz), .addra(bram_sprite1_adr), 
+    sprite_bram sprite1_bram(.clka(clk_50mhz), .addra(bram_sprite1_adr), 
             .dina(bram_sprite1_write), .douta(bram_sprite1_read), .wea(bram_sprite1_we));
     // Loader connections.
     reg sprite1_load = 0;
@@ -155,7 +157,45 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_sprite1_write), 
                     .bram_write_enable(bram_sprite1_we));
 
-    // timer image loader
+    // --------------------------
+    // Sprite 2 image loader
+    //
+    // BRAM connections.
+    wire [6:0] bram_sprite2_adr;
+    wire [32:0] bram_sprite2_write;
+    wire [32:0] bram_sprite2_read;
+    wire bram_sprite2_we;   
+    sprite_bram sprite2_bram(.clka(clk_50mhz), .addra(bram_sprite2_adr), 
+            .dina(bram_sprite2_write), .douta(bram_sprite2_read), .wea(bram_sprite2_we));
+    // Loader connections.
+    reg sprite2_load = 0;
+    wire [3:0] sprite2_r;
+    wire [3:0] sprite2_g;
+    wire [3:0] sprite2_b;
+    wire sprite2_a;
+    wire [9:0] sprite2_x;
+    wire [8:0] sprite2_y;
+    wire show_sprite2;
+    wire sprite2_alpha = show_sprite2 && sprite2_a && (owned_item == `ITEM_NONE);
+    wire [31:0] sprite2_address_offset;
+    wire is_sprite2_loaded;
+    wire [31:0] sprite2_sd_adr;
+    wire sprite2_sd_read;
+    image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
+            .ALPHA(1)) 
+            sprite2_loader(.clk(clk_100mhz), .rst(rst_loader), 
+                    .load(sprite2_load), .x(x-sprite2_x), .y(y-sprite2_y), .red(sprite2_r), 
+                    .green(sprite2_g), .blue(sprite2_b), .alpha(sprite2_a),
+                    .address_offset(sprite2_address_offset),
+                    .is_loaded(is_sprite2_loaded), 
+                    .sd_byte_available(sd_byte_available), 
+                    .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+                    .sd_address(sprite2_sd_adr), .sd_do_read(sprite2_sd_read),
+                    .bram_address(bram_sprite2_adr), .bram_read_data(bram_sprite2_read),
+                    .bram_write_data(bram_sprite2_write), 
+                    .bram_write_enable(bram_sprite2_we));
+
+    // Timer image loader
     // Loader connections.
     reg timer_load = 0;
     wire reset_timer = ~race_begin;
@@ -221,6 +261,19 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
             .alpha(csb1_a));
 
+    wire [9:0] csb2_x;
+    wire [8:0] csb2_y;
+    wire [3:0] csb2_r;
+    wire [3:0] csb2_g;
+    wire [3:0] csb2_b;
+    wire csb2_a;
+    wire show_csb2;
+    wire csb2_alpha = show_csb2 && csb2_a;
+    character_select_box p2_select(.clk(clk_100mhz), .rst(rst),
+            .x(x-csb2_x), .y(y-csb2_y), .filled(0),
+            .color(12'h00F), .red(csb1_r), .green(csb1_g), .blue(csb1_b),
+            .alpha(csb1_a));
+
     wire [9:0] laps1_x;
     wire [8:0] laps1_y;
     wire [9:0] laps1_sprite_x;
@@ -232,11 +285,28 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire show_laps1;
     wire laps1_alpha = show_laps1 && laps1_a;
     laps_display laps_display1 (.clk(clk_100mhz), .rst(rst),
-            .laps_completed(laps_completed),
+            .laps_completed1(laps_completed1),
             .x(x-laps1_x), .y(y-laps1_y),
             .sprite_x(laps1_sprite_x), .sprite_y(laps1_sprite_y),
             .color(12'hFFF), .red(laps1_r), .green(laps1_g), .blue(laps1_b),
             .alpha(laps1_a));
+
+    wire [9:0] laps2_x;
+    wire [8:0] laps2_y;
+    wire [9:0] laps2_sprite_x;
+    wire [9:0] laps2_sprite_y;
+    wire [3:0] laps2_r;
+    wire [3:0] laps2_g;
+    wire [3:0] laps2_b;
+    wire laps2_a;
+    wire show_laps2;
+    wire laps2_alpha = show_laps2 && laps2_a;
+    laps_display laps_display2 (.clk(clk_100mhz), .rst(rst),
+            .laps_completed2(laps_completed2),
+            .x(x-laps2_x), .y(y-laps2_y),
+            .sprite_x(laps2_sprite_x), .sprite_y(laps2_sprite_y),
+            .color(12'hFFF), .red(laps2_r), .green(laps2_g), .blue(laps2_b),
+            .alpha(laps2_a));
 
     // --------------------------
     // Item box image loader
@@ -246,7 +316,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_item_box_write;
     wire [31:0] bram_item_box_read;
     wire bram_item_box_we;   
-    item_box_image_bram item_box_bram(.clka(clk_50mhz), .addra(bram_item_box_adr), 
+    sprite_bram item_box_bram(.clka(clk_50mhz), .addra(bram_item_box_adr), 
             .dina(bram_item_box_write), .douta(bram_item_box_read), .wea(bram_item_box_we));
     // Loader connections.
     reg item_box_load = 0;
@@ -292,7 +362,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_banana_write;
     wire [31:0] bram_banana_read;
     wire bram_banana_we;   
-    banana_image_bram banana_bram(.clka(clk_50mhz), .addra(bram_banana_adr), 
+    sprite_bram banana_bram(.clka(clk_50mhz), .addra(bram_banana_adr), 
             .dina(bram_banana_write), .douta(bram_banana_read), .wea(bram_banana_we));
     // Loader connections.
     reg banana_load = 0;
@@ -328,8 +398,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item == `ITEM_BANANA ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10(0));
+                       .sprite9({(owned_item1 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({(owned_item2 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y});
 
     // --------------------------
     // Mushroom image loader
@@ -339,7 +409,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_mushroom_write;
     wire [31:0] bram_mushroom_read;
     wire bram_mushroom_we;   
-    mushroom_image_bram mushroom_bram(.clka(clk_50mhz), .addra(bram_mushroom_adr), 
+    sprite_bram mushroom_bram(.clka(clk_50mhz), .addra(bram_mushroom_adr), 
             .dina(bram_mushroom_write), .douta(bram_mushroom_read), .wea(bram_mushroom_we));
     // Loader connections.
     reg mushroom_load = 0;
@@ -375,8 +445,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10(0));
+                       .sprite9({(owned_item1 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}), 
+                       .sprite10({(owned_item2 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // --------------------------
     // Lightning image loader
@@ -386,7 +456,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] bram_lightning_write;
     wire [31:0] bram_lightning_read;
     wire bram_lightning_we;   
-    lightning_image_bram lightning_bram(.clka(clk_50mhz), .addra(bram_lightning_adr), 
+    sprite_bram lightning_bram(.clka(clk_50mhz), .addra(bram_lightning_adr), 
             .dina(bram_lightning_write), .douta(bram_lightning_read), .wea(bram_lightning_we));
     // Loader connections.
     reg lightning_load = 0;
@@ -422,8 +492,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item == `ITEM_LIGHTNING ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10(0));
+                       .sprite9({(owned_item1 == `ITEM_LIGHTNING ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({(owned_item2 == `ITEM_LIGHTNING ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // -------
     // SHADER
@@ -431,7 +501,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     shader image_shader(.fader(fader), .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
             .text_r(text_r), .text_g(text_g), .text_b(text_b), .text_alpha(text_alpha),
             .csb1_r(csb1_r), .csb1_g(csb1_g), .csb1_b(csb1_b), .csb1_alpha(csb1_alpha),
+            .csb2_r(csb2_r), .csb2_g(csb2_g), .csb2_b(csb2_b), .csb2_alpha(csb2_alpha),
             .sprite1_r(sprite1_r), .sprite1_g(sprite1_g), .sprite1_b(sprite1_b), .sprite1_alpha(sprite1_alpha),
+            .sprite2_r(sprite2_r), .sprite2_g(sprite2_g), .sprite2_b(sprite2_b), .sprite2_alpha(sprite2_alpha),
             .item_box_r(item_box_r), .item_box_g(item_box_g), .item_box_b(item_box_b), .item_box_alpha(item_box_alpha),
             .banana_r(banana_r), .banana_g(banana_g), .banana_b(banana_b), .banana_alpha(banana_alpha),
             .mushroom_r(mushroom_r), .mushroom_g(mushroom_g), .mushroom_b(mushroom_b), .mushroom_alpha(mushroom_alpha),
@@ -439,23 +511,33 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .timer_r(timer_r), .timer_g(timer_g), .timer_b(timer_b), .timer_alpha(timer_alpha),
             .latiku_oym_r(latiku_oym_r), .latiku_oym_g(latiku_oym_g), .latiku_oym_b(latiku_oym_b), .latiku_oym_alpha(latiku_oym_alpha),
             .laps1_r(laps1_r), .laps1_g(laps1_g), .laps1_b(laps1_b), .laps1_alpha(laps1_alpha),
+            .laps2_r(laps2_r), .laps2_g(laps2_g), .laps2_b(laps2_b), .laps2_alpha(laps2_alpha),
             .out_red(red), .out_green(green), .out_blue(blue));
     
     scene_logic sl(.clk_100mhz(clk_100mhz), .rst(rst), .phase(phase),
-            .selected_character(selected_character),
+            .selected_character1(selected_character1),
+            .selected_character2(selected_character2),
             .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
+            .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
             .race_begin(race_begin), .faded(faded),
-            .laps_completed(laps_completed),
+            .laps_completed1(laps_completed1), .laps_completed2(laps_completed2),
             .bg_address_offset(bg_address_offset),
             .text_address_offset(text_address_offset),
             .sprite1_address_offset(sprite1_address_offset),
+            .sprite2_address_offset(sprite2_address_offset),
             .show_text(show_text), .text_x(text_x), .text_y(text_y),
             .show_char_select_box1(show_csb1),
+            .show_char_select_box2(show_csb2),
             .char_select_box1_x(csb1_x),
             .char_select_box1_y(csb1_y),
+            .char_select_box2_x(csb2_x),
+            .char_select_box2_y(csb2_y),
             .sprite1_x(sprite1_x),
             .sprite1_y(sprite1_y),
             .show_sprite1(show_sprite1),
+            .sprite2_x(sprite2_x),
+            .sprite2_y(sprite2_y),
+            .show_sprite2(show_sprite2),
             .timer_x(timer_x),
             .timer_y(timer_y),
             .show_timer(show_timer),
@@ -464,19 +546,22 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .show_latiku_oym(show_latiku_oym),
             .laps1_x(laps1_x),
             .laps1_y(laps1_y),
-            .show_laps1(show_laps1)
+            .show_laps1(show_laps1),
+            .laps2_x(laps2_x),
+            .laps2_y(laps2_y),
+            .show_laps2(show_laps2)
             );
 
     // ------
     // BRAM LOADER
     
     // Tracks which image loader is currently active.
-    wire [8:0] active_loader = {bg_load, text_load, sprite1_load, timer_load,
+    wire [9:0] active_loader = {bg_load, text_load, sprite1_load, sprite2_load, timer_load,
             latiku_oym_load, item_box_load, banana_load, mushroom_load,
             lightning_load};
 
     wire are_all_loaders_unloaded = ~is_bg_loaded && 
-            ~is_text_loaded && ~is_sprite1_loaded && ~is_timer_loaded &&
+            ~is_text_loaded && ~is_sprite1_loaded && ~is_sprite2_loaded && ~is_timer_loaded &&
             ~is_latiku_oym_loaded && ~is_item_box_loaded && ~is_banana_loaded &&
             ~is_mushroom_loaded && ~is_lightning_loaded;
 
@@ -487,6 +572,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             bg_load <= 0;
             text_load <= 0;
             sprite1_load <= 0;
+            sprite2_load <= 0;
             timer_load <= 0;
             latiku_oym_load <= 0;
             item_box_load <= 0;
@@ -509,6 +595,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 1;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -520,6 +607,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 1;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -531,6 +619,19 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 1;
+                        sprite2_load <= 0;
+                        timer_load <= 0;
+                        latiku_oym_load <= 0;
+                        item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
+                    end
+                    else if(is_sprite1_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 0;
+                        sprite2_load <= 1;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -542,6 +643,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 1;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -553,6 +655,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 1;
                         item_box_load <= 0;
@@ -564,6 +667,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 1;
@@ -575,6 +679,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -586,6 +691,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -597,6 +703,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -609,6 +716,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
+                        sprite2_load <= 0;
                         timer_load <= 0;
                         latiku_oym_load <= 0;
                         item_box_load <= 0;
@@ -669,39 +777,43 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     always @(*) begin
         case(active_loader)
             // Background loader
-            9'b100000000: begin
+            10'b1000000000: begin
                 sd_read = bg_sd_read;
                 sd_address = bg_sd_adr;
             end
-            9'b010000000: begin
+            10'b0100000000: begin
                 sd_read = text_sd_read;
                 sd_address = text_sd_adr;
             end
-            9'b001000000: begin
+            10'b0010000000: begin
                 sd_read = sprite1_sd_read;
                 sd_address = sprite1_sd_adr;
             end
-            9'b000100000: begin
+            10'b0001000000: begin
+                sd_read = sprite2_sd_read;
+                sd_address = sprite2_sd_adr;
+            end
+            10'b0000100000: begin
                 sd_read = timer_sd_read;
                 sd_address = timer_sd_adr; 
             end
-            9'b000010000: begin
+            10'b0000010000: begin
                 sd_read = latiku_oym_sd_read;
                 sd_address = latiku_oym_sd_adr; 
             end
-            9'b000001000: begin
+            10'b0000001000: begin
                 sd_read = item_box_sd_read;
                 sd_address = item_box_sd_adr; 
             end
-            9'b000000100: begin
+            10'b0000000100: begin
                 sd_read = banana_sd_read;
                 sd_address = banana_sd_adr; 
             end
-            9'b000000010: begin
+            10'b0000000010: begin
                 sd_read = mushroom_sd_read;
                 sd_address = mushroom_sd_adr; 
             end
-            9'b000000001: begin
+            10'b0000000001: begin
                 sd_read = lightning_sd_read;
                 sd_address = lightning_sd_adr; 
             end
