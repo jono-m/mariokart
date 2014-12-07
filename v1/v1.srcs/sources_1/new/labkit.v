@@ -309,7 +309,7 @@ module labkit(input clk,
       .stickRight2(paused_stickRight2), .stickX2(stickX2), .stickY2(stickY2), 
 			.phase_loaded(phase_loaded), .in_loading_phase(in_loading_phase),
       .phase(phase),
-			.selected_character1(selected_character1), .selected_character2(selected_character2)
+			.selected_character1(selected_character1), .selected_character2(selected_character2),
       .lap_completed1(lap_completed1), .lap_completed2(lap_completed2),
       .laps_completed1(laps_completed1), .laps_completed2(laps_completed2), 
       .race_begin(race_begin),

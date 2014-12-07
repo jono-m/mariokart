@@ -316,6 +316,7 @@ module physics_logic (input clk_100mhz, input rst,
                     car1_turn_right_map_type <= map_type;
                     imap_x <= car2_x;
                     imap_y <= car2_y;
+                end
                 12: begin
                     car2_previous_map_type <= car2_current_map_type;
                     car2_current_map_type <= map_type;

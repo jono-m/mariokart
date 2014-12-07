@@ -399,7 +399,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
                        .sprite9({(owned_item1 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({(owned_item2 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y});
+                       .sprite10({(owned_item2 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // --------------------------
     // Mushroom image loader
