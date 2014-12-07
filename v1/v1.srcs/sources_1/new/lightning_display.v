@@ -2,7 +2,7 @@
 
 module lightning_display(input clk_100mhz, input rst,
 		input lightning_used, output reg lightning_display);
-    reg [3:0] lightning_counter = 0;
+    reg [9:0] lightning_counter = 0;
     reg [26:0] lightning_clk_counter = 0;
 	wire displaying_lightning = lightning_counter > 0;
 
@@ -16,7 +16,7 @@ module lightning_display(input clk_100mhz, input rst,
         else begin
             prev_lightning_used <= lightning_used;
             if(prev_lightning_used == 0 && lightning_used == 1) begin
-                lightning_counter <= `LIGHTNING_FLASH_SECONDS;
+                lightning_counter <= `LIGHTNING_FLASH_MS;
             end
             if(displaying_lightning) begin
             	if(lightning_clk_counter < 100000000) begin
@@ -38,7 +38,7 @@ module lightning_display(input clk_100mhz, input rst,
     	end
     	else begin
     		if(displaying_lightning) begin
-	    		if(flash_counter < 5000000) begin
+	    		if(flash_counter < 10000000) begin
 	    			flash_counter <= flash_counter + 1;
 	    		end
 	    		else begin

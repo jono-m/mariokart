@@ -317,6 +317,8 @@ module labkit(input clk,
 
   wire [1:0] owned_item1;
   wire [1:0] owned_item2;
+  wire picking_item1;
+  wire picking_item2;
   wire car1_banana_buff;
   wire car1_mushroom_buff;
   wire car1_lightning_buff;
@@ -348,8 +350,8 @@ module labkit(input clk,
       .laps_completed1(laps_completed1), .laps_completed2(laps_completed2), 
       .race_begin(race_begin),
       .oym_counter(oym_counter),
-      .owned_item1(owned_item1), .picking_item1(),
-      .owned_item2(owned_item2), .picking_item2(),
+      .owned_item1(owned_item1), .picking_item1(picking_item1),
+      .owned_item2(owned_item2), .picking_item2(picking_item2),
       .imap_item_box1(imap_item_box1), .imap_item_box2(imap_item_box2),
       .imap_item_box3(imap_item_box3), .imap_item_box4(imap_item_box4),
       .imap_item_box5(imap_item_box5), .imap_item_box6(imap_item_box6),
@@ -393,7 +395,7 @@ module labkit(input clk,
   wire turn_left1;
   wire turn_right1;
 
-  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward1),
+  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst || phase == `PHASE_LOADING_RACING), .forward(forward1),
       .backward(backward1), .left(turn_left1), .right(turn_right1), .speed(speed1), 
       .car_x(car1_x), .car_y(car1_y));
 
@@ -415,7 +417,7 @@ module labkit(input clk,
   wire turn_left2;
   wire turn_right2;
 
-  car_simulator car2(.clk_100mhz(clk_100mhz), .rst(rst), .forward(forward2),
+  car_simulator car2(.clk_100mhz(clk_100mhz), .rst(rst || phase == `PHASE_LOADING_RACING), .forward(forward2),
       .backward(backward2), .left(turn_left2), .right(turn_right2), .speed(speed2), 
       .car_x(car2_x), .car_y(car2_y));
 
@@ -456,6 +458,7 @@ module labkit(input clk,
       .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
       .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
       .owned_item1(owned_item1), .owned_item2(owned_item2),
+      .picking1(picking_item1), .picking2(picking_item2),
       .item_box1(item_box1), .item_box2(item_box2),
       .item_box3(item_box3), .item_box4(item_box4),
       .item_box5(item_box5), .item_box6(item_box6),
