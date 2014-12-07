@@ -193,7 +193,7 @@ module labkit(input clk,
   wire stickRight2 = (stickX2 > 270);
   wire controller_data2;
 
-  N64_interpret controller2(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_2mhz(clk_2mhz),
+  N64_interpret controller2(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_1mhz(clk_1mhz),
       .A(A2), .B(B2), .start(start2), .L(L2), .R(R2), .Z(Z2), .dU(dU2), .dD(dD2), .dL(dL2),
       .dR(dR2), .cU(cU2), .cD(cD2), .cL(cL2), .cR(cR2), .stickX(stickX2), 
       .stickY(stickY2), .controller_data(controller_data2));
