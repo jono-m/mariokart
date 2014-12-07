@@ -315,6 +315,15 @@ module labkit(input clk,
   wire [20:0] banana7;
   wire [20:0] banana8;
 
+  wire banana1_active;
+  wire banana2_active;
+  wire banana3_active;
+  wire banana4_active;
+  wire banana5_active;
+  wire banana6_active;
+  wire banana7_active;
+  wire banana8_active;
+
   wire [1:0] owned_item1;
   wire [1:0] owned_item2;
   wire picking_item1;
@@ -374,6 +383,10 @@ module labkit(input clk,
       .banana3(banana3), .banana4(banana4),
       .banana5(banana5), .banana6(banana6),
       .banana7(banana7), .banana8(banana8),
+      .banana1_active(banana1_active), .banana2_active(banana2_active),
+      .banana3_active(banana3_active), .banana4_active(banana4_active),
+      .banana5_active(banana5_active), .banana6_active(banana6_active),
+      .banana7_active(banana7_active), .banana8_active(banana8_active),
       .car1_x(car1_x), .car1_y(car1_y),
       .car2_x(car2_x), .car2_y(car2_y),
       .car1_banana_buff(car1_banana_buff),
@@ -532,7 +545,11 @@ module labkit(input clk,
       .banana1_hit(banana1_hit), .banana2_hit(banana2_hit),
       .banana3_hit(banana3_hit), .banana4_hit(banana4_hit),
       .banana5_hit(banana5_hit), .banana6_hit(banana6_hit),
-      .banana7_hit(banana7_hit), .banana8_hit(banana8_hit));
+      .banana7_hit(banana7_hit), .banana8_hit(banana8_hit),
+      .banana1_active(banana1_active), .banana2_active(banana2_active),
+      .banana3_active(banana3_active), .banana4_active(banana4_active),
+      .banana5_active(banana5_active), .banana6_active(banana6_active),
+      .banana7_active(banana7_active), .banana8_active(banana8_active));
 
   // ------------------------------------------
   // SD card loader.

@@ -98,6 +98,15 @@ module game_logic(input clk_100mhz, input rst,
 	    output reg [20:0] banana7 = 0,
 	    output reg [20:0] banana8 = 0,
 
+	    output banana1_active,
+	    output banana2_active,
+	    output banana3_active,
+	    output banana4_active,
+	    output banana5_active,
+	    output banana6_active,
+	    output banana7_active,
+	    output banana8_active,
+
 	    output lightning_used,
 	    output banana_placed,
 	    output mushroom_used
@@ -367,6 +376,7 @@ module game_logic(input clk_100mhz, input rst,
 	wire car2_use_lightning;
 	wire car1_use_mushroom;
 	wire car2_use_mushroom;
+
 	assign lightning_used = car1_use_lightning || car2_use_lightning;
 	assign banana_placed = car1_place_banana || car2_place_banana;
 	assign mushroom_used = car1_use_mushroom || car2_use_mushroom;
@@ -413,6 +423,14 @@ module game_logic(input clk_100mhz, input rst,
 	reg [26:0] banana6_clock = 0;
 	reg [26:0] banana7_clock = 0;
 	reg [26:0] banana8_clock = 0;
+	assign banana1_active = banana1_clock == 0;
+	assign banana2_active = banana2_clock == 0;
+	assign banana3_active = banana3_clock == 0;
+	assign banana4_active = banana4_clock == 0;
+	assign banana5_active = banana5_clock == 0;
+	assign banana6_active = banana6_clock == 0;
+	assign banana7_active = banana7_clock == 0;
+	assign banana8_active = banana8_clock == 0;
 
 	always @(posedge clk_100mhz) begin
 		if(rst == 1) begin

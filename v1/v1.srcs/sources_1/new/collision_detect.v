@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module collision_detect #(WIDTH = 20, HEIGHT = 20)
-    (input [20:0] object, input [9:0] car_x, input [8:0] car_y,
+    (input [20:0] object, input active, input [9:0] car_x, input [8:0] car_y,
     output collided);
   wire object_present = object[20];
   wire [9:0] obj_x = object[19:10];
@@ -26,5 +26,5 @@ module collision_detect #(WIDTH = 20, HEIGHT = 20)
   wire br_in = (br_x >= obj_x) && (br_x < obj_x + WIDTH) &&
                (br_y >= obj_y) && (br_y < obj_y + HEIGHT);
                
-  assign collided = object_present && (ul_in || ur_in || bl_in || br_in);
+  assign collided = active && object_present && (ul_in || ur_in || bl_in || br_in);
 endmodule

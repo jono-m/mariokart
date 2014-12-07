@@ -27,6 +27,7 @@
 `define ADR_BANANA_IMAGE                1060864  // LEN 512
 `define ADR_MUSHROOM_IMAGE              1061376  // LEN 512
 `define ADR_LIGHTNING_IMAGE             1061888  // LEN 512
+`define ADR_TROPHY_IMAGE				1062400  // LEN 512
   
 `define TURN_LEFT                       0
 `define TURN_STRAIGHT                   1
