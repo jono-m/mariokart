@@ -8,6 +8,7 @@ module scene_logic(input clk_100mhz, input rst,
     input [9:0] car2_x, input [8:0] car2_y, input car2_present,
     input race_begin, input faded, input [1:0] laps_completed1,
     input [1:0] laps_completed2,
+    input [1:0] finish_place1, input [1:0] finish_place2,
 
     output reg [31:0] bg_address_offset = `ADR_START_SCREEN_BG,
     output reg [31:0] text_address_offset = 0,
@@ -45,7 +46,11 @@ module scene_logic(input clk_100mhz, input rst,
     output reg show_laps1 = 0,
     output reg [9:0] laps2_x = 0,
     output reg [8:0] laps2_y = 0,
-    output reg show_laps2 = 0
+    output reg show_laps2 = 0,
+
+    output reg [9:0] trophy_x = 0,
+    output reg [8:0] trophy_y = 0,
+    output reg show_trophy = 0
     );
   
   // Determine which images should be loaded for each scene.
@@ -105,6 +110,9 @@ module scene_logic(input clk_100mhz, input rst,
       laps2_x <= 0;
       laps2_y <= 0;
       show_laps2 <= 0;
+      trophy_x <= 0;
+      trophy_y <= 0;
+      show_trophy <= 0;
       counter <= 0;
     end
     else begin
@@ -122,6 +130,9 @@ module scene_logic(input clk_100mhz, input rst,
             show_latiku_oym <= 0;
             show_laps1 <= 0;
             show_laps2 <= 0;
+            trophy_x <= 0;
+            trophy_y <= 0;
+            show_trophy <= 0;
             counter <= 0;
           end
         end
@@ -144,6 +155,9 @@ module scene_logic(input clk_100mhz, input rst,
             show_sprite2 <= 0;
             show_timer <= 0;
             show_latiku_oym <= 0;
+            trophy_x <= 0;
+            trophy_y <= 0;
+            show_trophy <= 0;
           end
         end
         `PHASE_CHARACTER_SELECT: begin
@@ -207,6 +221,16 @@ module scene_logic(input clk_100mhz, input rst,
             if(counter == 25000000) begin
               show_laps2 <= 0;
             end
+          end
+          if(finish_place1 == 1) begin
+            trophy_x <= car1_x - 10;
+            trophy_y <= car1_y - 35;
+            show_trophy <= 1;
+          end
+          if(finish_place2 == 1) begin
+            trophy_x <= car2_x - 10;
+            trophy_y <= car2_y - 35;
+            show_trophy <= 1;
           end
         end
       endcase

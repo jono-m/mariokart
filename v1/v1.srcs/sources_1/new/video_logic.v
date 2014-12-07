@@ -14,6 +14,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input race_begin,
         input [1:0] oym_counter,
         input [1:0] laps_completed1, input [1:0] laps_completed2,
+        input [1:0] finish_place1, input [1:0] finish_place2,
 
         // SD card connections
         output reg sd_read, input [7:0] sd_byte, input sd_byte_available,
@@ -508,6 +509,45 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_lightning_write), 
                     .bram_write_enable(bram_lightning_we));
 
+    // --------------------------
+    // Trophy image loader
+    //
+    // BRAM connections.
+    wire [6:0] bram_trophy_adr;
+    wire [31:0] bram_trophy_write;
+    wire [31:0] bram_trophy_read;
+    wire bram_trophy_we;   
+    sprite_image_bram trophy_bram(.clka(clk_50mhz), .addra(bram_trophy_adr), 
+            .dina(bram_trophy_write), .douta(bram_trophy_read), .wea(bram_trophy_we));
+    // Loader connections.
+    reg trophy_load = 0;
+    wire [3:0] trophy_r;
+    wire [3:0] trophy_g;
+    wire [3:0] trophy_b;
+    wire trophy_a;
+    wire [9:0] trophy_x;
+    wire [8:0] trophy_y;
+    wire show_trophy;
+    wire trophy_alpha = show_trophy && trophy_a && (phase == `PHASE_RACING);
+    wire [31:0] trophy_address_offset;
+    wire is_trophy_loaded;
+    wire [31:0] trophy_sd_adr;
+    wire trophy_sd_read;
+    image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
+            .ALPHA(1)) 
+            trophy_loader(.clk(clk_100mhz), .rst(rst_loader), 
+                    .load(trophy_load), .x(trophy_x), .y(trophy_y), .red(trophy_r), 
+                    .green(trophy_g), .blue(trophy_b), .alpha(trophy_a),
+                    .address_offset(`ADR_TROPHY_IMAGE),
+                    .is_loaded(is_trophy_loaded), 
+                    .sd_byte_available(sd_byte_available), 
+                    .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+                    .sd_address(trophy_sd_adr), .sd_do_read(trophy_sd_read),
+                    .bram_address(bram_trophy_adr), .bram_read_data(bram_trophy_read),
+                    .bram_write_data(bram_trophy_write), 
+                    .bram_write_enable(bram_trophy_we));
+
+
     sprite_painter lightning_p(.x(x), .y(y), .sprite_x(lightning_x), .sprite_y(lightning_y),
                        .sprite_is_present(show_lightning),
                        .sprite1(0), .sprite2(0),
@@ -534,6 +574,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .banana_r(banana_r), .banana_g(banana_g), .banana_b(banana_b), .banana_alpha(banana_alpha),
             .mushroom_r(mushroom_r), .mushroom_g(mushroom_g), .mushroom_b(mushroom_b), .mushroom_alpha(mushroom_alpha),
             .lightning_r(lightning_r), .lightning_g(lightning_g), .lightning_b(lightning_b), .lightning_alpha(lightning_alpha),
+            .trophy_r(trophy_r), .trophy_g(trophy_g), .trophy_b(trophy_b), .trophy_alpha(trophy_alpha),
             .timer_r(timer_r), .timer_g(timer_g), .timer_b(timer_b), .timer_alpha(timer_alpha),
             .latiku_oym_r(latiku_oym_r), .latiku_oym_g(latiku_oym_g), .latiku_oym_b(latiku_oym_b), .latiku_oym_alpha(latiku_oym_alpha),
             .laps1_r(laps1_r), .laps1_g(laps1_g), .laps1_b(laps1_b), .laps1_alpha(laps1_alpha),
@@ -548,6 +589,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
             .race_begin(race_begin), .faded(faded),
             .laps_completed1(laps_completed1), .laps_completed2(laps_completed2),
+            .finish_place1(finish_place1), .finish_place2(finish_place2),
             .bg_address_offset(bg_address_offset),
             .text_address_offset(text_address_offset),
             .sprite1_address_offset(sprite1_address_offset),
@@ -576,21 +618,24 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .show_laps1(show_laps1),
             .laps2_x(laps2_x),
             .laps2_y(laps2_y),
-            .show_laps2(show_laps2)
+            .show_laps2(show_laps2),
+            .trophy_x(trophy_x),
+            .trophy_y(trophy_y),
+            .show_trophy(show_trophy)
             );
 
     // ------
     // BRAM LOADER
     
     // Tracks which image loader is currently active.
-    wire [9:0] active_loader = {bg_load, text_load, sprite1_load, sprite2_load, timer_load,
+    wire [10:0] active_loader = {bg_load, text_load, sprite1_load, sprite2_load, timer_load,
             latiku_oym_load, item_box_load, banana_load, mushroom_load,
-            lightning_load};
+            lightning_load, trophy_load};
 
     wire are_all_loaders_unloaded = ~is_bg_loaded && 
             ~is_text_loaded && ~is_sprite1_loaded && ~is_sprite2_loaded && ~is_timer_loaded &&
             ~is_latiku_oym_loaded && ~is_item_box_loaded && ~is_banana_loaded &&
-            ~is_mushroom_loaded && ~is_lightning_loaded;
+            ~is_mushroom_loaded && ~is_lightning_loaded && ~is_trophy_loaded;
 
     // Reload images into BRAM.
     always @(posedge clk_100mhz) begin
@@ -606,6 +651,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             banana_load <= 0;
             mushroom_load <= 0;
             lightning_load <= 0;
+            trophy_load <= 0;
 
             is_loaded <= 0;
             unload <= 0;
@@ -629,6 +675,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_text_loaded == 0) begin
                         bg_load <= 0;
@@ -641,6 +688,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_sprite1_loaded == 0) begin
                         bg_load <= 0;
@@ -653,6 +701,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_sprite2_loaded == 0) begin
                         bg_load <= 0;
@@ -665,6 +714,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_timer_loaded == 0) begin
                         bg_load <= 0;
@@ -677,6 +727,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_latiku_oym_loaded == 0) begin
                         bg_load <= 0;
@@ -689,6 +740,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_item_box_loaded == 0) begin
                         bg_load <= 0;
@@ -701,6 +753,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_banana_loaded == 0) begin
                         bg_load <= 0;
@@ -713,6 +766,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 1;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_mushroom_loaded == 0) begin
                         bg_load <= 0;
@@ -725,6 +779,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 1;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                     end
                     else if(is_lightning_loaded == 0) begin
                         bg_load <= 0;
@@ -737,6 +792,20 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 1;
+                        trophy_load <= 0;
+                    end
+                    else if(is_trophy_loaded == 0) begin
+                        bg_load <= 0;
+                        text_load <= 0;
+                        sprite1_load <= 0;
+                        sprite2_load <= 0;
+                        timer_load <= 0;
+                        latiku_oym_load <= 0;
+                        item_box_load <= 0;
+                        banana_load <= 0;
+                        mushroom_load <= 0;
+                        lightning_load <= 0;
+                        trophy_load <= 1;
                     end
                     else begin
                         // Done loading, clean up.
@@ -750,6 +819,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         banana_load <= 0;
                         mushroom_load <= 0;
                         lightning_load <= 0;
+                        trophy_load <= 0;
                         
                         if(fader == 5'b1_0000) begin
                             is_loaded <= 1;
@@ -804,45 +874,49 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     always @(*) begin
         case(active_loader)
             // Background loader
-            10'b1000000000: begin
+            11'b10000000000: begin
                 sd_read = bg_sd_read;
                 sd_address = bg_sd_adr;
             end
-            10'b0100000000: begin
+            11'b01000000000: begin
                 sd_read = text_sd_read;
                 sd_address = text_sd_adr;
             end
-            10'b0010000000: begin
+            11'b00100000000: begin
                 sd_read = sprite1_sd_read;
                 sd_address = sprite1_sd_adr;
             end
-            10'b0001000000: begin
+            11'b00010000000: begin
                 sd_read = sprite2_sd_read;
                 sd_address = sprite2_sd_adr;
             end
-            10'b0000100000: begin
+            11'b00001000000: begin
                 sd_read = timer_sd_read;
                 sd_address = timer_sd_adr; 
             end
-            10'b0000010000: begin
+            11'b00000100000: begin
                 sd_read = latiku_oym_sd_read;
                 sd_address = latiku_oym_sd_adr; 
             end
-            10'b0000001000: begin
+            11'b00000010000: begin
                 sd_read = item_box_sd_read;
                 sd_address = item_box_sd_adr; 
             end
-            10'b0000000100: begin
+            11'b00000001000: begin
                 sd_read = banana_sd_read;
                 sd_address = banana_sd_adr; 
             end
-            10'b0000000010: begin
+            11'b00000000100: begin
                 sd_read = mushroom_sd_read;
                 sd_address = mushroom_sd_adr; 
             end
-            10'b0000000001: begin
+            11'b00000000010: begin
                 sd_read = lightning_sd_read;
                 sd_address = lightning_sd_adr; 
+            end
+            11'b00000000001: begin
+                sd_read = trophy_sd_read;
+                sd_address = trophy_sd_adr; 
             end
             default: begin
                 sd_read = 0;

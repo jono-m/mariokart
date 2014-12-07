@@ -265,6 +265,8 @@ module labkit(input clk,
   wire [1:0] laps_completed1;
   wire lap_completed2;
   wire [1:0] laps_completed2;
+  wire [1:0] finish_place1;
+  wire [1:0] finish_place2;
   wire race_begin;
   wire [1:0] oym_counter;
   wire correct_direction1;
@@ -357,6 +359,7 @@ module labkit(input clk,
       .ready_for_race(ready_for_race),
       .lap_completed1(lap_completed1), .lap_completed2(lap_completed2),
       .laps_completed1(laps_completed1), .laps_completed2(laps_completed2), 
+      .finish_place1(finish_place1), .finish_place2(finish_place2),
       .race_begin(race_begin),
       .oym_counter(oym_counter),
       .owned_item1(owned_item1), .picking_item1(picking_item1),
@@ -464,6 +467,7 @@ module labkit(input clk,
       .in_loading_phase(in_loading_phase),
 			.is_loaded(video_loaded), .race_begin(race_begin), .oym_counter(oym_counter),
       .laps_completed1(laps_completed1), .laps_completed2(laps_completed2),
+      .finish_place1(finish_place1), .finish_place2(finish_place2),
       .sd_read(video_sd_read), .sd_byte(sd_byte),
 			.sd_byte_available(sd_byte_available), 
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),

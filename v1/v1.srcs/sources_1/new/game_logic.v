@@ -28,6 +28,9 @@ module game_logic(input clk_100mhz, input rst,
 		output reg race_begin = 0,
 		output reg [1:0] oym_counter = 0,
 
+		output reg [1:0] finish_place1 = 0,
+		output reg [1:0] finish_place2 = 0,
+
 		output [1:0] owned_item1,
 		output [1:0] owned_item2,
 		output picking_item1,
@@ -132,6 +135,8 @@ module game_logic(input clk_100mhz, input rst,
 			ready_for_race <= 0;
 			laps_completed1 <= 0;
 			laps_completed2 <= 0;
+			finish_place1 <= 0;
+			finish_place2 <= 0;
       item_box1[19:0] <= 0;
       item_box2[19:0] <= 0;
       item_box3[19:0] <= 0;
@@ -259,23 +264,30 @@ module game_logic(input clk_100mhz, input rst,
 					end
 					laps_completed1 <= 0;
 					laps_completed2 <= 0;
+					finish_place1 <= 0;
+					finish_place2 <= 0;
 				end
 				`PHASE_RACING: begin
 					if(prev_lap_completed1 == 0 && lap_completed1 == 1) begin
 						if(laps_completed1 == 2) begin
-							phase <= `PHASE_LOADING_START_SCREEN;
+							finish_place1 <= finish_place2 == 0 ? 1 : 2;
+							laps_completed1 <= 3;
 						end
-						else begin
+						else if(laps_completed1 < 2) begin
 							laps_completed1 <= laps_completed1 + 1;
 						end
 					end
 					if(prev_lap_completed2 == 0 && lap_completed2 == 1) begin
 						if(laps_completed2 == 2) begin
-							phase <= `PHASE_LOADING_START_SCREEN;
+							finish_place2 <= finish_place1 == 0 ? 1 : 2;
+							laps_completed2 <= 3;
 						end
-						else begin
+						else if(laps_completed2 < 2) begin
 							laps_completed2 <= laps_completed2 + 1;
 						end
+					end
+					if(finish_place1 != 0 && finish_place2 != 0) begin
+						phase <= `PHASE_LOADING_START_SCREEN;
 					end
 				end
 				default: begin
