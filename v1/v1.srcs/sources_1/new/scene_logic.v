@@ -148,6 +148,8 @@ module scene_logic(input clk_100mhz, input rst,
         `PHASE_LOADING_CHARACTER_SELECT: begin
           if(faded == 1) begin
             show_text <= 0;
+            text_x <= 138;
+            text_y <= 306;
             char_select_box1_x <= 44 + (selected_character1[1:0] * 139);
             char_select_box1_y <= 119 + (selected_character1[2] * 165);
             char_select_box2_x <= 44 + (selected_character2[1:0] * 139);
@@ -249,12 +251,15 @@ module scene_logic(input clk_100mhz, input rst,
           trophy_x <= 0;
           trophy_y <= 0;
           show_trophy <= 0;
+          text_x <= 120;
+          text_y <= 226;
         end
         `PHASE_RESULTS: begin
           if(counter == 50000000) begin
             show_text <= ~show_text;
           end
           counter <= counter + 1;
+          text_x <= 
         end
       endcase
     end
