@@ -112,7 +112,7 @@ module time_display
         ))))))));
 
     assign time_y = in_y ? (y + (number_to_draw * BMP_Y)) : (in_y2 ?
-        (y - 40 + (number_to_draw * BMP_Y)) : 0);
+        (y - 40 - BMP_Y + (number_to_draw * BMP_Y)) : 0);
 
     reg [19:0] counter = 0;
     always @(posedge clk_100mhz) begin
