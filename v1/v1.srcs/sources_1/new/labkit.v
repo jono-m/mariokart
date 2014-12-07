@@ -513,7 +513,7 @@ module labkit(input clk,
       .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
       .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
       .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
-      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit)
+      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit),
       .banana_hit1(banana_hit1), .banana_hit2(banana_hit2),
       .banana1_hit(banana1_hit), .banana2_hit(banana2_hit),
       .banana3_hit(banana3_hit), .banana4_hit(banana4_hit),

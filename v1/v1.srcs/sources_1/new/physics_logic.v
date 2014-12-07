@@ -431,7 +431,7 @@ module physics_logic (input clk_100mhz, input rst,
     // Determine speed
 
     wire [1:0] road_speed1 = (car1_mushroom_buff ? `SPEED_BOOST :
-            (car1_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL)));
+            (car1_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL));
     wire [1:0] wall_speed1 = `SPEED_SLOW;
     wire [1:0] grass_speed1 = (car1_mushroom_buff ? `SPEED_NORMAL : `SPEED_SLOW);
     wire [1:0] finish_speed1 = road_speed1;
@@ -442,7 +442,7 @@ module physics_logic (input clk_100mhz, input rst,
     ))));
 
     wire [1:0] road_speed2 = (car2_mushroom_buff ? `SPEED_BOOST :
-            (car2_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL)));
+            (car2_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL));
     wire [1:0] wall_speed2 = `SPEED_SLOW;
     wire [1:0] grass_speed2 = (car2_mushroom_buff ? `SPEED_NORMAL : `SPEED_SLOW);
     wire [1:0] finish_speed2 = road_speed2;

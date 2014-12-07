@@ -18,12 +18,12 @@ module buff_item_manager(input clk_100mhz, input rst,
   reg [26:0] item_pick_clk_counter = 0;
   reg [26:0] item_rotation_clk_counter = 0;
 
-  reg [2:0] mushroom_counter <= 0;
-  reg [26:0] mushroom_clk_counter <= 0;
-  reg [2:0] banana_counter <= 0;
-  reg [26:0] banana_clk_counter <= 0;
-  reg [2:0] lightning_counter <= 0;
-  reg [26:0] lightning_clk_counter <= 0;
+  reg [2:0] mushroom_counter = 0;
+  reg [26:0] mushroom_clk_counter = 0;
+  reg [2:0] banana_counter = 0;
+  reg [26:0] banana_clk_counter = 0;
+  reg [2:0] lightning_counter = 0;
+  reg [26:0] lightning_clk_counter = 0;
 
   assign has_banana_buff = banana_counter > 0;
   assign has_mushroom_buff = mushroom_counter > 0;
