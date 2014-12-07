@@ -12,7 +12,7 @@ module physics_logic (input clk_100mhz, input rst,
 
     input [9:0] car2_x,
     input [8:0] car2_y,
-    output reg lap_complete2,
+    output reg lap_completed2,
     output reg correct_direction2,
 
 
