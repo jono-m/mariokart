@@ -445,7 +445,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item1 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}), 
+                       .sprite9({(owned_item1 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
                        .sprite10({(owned_item2 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // --------------------------
@@ -627,7 +627,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                         mushroom_load <= 0;
                         lightning_load <= 0;
                     end
-                    else if(is_sprite1_loaded == 0) begin
+                    else if(is_sprite2_loaded == 0) begin
                         bg_load <= 0;
                         text_load <= 0;
                         sprite1_load <= 0;
