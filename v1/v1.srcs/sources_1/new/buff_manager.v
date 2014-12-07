@@ -2,25 +2,36 @@
 
 module buff_item_manager(input clk_100mhz, input rst,
     input item_box_hit,
-    //input lightning_hit,
+    input banana_hit,
+    input lightning_hit,
     input Z,
     output reg [1:0] owned_item = `ITEM_NONE,
     output reg picking_item = 0,
-    //output reg [1:0] buff = `BUFF_NONE,
-    output reg place_banana
-    //output reg use_lightning
+    output has_banana_buff,
+    output has_lightning_buff,
+    output has_mushroom_buff,
+    output reg place_banana,
+    output reg use_lightning
     );
 
   reg [2:0] item_pick_counter = 0;
   reg [26:0] item_pick_clk_counter = 0;
   reg [26:0] item_rotation_clk_counter = 0;
 
-  //reg buff_expired = 1;
+  reg [2:0] mushroom_counter <= 0;
+  reg [26:0] mushroom_clk_counter <= 0;
+  reg [2:0] banana_counter <= 0;
+  reg [26:0] banana_clk_counter <= 0;
+  reg [2:0] lightning_counter <= 0;
+  reg [26:0] lightning_clk_counter <= 0;
+
+  assign has_banana_buff = banana_counter > 0;
+  assign has_mushroom_buff = mushroom_counter > 0;
+  assign has_lightning_buff = lightning_counter > 0;
 
   always @(posedge clk_100mhz) begin
     if(rst == 1) begin
       owned_item <= `ITEM_NONE;
-      // buff <= `BUFF_NONE;
       picking_item <= 0;
 
       item_pick_counter <= 0;
@@ -28,14 +39,25 @@ module buff_item_manager(input clk_100mhz, input rst,
       item_rotation_clk_counter <= 0;
 
       place_banana <= 0;
+      use_lightning <= 0;
+
+      mushroom_counter <= 0;
+      mushroom_clk_counter <= 0;
+      banana_counter <= 0;
+      banana_clk_counter <= 0;
+      lightning_counter <= 0;
+      lightning_clk_counter <= 0;
     end
     else begin
       if(item_box_hit) begin
         picking_item <= 1;
       end
-      // if(lightning_hit) begin
-      //   buff <= `BUFF_LIGHTNING;
-      // end
+      if(lightning_hit) begin
+        lightning_counter <= `LIGHTNING_SECONDS;
+      end
+      if(banana_hit) begin
+        banana_counter <= `BANANA_SECONDS;
+      end
 
       // We are currently picking an item
       if(picking_item == 1) begin
@@ -74,11 +96,11 @@ module buff_item_manager(input clk_100mhz, input rst,
               owned_item <= `ITEM_NONE;
             end
             `ITEM_MUSHROOM: begin
-              //buff <= `BUFF_MUSHROOM;
+              mushroom_counter <= `MUSHROOM_BOOST_SECONDS;
               owned_item <= `ITEM_NONE;
             end
             `ITEM_LIGHTNING: begin
-              //use_lightning <= 1;
+              use_lightning <= 1;
               owned_item <= `ITEM_NONE;
             end
           endcase
@@ -86,50 +108,36 @@ module buff_item_manager(input clk_100mhz, input rst,
       end
       else begin
         place_banana <= 0;
+        use_lightning <= 0;
       end
 
-      // // Update 
-      // if(buff_expired == 1) begin
-      //   buff <= `BUFF_NONE;
-      // end
-    end
-  end
-
-  /*reg [1:0] last_buff = `BUFF_NONE;
-  reg [2:0] buff_counter <= 0;
-  reg [26:0] buff_clk_counter <= 0;
-  always @(posedge clk_100mhz) begin
-    if(rst == 1) begin
-      buff_expired <= 1;
-      last_buff <= `BUFF_NONE;
-      buff_counter <= 0;
-      buff_clk_counter <= 0;
-    end
-    else begin
-      if(buff != `BUFF_NONE) begin
-        if(last_buff == `BUFF_NONE) begin
-          case(buff)
-            `BUFF_MUSHROOM: buff_counter <= `MUSHROOM_BOOST_SECONDS;
-            `BUFF_BANANA: buff_counter <= `BANANA_SECONDS;
-            `BUFF_LIGHTNING: buff_counter <= `LIGHTNING_SECONDS;
-          endcase
-        end
-        if(buff_counter > 0) begin
-          if(buff_clk_counter < 100000000) begin
-            buff_clk_counter <= buff_clk_counter + 1;
-          end
-          else begin
-            buff_clk_counter <= 0;
-            buff_counter <= buff_counter - 1;
-          end
+      if(has_banana_buff) begin
+        if(banana_clk_counter < 100000000) begin
+          banana_clk_counter <= banana_clk_counter + 1;
         end
         else begin
-          buff_expired <= 1;
+          banana_clk_counter <= 0;
+          banana_counter <= banana_counter - 1;
         end
       end
-      else begin
-        buff_expired <= 0;
+      if(has_mushroom_buff) begin
+        if(mushroom_clk_counter < 100000000) begin
+          mushroom_clk_counter <= mushroom_clk_counter + 1;
+        end
+        else begin
+          mushroom_clk_counter <= 0;
+          mushroom_counter <= mushroom_counter - 1;
+        end
+      end
+      if(has_lightning_buff) begin
+        if(lightning_clk_counter < 100000000) begin
+          lightning_clk_counter <= lightning_clk_counter + 1;
+        end
+        else begin
+          lightning_clk_counter <= 0;
+          lightning_counter <= lightning_counter - 1;
+        end
       end
     end
-  end*/
+  end
 endmodule

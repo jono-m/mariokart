@@ -126,6 +126,17 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_text_write), 
                     .bram_write_enable(bram_text_we));
 
+    reg [26:0] powerup_counter = 0;
+
+    always @(posedge clk_100mhz) begin
+        if(powerup_counter == 25000000) begin
+            powerup_counter <= ~powerup_counter;
+        end
+        else begin
+            powerup_counter <= powerup_counter + 1;
+        end
+    end
+
     // --------------------------
     // Sprite 1 image loader
     //
@@ -145,7 +156,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite1_x;
     wire [8:0] sprite1_y;
     wire show_sprite1;
-    wire sprite1_alpha = show_sprite1 && sprite1_a && (owned_item1 == `ITEM_NONE);
+    wire sprite1_alpha = show_sprite1 && sprite1_a && (owned_item1 == `ITEM_NONE || powerup_counter == 1);
     wire [31:0] sprite1_address_offset;
     wire is_sprite1_loaded;
     wire [31:0] sprite1_sd_adr;
@@ -183,7 +194,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite2_x;
     wire [8:0] sprite2_y;
     wire show_sprite2;
-    wire sprite2_alpha = show_sprite2 && sprite2_a && (owned_item2 == `ITEM_NONE);
+    wire sprite2_alpha = show_sprite2 && sprite2_a && (owned_item2 == `ITEM_NONE || powerup_counter == 1);
     wire [31:0] sprite2_address_offset;
     wire is_sprite2_loaded;
     wire [31:0] sprite2_sd_adr;
@@ -405,8 +416,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(banana3), .sprite4(banana4),
                        .sprite5(banana5), .sprite6(banana6),
                        .sprite7(banana7), .sprite8(banana8),
-                       .sprite9({(owned_item1 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({(owned_item2 == `ITEM_BANANA ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
+                       .sprite9({((owned_item1 == `ITEM_BANANA || powerup_counter == 0) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({((owned_item2 == `ITEM_BANANA || powerup_counter == 0) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // --------------------------
     // Mushroom image loader
@@ -452,8 +463,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item1 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({(owned_item2 == `ITEM_MUSHROOM ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
+                       .sprite9({((owned_item1 == `ITEM_MUSHROOM || powerup_counter == 0) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({((owned_item2 == `ITEM_MUSHROOM || powerup_counter == 0) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // --------------------------
     // Lightning image loader
@@ -499,8 +510,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite3(0), .sprite4(0),
                        .sprite5(0), .sprite6(0),
                        .sprite7(0), .sprite8(0),
-                       .sprite9({(owned_item1 == `ITEM_LIGHTNING ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({(owned_item2 == `ITEM_LIGHTNING ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
+                       .sprite9({((owned_item1 == `ITEM_LIGHTNING || powerup_counter == 0) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({((owned_item2 == `ITEM_LIGHTNING || powerup_counter == 0) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     // -------
     // SHADER

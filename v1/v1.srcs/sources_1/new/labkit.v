@@ -256,6 +256,8 @@ module labkit(input clk,
   wire [2:0] selected_character2;
   wire [9:0] car1_x;
   wire [8:0] car1_y;
+  wire [9:0] car2_x;
+  wire [8:0] car2_y;
   wire character_selected1;
   wire character_selected2;
   wire ready_for_race;
@@ -293,6 +295,16 @@ module labkit(input clk,
   wire item_box6_hit;
   wire item_box7_hit;
   wire item_box8_hit;
+  wire banana_hit1;
+  wire banana_hit2;
+  wire banana1_hit;
+  wire banana2_hit;
+  wire banana3_hit;
+  wire banana4_hit;
+  wire banana5_hit;
+  wire banana6_hit;
+  wire banana7_hit;
+  wire banana8_hit;
 
   wire [20:0] banana1;
   wire [20:0] banana2;
@@ -305,6 +317,13 @@ module labkit(input clk,
 
   wire [1:0] owned_item1;
   wire [1:0] owned_item2;
+  wire car1_banana_buff;
+  wire car1_mushroom_buff;
+  wire car1_lightning_buff;
+  wire car2_banana_buff;
+  wire car2_mushroom_buff;
+  wire car2_lightning_buff;
+
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(A1), .B1(clean_B1), 
 			.start1(clean_start1), .Z1(clean_Z1), .R1(clean_R1), .L1(clean_L1), .dU1(clean_dU1),
       .dD1(clean_dD1), .dL1(clean_dL1), .dR1(clean_dR1), .cU1(clean_cU1), .cD1(clean_cD1),
@@ -341,12 +360,23 @@ module labkit(input clk,
       .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
       .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
       .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit),
+      .banana_hit1(banana_hit1), .banana_hit2(banana_hit2),
+      .banana1_hit(banana1_hit), .banana2_hit(banana2_hit),
+      .banana3_hit(banana3_hit), .banana4_hit(banana4_hit),
+      .banana5_hit(banana5_hit), .banana6_hit(banana6_hit),
+      .banana7_hit(banana7_hit), .banana8_hit(banana8_hit),
       .banana1(banana1), .banana2(banana2),
       .banana3(banana3), .banana4(banana4),
       .banana5(banana5), .banana6(banana6),
       .banana7(banana7), .banana8(banana8),
       .car1_x(car1_x), .car1_y(car1_y),
-      .car2_x(car2_x), .car2_y(car2_y));
+      .car2_x(car2_x), .car2_y(car2_y),
+      .car1_banana_buff(car1_banana_buff),
+      .car1_mushroom_buff(car1_mushroom_buff),
+      .car1_lightning_buff(car1_lightning_buff),
+      .car2_banana_buff(car2_banana_buff),
+      .car2_mushroom_buff(car2_mushroom_buff),
+      .car2_lightning_buff(car2_lightning_buff));
 
   // -----------------------------------
   // Car drivers and simulators.
@@ -373,9 +403,6 @@ module labkit(input clk,
       .driver_right(driver_right1));
 
   // Car 2
-
-  wire [9:0] car2_x;
-  wire [8:0] car2_y;
   wire [1:0] speed2;
   wire forward2;
   wire backward2;
@@ -461,6 +488,12 @@ module labkit(input clk,
   physics_logic pl(.clk_100mhz(clk_100mhz), .rst(rst), 
       .phase(phase), .selected_character1(selected_character1), 
       .selected_character2(selected_character2), .race_begin(race_begin),
+      .car1_banana_buff(car1_banana_buff),
+      .car1_mushroom_buff(car1_mushroom_buff),
+      .car1_lightning_buff(car1_lightning_buff),
+      .car2_banana_buff(car2_banana_buff),
+      .car2_mushroom_buff(car2_mushroom_buff),
+      .car2_lightning_buff(car2_lightning_buff),
       .car1_x(car1_x),
       .car1_y(car1_y), .lap_completed1(lap_completed1), .correct_direction1(correct_direction1), 
       .A1(clean_A1), .B1(clean_B1), .stickLeft1(clean_stickLeft1), .stickRight1(clean_stickRight1),
@@ -480,7 +513,12 @@ module labkit(input clk,
       .item_box1_hit(item_box1_hit), .item_box2_hit(item_box2_hit),
       .item_box3_hit(item_box3_hit), .item_box4_hit(item_box4_hit),
       .item_box5_hit(item_box5_hit), .item_box6_hit(item_box6_hit),
-      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit));
+      .item_box7_hit(item_box7_hit), .item_box8_hit(item_box8_hit)
+      .banana_hit1(banana_hit1), .banana_hit2(banana_hit2),
+      .banana1_hit(banana1_hit), .banana2_hit(banana2_hit),
+      .banana3_hit(banana3_hit), .banana4_hit(banana4_hit),
+      .banana5_hit(banana5_hit), .banana6_hit(banana6_hit),
+      .banana7_hit(banana7_hit), .banana8_hit(banana8_hit));
 
   // ------------------------------------------
   // SD card loader.

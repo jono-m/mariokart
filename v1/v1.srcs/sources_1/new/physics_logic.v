@@ -16,6 +16,12 @@ module physics_logic (input clk_100mhz, input rst,
     output reg lap_completed2,
     output reg correct_direction2,
 
+    input car1_banana_buff,
+    input car1_mushroom_buff,
+    input car1_lightning_buff,
+    input car2_banana_buff,
+    input car2_mushroom_buff,
+    input car2_lightning_buff,
 
     // Controller connections
     input A1,
@@ -53,6 +59,18 @@ module physics_logic (input clk_100mhz, input rst,
     output item_box6_hit,
     output item_box7_hit,
     output item_box8_hit,
+
+    output banana_hit1,
+    output banana_hit2,
+
+    output banana1_hit,
+    output banana2_hit,
+    output banana3_hit,
+    output banana4_hit,
+    output banana5_hit,
+    output banana6_hit,
+    output banana7_hit,
+    output banana8_hit,
 
     // Driver connections
     output forward1,
@@ -412,16 +430,26 @@ module physics_logic (input clk_100mhz, input rst,
     // ------------------
     // Determine speed
 
-    assign speed1 = (car1_current_map_type == `MAPTYPE_ROAD ? `SPEED_NORMAL : 
-      (car1_current_map_type == `MAPTYPE_GRASS ? `SPEED_SLOW :
-      (car1_current_map_type == `MAPTYPE_WALL ? `SPEED_SLOW :
-      (car1_current_map_type == `MAPTYPE_FINISH ? `SPEED_BOOST : 0
+    wire [1:0] road_speed1 = (car1_mushroom_buff ? `SPEED_BOOST :
+            (car1_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL)));
+    wire [1:0] wall_speed1 = `SPEED_SLOW;
+    wire [1:0] grass_speed1 = (car1_mushroom_buff ? `SPEED_NORMAL : `SPEED_SLOW);
+    wire [1:0] finish_speed1 = road_speed1;
+    assign speed1 = (car1_current_map_type == `MAPTYPE_ROAD ? road_speed1 : 
+      (car1_current_map_type == `MAPTYPE_FINISH ? finish_speed1 :
+      (car1_current_map_type == `MAPTYPE_GRASS ? grass_speed1 :
+      (car1_current_map_type == `MAPTYPE_WALL ? wall_speed1 : ))));
     ))));
 
-    assign speed2 = (car2_current_map_type == `MAPTYPE_ROAD ? `SPEED_NORMAL : 
-      (car2_current_map_type == `MAPTYPE_GRASS ? `SPEED_SLOW :
-      (car2_current_map_type == `MAPTYPE_WALL ? `SPEED_SLOW :
-      (car2_current_map_type == `MAPTYPE_FINISH ? `SPEED_BOOST : 0
+    wire [1:0] road_speed2 = (car2_mushroom_buff ? `SPEED_BOOST :
+            (car2_lightning_buff ? `SPEED_SLOW : `SPEED_NORMAL)));
+    wire [1:0] wall_speed2 = `SPEED_SLOW;
+    wire [1:0] grass_speed2 = (car2_mushroom_buff ? `SPEED_NORMAL : `SPEED_SLOW);
+    wire [1:0] finish_speed2 = road_speed2;
+    assign speed2 = (car2_current_map_type == `MAPTYPE_ROAD ? road_speed2 : 
+      (car2_current_map_type == `MAPTYPE_FINISH ? finish_speed2 :
+      (car2_current_map_type == `MAPTYPE_GRASS ? grass_speed2 :
+      (car2_current_map_type == `MAPTYPE_WALL ? wall_speed2 : ))));
     ))));
 
     // -------
@@ -438,8 +466,8 @@ module physics_logic (input clk_100mhz, input rst,
 
     assign forward1 = A1 && (~wall_forward1 || (wall_forward1 && wall_backward1)) && race_begin;
     assign backward1 = B1 && (~wall_backward1 || (wall_forward1 && wall_backward1)) && race_begin;
-    assign turn_left1 = stickLeft1 && (~wall_turn_left1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
-    assign turn_right1 = stickRight1 && (~wall_turn_right1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
+    assign turn_left1 = (car1_banana_buff ? stickRight1 : stickLeft1) && (~wall_turn_left1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
+    assign turn_right1 = (car1_banana_buff ? stickLeft1 : stickRight1) && (~wall_turn_right1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
 
     wire wall_forward2 = (car2_forward_map_type == `MAPTYPE_WALL) ||
             (car2_forward_x >= 640 || car2_forward_y >= 480 || car2_forward_y == 0);

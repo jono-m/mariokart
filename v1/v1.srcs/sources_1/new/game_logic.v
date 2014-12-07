@@ -28,11 +28,16 @@ module game_logic(input clk_100mhz, input rst,
 		output reg race_begin = 0,
 		output reg [1:0] oym_counter = 0,
 
-		output wire [1:0] owned_item1,
-		output wire [1:0] owned_item2,
-		output wire picking_item1,
-		output wire picking_item2,
-		//output wire [1:0] buff,
+		output [1:0] owned_item1,
+		output [1:0] owned_item2,
+		output picking_item1,
+		output picking_item2,
+		output car1_banana_buff,
+		output car1_mushroom_buff,
+		output car1_lightning_buff,
+		output car2_banana_buff,
+		output car2_mushroom_buff,
+		output car2_lightning_buff,
 
 		// Information map connections,
 	    input [20:0] imap_item_box1,
@@ -66,6 +71,18 @@ module game_logic(input clk_100mhz, input rst,
 	    input item_box6_hit,
 	    input item_box7_hit,
 	    input item_box8_hit,
+	    
+		input banana_hit1,
+		input banana_hit2,
+
+	    input banana1_hit,
+	    input banana2_hit,
+	    input banana3_hit,
+	    input banana4_hit,
+	    input banana5_hit,
+	    input banana6_hit,
+	    input banana7_hit,
+	    input banana8_hit,
 
 	    // Car connections,
 	    input [9:0] car1_x, input [8:0] car1_y,
@@ -342,12 +359,30 @@ module game_logic(input clk_100mhz, input rst,
 
 	wire car1_place_banana;
 	wire car2_place_banana;
+	wire car1_use_lightning;
+	wire car2_use_lightning;
 	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
-			.item_box_hit(item_box_hit1), .Z(Z1), .owned_item(owned_item1),
-			.picking_item(picking_item1), .place_banana(car1_place_banana));
+			.item_box_hit(item_box_hit1), 
+			.banana_hit(.banana_hit1),
+			.lightning_hit(car2_use_lightning),
+			.Z(Z1), .owned_item(owned_item1),
+			.picking_item(picking_item1), 
+			.has_banana_buff(car1_banana_buff),
+			.has_mushroom_buff(car1_mushroom_buff),
+			.has_lightning_buff(car1_lightning_buff),
+			.place_banana(car1_place_banana),
+			.use_lightning(car1_use_lightning));
 	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
-			.item_box_hit(item_box_hit2), .Z(Z2), .owned_item(owned_item2),
-			.picking_item(picking_item2), .place_banana(car2_place_banana));
+			.item_box_hit(item_box_hit2), 
+			.banana_hit(.banana_hit2),
+			.lightning_hit(car1_use_lightning),
+			.Z(Z1), .owned_item(owned_item2),
+			.picking_item(picking_item2), 
+			.has_banana_buff(car2_banana_buff),
+			.has_mushroom_buff(car2_mushroom_buff),
+			.has_lightning_buff(car2_lightning_buff),
+			.place_banana(car2_place_banana),
+			.use_lightning(car2_use_lightning));
 
 	wire [4:0] next_free_banana_slot = 
 			(banana1[20] == 0 ? 1 :
