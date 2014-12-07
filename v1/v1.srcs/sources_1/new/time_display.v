@@ -126,49 +126,47 @@ module time_display
         counter <= 0;
       end
       else begin
-        else begin
-            if(counter == 1000000) begin
-              counter <= 0;
-              if(ms_ones == 9) begin
-                ms_ones <= 0;
-                if(ms_tens == 9) begin
-                  ms_tens <= 0;
-                  if(sec_ones == 9) begin
-                    sec_ones <= 0;
-                    if(sec_tens == 5) begin
-                      sec_tens <= 0;
-                      if(min_ones == 9) begin
-                        min_ones <= 0;
-                        if(min_tens == 9) begin
-                          min_tens <= 0;
-                        end
-                        else begin
-                          min_tens <= min_tens + 1;
-                        end
-                      end
-                      else begin
-                        min_ones <= min_ones + 1;
-                      end
+        if(counter == 1000000) begin
+          counter <= 0;
+          if(ms_ones == 9) begin
+            ms_ones <= 0;
+            if(ms_tens == 9) begin
+              ms_tens <= 0;
+              if(sec_ones == 9) begin
+                sec_ones <= 0;
+                if(sec_tens == 5) begin
+                  sec_tens <= 0;
+                  if(min_ones == 9) begin
+                    min_ones <= 0;
+                    if(min_tens == 9) begin
+                      min_tens <= 0;
                     end
                     else begin
-                      sec_tens <= sec_tens + 1;
+                      min_tens <= min_tens + 1;
                     end
                   end
                   else begin
-                    sec_ones <= sec_ones + 1;
+                    min_ones <= min_ones + 1;
                   end
                 end
                 else begin
-                  ms_tens <= ms_tens + 1;
+                  sec_tens <= sec_tens + 1;
                 end
               end
               else begin
-                ms_ones <= ms_ones + 1;
+                sec_ones <= sec_ones + 1;
               end
             end
             else begin
-              counter <= counter + 1;
+              ms_tens <= ms_tens + 1;
             end
+          end
+          else begin
+            ms_ones <= ms_ones + 1;
+          end
+        end
+        else begin
+          counter <= counter + 1;
         end
       end
     end
