@@ -182,7 +182,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite1_x;
     wire [8:0] sprite1_y;
     wire show_sprite1;
-    wire sprite1_alpha = show_sprite1 && sprite1_a && ~picking1 && (owned_item1 == `ITEM_NONE || powerup_counter == 1);
+    wire sprite1_alpha = show_sprite1 && sprite1_a && ((~picking1 && (owned_item1 == `ITEM_NONE || powerup_counter == 1)) || phase == `PHASE_RESULTS);
     wire [31:0] sprite1_address_offset;
     wire is_sprite1_loaded;
     wire [31:0] sprite1_sd_adr;
@@ -220,7 +220,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite2_x;
     wire [8:0] sprite2_y;
     wire show_sprite2;
-    wire sprite2_alpha = show_sprite2 && sprite2_a && ~picking2 && (owned_item2 == `ITEM_NONE || powerup_counter == 1);
+    wire sprite2_alpha = show_sprite2 && sprite2_a && ((~picking2 && (owned_item2 == `ITEM_NONE || powerup_counter == 1)) || phase == `PHASE_RESULTS);
     wire [31:0] sprite2_address_offset;
     wire is_sprite2_loaded;
     wire [31:0] sprite2_sd_adr;
@@ -266,9 +266,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .sd_address(timer_sd_adr), .sd_do_read(timer_sd_read),
             .min_tens(min_tens), .min_ones(min_ones), .sec_tens(sec_tens), .sec_ones(sec_ones),
             .ms_tens(ms_tens), .ms_ones(ms_ones),
-            .fmin_tens1(fmin_tens1), .fmin_ones1(fmin_ones1), .fsec_tens1(fsec_tens1), .fsec_ones1(sec_ones1),
+            .fmin_tens1(fmin_tens1), .fmin_ones1(fmin_ones1), .fsec_tens1(fsec_tens1), .fsec_ones1(fsec_ones1),
             .fms_tens1(fms_tens1), .fms_ones1(fms_ones1),
-            .fmin_tens2(fmin_tens2), .fmin_ones2(fmin_ones2), .fsec_tens2(fsec_tens2), .fsec_ones2(sec_ones2),
+            .fmin_tens2(fmin_tens2), .fmin_ones2(fmin_ones2), .fsec_tens2(fsec_tens2), .fsec_ones2(fsec_ones2),
             .fms_tens2(fms_tens2), .fms_ones2(fms_ones2));
     
     // Latiku on your marks image loader
@@ -572,7 +572,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     image_loader #(.WIDTH(20), .HEIGHT(20), .ROWS(100), .BRAM_ADDWIDTH(6),
             .ALPHA(1)) 
             trophy_loader(.clk(clk_100mhz), .rst(rst_loader), 
-                    .load(trophy_load), .x(trophy_x), .y(trophy_y), .red(trophy_r), 
+                    .load(trophy_load), .x(x - trophy_x), .y(y - trophy_y), .red(trophy_r), 
                     .green(trophy_g), .blue(trophy_b), .alpha(trophy_a),
                     .address_offset(`ADR_TROPHY_IMAGE),
                     .is_loaded(is_trophy_loaded), 

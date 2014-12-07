@@ -201,7 +201,6 @@ module scene_logic(input clk_100mhz, input rst,
           end
         end
         `PHASE_RACING: begin
-          show_trophy <= 1;
           if(race_begin == 1) begin
             if(counter == 50000000) begin
               show_latiku_oym <= 0;

@@ -355,7 +355,7 @@ module game_logic(input clk_100mhz, input rst,
 	// Race on-your-marks timer.
 	reg [26:0] counter = 0;
 	always @(posedge clk_100mhz) begin
-		if(rst == 1 || phase == `PHASE_LOADING_START_SCREEN) begin
+		if(rst == 1 || phase == `PHASE_LOADING_RACING) begin
 			race_begin <= 0;
 			oym_counter <= 0;
 			counter <= 0;
@@ -447,7 +447,7 @@ module game_logic(input clk_100mhz, input rst,
 	assign lightning_used = car1_use_lightning || car2_use_lightning;
 	assign banana_placed = car1_place_banana || car2_place_banana;
 	assign mushroom_used = car1_use_mushroom || car2_use_mushroom;
-	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
+	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst || phase == `PHASE_LOADING_RACING),
 			.item_box_hit(item_box_hit1), 
 			.banana_hit(banana_hit1),
 			.lightning_hit(car2_use_lightning),
@@ -459,7 +459,7 @@ module game_logic(input clk_100mhz, input rst,
 			.place_banana(car1_place_banana),
 			.use_lightning(car1_use_lightning),
 			.use_mushroom(car1_use_mushroom));
-	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
+	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst || phase == `PHASE_LOADING_RACING),
 			.item_box_hit(item_box_hit2), 
 			.banana_hit(banana_hit2),
 			.lightning_hit(car1_use_lightning),

@@ -83,7 +83,7 @@ module time_display
     wire in_ms_tens = ms_tens_x < BMP_X;
     wire in_ms_ones = ms_ones_x < BMP_X;
 
-    wire in_y2 = (y < BMP_Y + 40);
+    wire in_y2 = (y >= (BMP_Y + 40) && y < (BMP_Y + BMP_Y + 40);
 
     wire in_drawing = in_min_tens || in_min_ones || in_min_separator ||
         in_sec_tens || in_sec_ones || in_sec_separator ||
