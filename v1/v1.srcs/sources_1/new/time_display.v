@@ -33,7 +33,7 @@ module time_display
     input [3:0] fsec_tens2,
     input [3:0] fsec_ones2,
     input [3:0] fms_tens2,
-    input [3:0] fms_ones2,
+    input [3:0] fms_ones2
     );
 
     parameter BMP_X = 20;
