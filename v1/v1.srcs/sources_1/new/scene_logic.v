@@ -73,6 +73,9 @@ module scene_logic(input clk_100mhz, input rst,
           sprite1_address_offset <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character1);
           sprite2_address_offset <= `ADR_CHARACTER_SPRITE1 + (512 * selected_character2);
         end
+        `PHASE_LOADING_RESULTS: begin
+          bg_address_offset <= `ADR_RESULTS_BG;
+        end
       endcase
     end
   end
@@ -233,6 +236,25 @@ module scene_logic(input clk_100mhz, input rst,
             trophy_y <= car2_y - 35;
             show_trophy <= 1;
           end
+        end
+        `PHASE_LOADING_RESULTS: begin
+          show_char_select_box1 <= 0;
+          show_sprite1 <= 0;
+          show_char_select_box2 <= 0;
+          show_sprite2 <= 0;
+          show_timer <= 0;
+          show_latiku_oym <= 0;
+          show_laps1 <= 0;
+          show_laps2 <= 0;
+          trophy_x <= 0;
+          trophy_y <= 0;
+          show_trophy <= 0;
+        end
+        `PHASE_RESULTS: begin
+          if(counter == 50000000) begin
+            show_text <= ~show_text;
+          end
+          counter <= counter + 1;
         end
       endcase
     end

@@ -4,6 +4,8 @@
 `define PHASE_LOADING_START_SCREEN 		  3
 `define PHASE_LOADING_CHARACTER_SELECT 	4
 `define PHASE_LOADING_RACING 			      5
+`define PHASE_LOADING_RESULTS				 6
+`define PHASE_RESULTS 				 7
 
 `define CHARACTER_MARIO					        0
 `define CHARACTER_LUIGI                 1
@@ -28,6 +30,7 @@
 `define ADR_MUSHROOM_IMAGE              1061376  // LEN 512
 `define ADR_LIGHTNING_IMAGE             1061888  // LEN 512
 `define ADR_TROPHY_IMAGE				1062400  // LEN 512
+`define ADR_RESULTS_BG					1062912  // LEN 307200
   
 `define TURN_LEFT                       0
 `define TURN_STRAIGHT                   1

@@ -516,6 +516,16 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_lightning_write), 
                     .bram_write_enable(bram_lightning_we));
 
+
+    sprite_painter lightning_p(.x(x), .y(y), .sprite_x(lightning_x), .sprite_y(lightning_y),
+                       .sprite_is_present(show_lightning),
+                       .sprite1(0), .sprite2(0),
+                       .sprite3(0), .sprite4(0),
+                       .sprite5(0), .sprite6(0),
+                       .sprite7(0), .sprite8(0),
+                       .sprite9({((owned_item1 == `ITEM_LIGHTNING && (powerup_counter == 0 || picking1)) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
+                       .sprite10({((owned_item2 == `ITEM_LIGHTNING && (powerup_counter == 0 || picking2)) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
+    
     // --------------------------
     // Trophy image loader
     //
@@ -545,7 +555,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             trophy_loader(.clk(clk_100mhz), .rst(rst_loader), 
                     .load(trophy_load), .x(trophy_x), .y(trophy_y), .red(trophy_r), 
                     .green(trophy_g), .blue(trophy_b), .alpha(trophy_a),
-                    .address_offset(`ADR_LIGHTNING_IMAGE),
+                    .address_offset(`ADR_TROPHY_IMAGE),
                     .is_loaded(is_trophy_loaded), 
                     .sd_byte_available(sd_byte_available), 
                     .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
@@ -554,15 +564,6 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                     .bram_write_data(bram_trophy_write), 
                     .bram_write_enable(bram_trophy_we));
 
-
-    sprite_painter lightning_p(.x(x), .y(y), .sprite_x(lightning_x), .sprite_y(lightning_y),
-                       .sprite_is_present(show_lightning),
-                       .sprite1(0), .sprite2(0),
-                       .sprite3(0), .sprite4(0),
-                       .sprite5(0), .sprite6(0),
-                       .sprite7(0), .sprite8(0),
-                       .sprite9({((owned_item1 == `ITEM_LIGHTNING && (powerup_counter == 0 || picking1)) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
-                       .sprite10({((owned_item2 == `ITEM_LIGHTNING && (powerup_counter == 0 || picking2)) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
     wire lightning_display;
     lightning_display ld(.clk_100mhz(clk_100mhz), .rst(rst),

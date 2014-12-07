@@ -511,7 +511,10 @@ module labkit(input clk,
       .banana3(banana3), .banana4(banana4),
       .banana5(banana5), .banana6(banana6),
       .banana7(banana7), .banana8(banana8),
-      .lightning_used(lightning_used));
+      .lightning_used(lightning_used),
+      .min_tens(min_tens), .min_ones(min_ones), .sec_tens(sec_tens), .sec_ones(sec_ones),
+      .ms_tens(ms_tens), .ms_ones(ms_ones)
+      );
 
   // ------------------------
   // Track information map.

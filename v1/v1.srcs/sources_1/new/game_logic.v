@@ -138,7 +138,8 @@ module game_logic(input clk_100mhz, input rst,
 
 	assign in_loading_phase = (phase == `PHASE_LOADING_START_SCREEN ||
 		                    phase == `PHASE_LOADING_CHARACTER_SELECT ||
-		                    phase == `PHASE_LOADING_RACING);
+		                    phase == `PHASE_LOADING_RACING ||
+		                    phase == `PHASE_LOADING_RESULTS);
 	reg prev_lap_completed1 = 0;
 	reg prev_lap_completed2 = 0;
 
@@ -332,6 +333,16 @@ module game_logic(input clk_100mhz, input rst,
 					end
 					if(finish_place1 != 0 && finish_place2 != 0) begin
 						phase <= `PHASE_LOADING_START_SCREEN;
+					end
+				end
+				`PHASE_LOADING_RESULTS: begin
+					if(phase_loaded == 1) begin
+						phase <= `PHASE_START_SCREEN;
+					end
+				end
+				`PHASE_RESULTS: begin
+					if(start1 || start2) begin
+						phase <= `PHASE_LOADING_CHARACTER_SELECT;
 					end
 				end
 				default: begin
