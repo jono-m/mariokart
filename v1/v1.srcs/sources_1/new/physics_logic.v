@@ -536,4 +536,60 @@ module physics_logic (input clk_100mhz, input rst,
     assign item_box6_hit = car1_item_box6 || car2_item_box6;
     assign item_box7_hit = car1_item_box7 || car2_item_box7;
     assign item_box8_hit = car1_item_box8 || car2_item_box8;
+
+    // -------
+    // Collision with bananas
+    
+    wire car1_banana1;
+    wire car1_banana2;
+    wire car1_banana3;
+    wire car1_banana4;
+    wire car1_banana5;
+    wire car1_banana6;
+    wire car1_banana7;
+    wire car1_banana8;
+    collision_detect c1ban1(.object(banana1), .collided(car1_banana1), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban2(.object(banana2), .collided(car1_banana2), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban3(.object(banana3), .collided(car1_banana3), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban4(.object(banana4), .collided(car1_banana4), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban5(.object(banana5), .collided(car1_banana5), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban6(.object(banana6), .collided(car1_banana6), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban7(.object(banana7), .collided(car1_banana7), .car_x(car1_x), .car_y(car1_y));
+    collision_detect c1ban8(.object(banana8), .collided(car1_banana8), .car_x(car1_x), .car_y(car1_y));
+
+    wire car2_banana1;
+    wire car2_banana2;
+    wire car2_banana3;
+    wire car2_banana4;
+    wire car2_banana5;
+    wire car2_banana6;
+    wire car2_banana7;
+    wire car2_banana8;
+    collision_detect c2ban1(.object(banana1), .collided(car2_banana1), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban2(.object(banana2), .collided(car2_banana2), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban3(.object(banana3), .collided(car2_banana3), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban4(.object(banana4), .collided(car2_banana4), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban5(.object(banana5), .collided(car2_banana5), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban6(.object(banana6), .collided(car2_banana6), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban7(.object(banana7), .collided(car2_banana7), .car_x(car2_x), .car_y(car2_y));
+    collision_detect c2ban8(.object(banana8), .collided(car2_banana8), .car_x(car2_x), .car_y(car2_y));
+
+    assign banana_hit1 = car1_banana1 || car1_banana2 ||
+                          car1_banana3 || car1_banana4 ||
+                          car1_banana5 || car1_banana6 ||
+                          car1_banana7 || car1_banana8;
+
+    assign banana_hit2 = car2_banana1 || car2_banana2 ||
+                          car2_banana3 || car2_banana4 ||
+                          car2_banana5 || car2_banana6 ||
+                          car2_banana7 || car2_banana8;
+
+    assign banana1_hit = car1_banana1 || car2_banana1;
+    assign banana2_hit = car1_banana2 || car2_banana2;
+    assign banana3_hit = car1_banana3 || car2_banana3;
+    assign banana4_hit = car1_banana4 || car2_banana4;
+    assign banana5_hit = car1_banana5 || car2_banana5;
+    assign banana6_hit = car1_banana6 || car2_banana6;
+    assign banana7_hit = car1_banana7 || car2_banana7;
+    assign banana8_hit = car1_banana8 || car2_banana8;
 endmodule    
