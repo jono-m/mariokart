@@ -45,7 +45,14 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input [20:0] banana5, input [20:0] banana6,
         input [20:0] banana7, input [20:0] banana8,
 
-        input lightning_used
+        input lightning_used,
+
+        output [3:0] min_tens,
+        output [3:0] min_ones,
+        output [3:0] sec_tens,
+        output [3:0] sec_ones,
+        output [3:0] ms_tens,
+        output [3:0] ms_ones
     );
 
     // Flag if image loaders should be unloaded.
@@ -242,8 +249,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
             .sd_byte_available(sd_byte_available), 
             .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte), 
             .sd_address(timer_sd_adr), .sd_do_read(timer_sd_read),
-            .min_tens(), .min_ones(), .sec_tens(), .sec_ones(),
-            .ms_tens(), .ms_ones());
+            .min_tens(min_tens), .min_ones(min_ones), .sec_tens(sec_tens), .sec_ones(sec_ones),
+            .ms_tens(ms_tens), .ms_ones(ms_ones));
     
     // Latiku on your marks image loader
     // Loader connections.

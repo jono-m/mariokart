@@ -340,6 +340,27 @@ module labkit(input clk,
   wire banana_placed;
   wire mushroom_used;
 
+  wire [3:0] fmin_tens1;
+  wire [3:0] fmin_ones1;
+  wire [3:0] fsec_tens1;
+  wire [3:0] fsec_ones1;
+  wire [3:0] fms_tens1;
+  wire [3:0] fms_ones1;
+
+  wire [3:0] fmin_tens2;
+  wire [3:0] fmin_ones2;
+  wire [3:0] fsec_tens2;
+  wire [3:0] fsec_ones2;
+  wire [3:0] fms_tens2;
+  wire [3:0] fms_ones2;
+
+  wire [3:0] min_tens;
+  wire [3:0] min_ones;
+  wire [3:0] sec_tens;
+  wire [3:0] sec_ones;
+  wire [3:0] ms_tens;
+  wire [3:0] ms_ones;
+
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(A1), .B1(clean_B1), 
 			.start1(clean_start1), .Z1(clean_Z1), .R1(clean_R1), .L1(clean_L1), .dU1(clean_dU1),
       .dD1(clean_dD1), .dL1(clean_dL1), .dR1(clean_dR1), .cU1(clean_cU1), .cD1(clean_cD1),
@@ -400,7 +421,13 @@ module labkit(input clk,
       .car2_lightning_buff(car2_lightning_buff),
       .lightning_used(lightning_used),
       .banana_placed(banana_placed),
-      .mushroom_used(mushroom_used));
+      .mushroom_used(mushroom_used),
+      .fmin_tens1(fmin_tens1), .fmin_ones1(fmin_ones1), .fsec_tens1(fsec_tens1), .fsec_ones1(fsec_ones1),
+      .fms_tens1(fms_tens1), .fms_ones1(fms_ones1),
+      .fmin_tens2(fmin_tens2), .fmin_ones2(fmin_ones2), .fsec_tens2(fsec_tens2), .fsec_ones2(fsec_ones2),
+      .fms_tens2(fms_tens2), .fms_ones2(fms_ones2),
+      .min_tens(min_tens), .min_ones(min_ones), .sec_tens(sec_tens), .sec_ones(sec_ones),
+      .ms_tens(ms_tens), .ms_ones(ms_ones));
 
   // -----------------------------------
   // Car drivers and simulators.

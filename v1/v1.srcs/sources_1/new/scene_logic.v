@@ -196,6 +196,7 @@ module scene_logic(input clk_100mhz, input rst,
           end
         end
         `PHASE_RACING: begin
+          show_trophy <= 1;
           if(race_begin == 1) begin
             if(counter == 50000000) begin
               show_latiku_oym <= 0;
@@ -222,16 +223,16 @@ module scene_logic(input clk_100mhz, input rst,
               show_laps2 <= 0;
             end
           end
-          if(finish_place1 == 1) begin
-            trophy_x <= car1_x - 10;
-            trophy_y <= car1_y - 35;
-            show_trophy <= 1;
-          end
-          if(finish_place2 == 1) begin
-            trophy_x <= car2_x - 10;
-            trophy_y <= car2_y - 35;
-            show_trophy <= 1;
-          end
+          // if(finish_place1 == 1) begin
+          //   trophy_x <= car1_x - 10;
+          //   trophy_y <= car1_y - 35;
+          //   show_trophy <= 1;
+          // end
+          // if(finish_place2 == 1) begin
+          //   trophy_x <= car2_x - 10;
+          //   trophy_y <= car2_y - 35;
+          //   show_trophy <= 1;
+          // end
         end
       endcase
     end
