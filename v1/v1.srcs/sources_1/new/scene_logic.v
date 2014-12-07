@@ -259,7 +259,6 @@ module scene_logic(input clk_100mhz, input rst,
             show_text <= ~show_text;
           end
           counter <= counter + 1;
-          text_x <= 
         end
       endcase
     end
