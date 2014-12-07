@@ -112,7 +112,7 @@ module game_logic(input clk_100mhz, input rst,
 					selected_character2 <= `CHARACTER_LUIGI;
 				end
 				`PHASE_CHARACTER_SELECT: begin
-					if(start == 1) begin
+					if(start1 == 1 || start2 == 1) begin
 						phase <= `PHASE_LOADING_RACING;
 						item_box1[19:0] <= imap_item_box1;
 						item_box2[19:0] <= imap_item_box2;
