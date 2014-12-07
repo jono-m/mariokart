@@ -116,7 +116,7 @@ module time_display
 
     reg [19:0] counter = 0;
     always @(posedge clk_100mhz) begin
-      if(rst || reset_timer) begin
+      if(rst || reset_timer || force_display) begin
         min_tens <= 0;
         min_ones <= 0;
         sec_tens <= 0;

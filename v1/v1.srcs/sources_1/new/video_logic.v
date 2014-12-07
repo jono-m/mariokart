@@ -66,9 +66,12 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input [3:0] fsec_tens2,
         input [3:0] fsec_ones2,
         input [3:0] fms_tens2,
-        input [3:0] fms_ones2
+        input [3:0] fms_ones2,
+
+        output forcing_display
     );
 
+    assign forcing_display = (phase == `PHASE_RESULTS);
     // Flag if image loaders should be unloaded.
     reg unload = 0;
     reg faded = 0;
@@ -100,7 +103,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire bg_sd_read;
     image_loader #(.WIDTH(640), .HEIGHT(480), .ROWS(76800), .BRAM_ADDWIDTH(16),
             .ALPHA(0)) 
-            bg_loader(.clk(clk_100mhz), .rst(rst_loader), 
+            bg_loader(.clk(clk_50mhz), .rst(rst_loader), 
                     .load(bg_load), .x(x), .y(y), .red(bg_r), 
                     .green(bg_g), .blue(bg_b), .alpha(bg_a),
                     .address_offset(bg_address_offset),
@@ -163,6 +166,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         end
     end
 
+
     // --------------------------
     // Sprite 1 image loader
     //
@@ -182,7 +186,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite1_x;
     wire [8:0] sprite1_y;
     wire show_sprite1;
-    wire sprite1_alpha = show_sprite1 && sprite1_a && ((~picking1 && (owned_item1 == `ITEM_NONE || powerup_counter == 1)) || phase == `PHASE_RESULTS);
+    wire sprite1_alpha = show_sprite1 && sprite1_a && ((~picking1 && (owned_item1 == `ITEM_NONE || powerup_counter == 1)) || forcing_display);
     wire [31:0] sprite1_address_offset;
     wire is_sprite1_loaded;
     wire [31:0] sprite1_sd_adr;
@@ -220,7 +224,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [9:0] sprite2_x;
     wire [8:0] sprite2_y;
     wire show_sprite2;
-    wire sprite2_alpha = show_sprite2 && sprite2_a && ((~picking2 && (owned_item2 == `ITEM_NONE || powerup_counter == 1)) || phase == `PHASE_RESULTS);
+    wire sprite2_alpha = show_sprite2 && sprite2_a && ((~picking2 && (owned_item2 == `ITEM_NONE || powerup_counter == 1)) || forcing_display);
     wire [31:0] sprite2_address_offset;
     wire is_sprite2_loaded;
     wire [31:0] sprite2_sd_adr;
@@ -256,7 +260,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire [31:0] timer_sd_adr;
     wire timer_sd_read;
     time_display td(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst_loader),
-            .force_display(phase == `PHASE_RESULTS),
+            .force_display(forcing_display),
             .load(timer_load), .reset_timer(reset_timer), 
             .address_offset(timer_address_offset), .x(x-timer_x), 
             .y(y-timer_y), .red(timer_r), .green(timer_g), .blue(timer_b),

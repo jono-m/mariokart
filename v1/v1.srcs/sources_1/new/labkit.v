@@ -485,6 +485,7 @@ module labkit(input clk,
 	wire [3:0] blue;
   wire [31:0] video_sd_adr;
   wire video_sd_read;
+  wire forcing_display;
 
 	video_logic vl(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst), .phase(phase),
 			.selected_character1(selected_character1), .selected_character2(selected_character2), 
@@ -517,7 +518,7 @@ module labkit(input clk,
       .fmin_tens1(fmin_tens1), .fmin_ones1(fmin_ones1), .fsec_tens1(fsec_tens1), .fsec_ones1(fsec_ones1),
       .fms_tens1(fms_tens1), .fms_ones1(fms_ones1),
       .fmin_tens2(fmin_tens2), .fmin_ones2(fmin_ones2), .fsec_tens2(fsec_tens2), .fsec_ones2(fsec_ones2),
-      .fms_tens2(fms_tens2), .fms_ones2(fms_ones2)
+      .fms_tens2(fms_tens2), .fms_ones2(fms_ones2), .forcing_display(forcing_display)
       );
 
   // ------------------------
@@ -625,5 +626,5 @@ module labkit(input clk,
   assign JA = {controller_data1, controller_data2};
 
   assign led = {phase, phase_loaded, A1, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, imap_loaded, video_loaded, 3'b111};
+      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, imap_loaded, video_loaded, forcing_display};
 endmodule
