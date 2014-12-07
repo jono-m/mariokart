@@ -255,7 +255,7 @@ module labkit(input clk,
 	wire [2:0] selected_character1;
   wire [2:0] selected_character2;
   wire lap_completed1;
-  wire [1:0] laps_completed2;
+  wire [1:0] laps_completed1;
   wire lap_completed2;
   wire [1:0] laps_completed2;
   wire race_begin;
@@ -291,13 +291,13 @@ module labkit(input clk,
 
   wire [1:0] owned_item1;
   wire [1:0] owned_item2;
-	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(paused_A1), .B1(clean_B1), 
+	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(A1), .B1(clean_B1), 
 			.start1(clean_start1), .Z1(clean_Z1), .R1(clean_R1), .L1(clean_L1), .dU1(clean_dU1),
       .dD1(clean_dD1), .dL1(clean_dL1), .dR1(clean_dR1), .cU1(clean_cU1), .cD1(clean_cD1),
       .cL1(clean_cL1), .cR1(clean_cR1), .stickUp1(paused_stickUp1), 
       .stickDown1(paused_stickDown1), .stickLeft1(paused_stickLeft1), 
 			.stickRight1(paused_stickRight1), .stickX1(stickX1), .stickY1(stickY1), 
-      .A2(paused_A2), .B2(clean_B2), 
+      .A2(A2), .B2(clean_B2), 
       .start2(clean_start2), .Z2(clean_Z2), .R2(clean_R2), .L2(clean_L2), .dU2(clean_dU2),
       .dD2(clean_dD2), .dL2(clean_dL2), .dR2(clean_dR2), .cU2(clean_cU2), .cD2(clean_cD2),
       .cL2(clean_cL2), .cR2(clean_cR2), .stickUp2(paused_stickUp2), 

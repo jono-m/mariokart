@@ -162,8 +162,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     //
     // BRAM connections.
     wire [6:0] bram_sprite2_adr;
-    wire [32:0] bram_sprite2_write;
-    wire [32:0] bram_sprite2_read;
+    wire [31:0] bram_sprite2_write;
+    wire [31:0] bram_sprite2_read;
     wire bram_sprite2_we;   
     sprite_image_bram sprite2_bram(.clka(clk_50mhz), .addra(bram_sprite2_adr), 
             .dina(bram_sprite2_write), .douta(bram_sprite2_read), .wea(bram_sprite2_we));

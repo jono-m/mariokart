@@ -291,9 +291,9 @@ module game_logic(input clk_100mhz, input rst,
 	// Item and buff managers
 
 	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
-			.item_box_hit(item_box_hit1), .Z(Z), .owned_item(owned_item1),
+			.item_box_hit(item_box_hit1), .Z(Z1), .owned_item(owned_item1),
 			.picking_item(picking_item1));
 	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
-			.item_box_hit(item_box_hit2), .Z(Z), .owned_item(owned_item2),
+			.item_box_hit(item_box_hit2), .Z(Z2), .owned_item(owned_item2),
 			.picking_item(picking_item2));
 endmodule
