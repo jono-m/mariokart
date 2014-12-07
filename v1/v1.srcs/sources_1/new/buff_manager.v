@@ -5,9 +5,9 @@ module buff_item_manager(input clk_100mhz, input rst,
     //input lightning_hit,
     input Z,
     output reg [1:0] owned_item = `ITEM_NONE,
-    output reg picking_item = 0
+    output reg picking_item = 0,
     //output reg [1:0] buff = `BUFF_NONE,
-    output reg place_banana,
+    output reg place_banana
     //output reg use_lightning
     );
 
@@ -26,7 +26,7 @@ module buff_item_manager(input clk_100mhz, input rst,
       item_pick_counter <= 0;
       item_pick_clk_counter <= 0;
       item_rotation_clk_counter <= 0;
-      
+
       place_banana <= 0;
     end
     else begin

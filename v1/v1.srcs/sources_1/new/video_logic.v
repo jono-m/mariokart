@@ -42,7 +42,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input [20:0] banana1, input [20:0] banana2,
         input [20:0] banana3, input [20:0] banana4,
         input [20:0] banana5, input [20:0] banana6,
-        input [20:0] banana7, input [20:0] banana8,
+        input [20:0] banana7, input [20:0] banana8
     );
 
     // Flag if image loaders should be unloaded.
