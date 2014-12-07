@@ -111,10 +111,10 @@ module labkit(input clk,
 	wire cR1;
 	wire [7:0] stickX1;
 	wire [7:0] stickY1;
-  wire stickUp1 = btnU || (stickY > 170);
-  wire stickDown1 = btnD || (stickY < 80);
-  wire stickLeft1 = btnL || (stickX < 80);
-  wire stickRight1 = btnR || (stickX > 170);
+  wire stickUp1 = btnU || (stickY1 > 170);
+  wire stickDown1 = btnD || (stickY1 < 80);
+  wire stickLeft1 = btnL || (stickX1 < 80);
+  wire stickRight1 = btnR || (stickX1 > 170);
   wire controller_data1;
 
   N64_interpret controller1(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_1mhz(clk_1mhz),
@@ -141,24 +141,24 @@ module labkit(input clk,
   wire clean_stickLeft1;
   wire clean_stickRight1;
 
-  debounce debounceA(rst, clk_100mhz, A1, clean_A1);
-  debounce debounceB(rst, clk_100mhz, B1, clean_B1);
-  debounce debounceS(rst, clk_100mhz, start1, clean_start1);
-  debounce debounceZ(rst, clk_100mhz, Z1, clean_Z1);
-  debounce debounceR(rst, clk_100mhz, R1, clean_R1);
-  debounce debounceL(rst, clk_100mhz, L1, clean_L1);
-  debounce debounceDU(rst, clk_100mhz, dU1, clean_dU1);
-  debounce debounceDD(rst, clk_100mhz, dD1, clean_dD1);
-  debounce debounceDL(rst, clk_100mhz, dL1, clean_dL1);
-  debounce debounceDR(rst, clk_100mhz, dR1, clean_dR1);
-  debounce debounceCU(rst, clk_100mhz, cU1, clean_cU1);
-  debounce debounceCD(rst, clk_100mhz, cD1, clean_cD1);
-  debounce debounceCL(rst, clk_100mhz, cL1, clean_cL1);
-  debounce debounceCR(rst, clk_100mhz, cR1, clean_cR1);
-  debounce debounceSU(rst, clk_100mhz, stickUp1, clean_stickUp1);
-  debounce debounceSD(rst, clk_100mhz, stickDown1, clean_stickDown1);
-  debounce debounceSL(rst, clk_100mhz, stickLeft1, clean_stickLeft1);
-  debounce debounceSR(rst, clk_100mhz, stickRight1, clean_stickRight1);
+  debounce debounceA1(rst, clk_100mhz, A1, clean_A1);
+  debounce debounceB1(rst, clk_100mhz, B1, clean_B1);
+  debounce debounceS1(rst, clk_100mhz, start1, clean_start1);
+  debounce debounceZ1(rst, clk_100mhz, Z1, clean_Z1);
+  debounce debounceR1(rst, clk_100mhz, R1, clean_R1);
+  debounce debounceL1(rst, clk_100mhz, L1, clean_L1);
+  debounce debounceDU1(rst, clk_100mhz, dU1, clean_dU1);
+  debounce debounceDD1(rst, clk_100mhz, dD1, clean_dD1);
+  debounce debounceDL1(rst, clk_100mhz, dL1, clean_dL1);
+  debounce debounceDR1(rst, clk_100mhz, dR1, clean_dR1);
+  debounce debounceCU1(rst, clk_100mhz, cU1, clean_cU1);
+  debounce debounceCD1(rst, clk_100mhz, cD1, clean_cD1);
+  debounce debounceCL1(rst, clk_100mhz, cL1, clean_cL1);
+  debounce debounceCR1(rst, clk_100mhz, cR1, clean_cR1);
+  debounce debounceSU1(rst, clk_100mhz, stickUp1, clean_stickUp1);
+  debounce debounceSD1(rst, clk_100mhz, stickDown1, clean_stickDown1);
+  debounce debounceSL1(rst, clk_100mhz, stickLeft1, clean_stickLeft1);
+  debounce debounceSR1(rst, clk_100mhz, stickRight1, clean_stickRight1);
 
   wire paused_stickUp1;
   wire paused_stickDown1;
@@ -171,14 +171,10 @@ module labkit(input clk,
   pause_repeater pr1(rst, clk_100mhz, clean_stickRight1, paused_stickRight1);
 
   // Player 2
-  wire A_ctrl;
-  wire A2 = btnU || A_ctrl;
-  wire B_ctrl;
-  wire B2 = btnD || B_ctrl;
-  wire start_ctrl;
-  wire start2 = btnC || start_ctrl;
-  wire Z_ctrl;
-  wire Z2 = btnC || Z_ctrl;
+  wire A2;
+  wire B2;
+  wire start2;
+  wire Z2;
   wire R2;
   wire L2;
   wire dU2;
@@ -191,14 +187,14 @@ module labkit(input clk,
   wire cR2;
   wire [7:0] stickX2;
   wire [7:0] stickY2;
-  wire stickUp2 = btnU || (stickY > 270);
-  wire stickDown2 = btnD || (stickY < 80);
-  wire stickLeft2 = btnL || (stickX < 80);
-  wire stickRight2 = btnR || (stickX > 270);
+  wire stickUp2 = (stickY2 > 270);
+  wire stickDown2 = (stickY2 < 80);
+  wire stickLeft2 = (stickX2 < 80);
+  wire stickRight2 = (stickX2 > 270);
   wire controller_data2;
 
   N64_interpret controller2(.clk_100mhz(clk_100mhz), .rst(rst), .enabled(1), .clk_2mhz(clk_2mhz),
-      .A(A_ctrl), .B(B_ctrl), .start(start_ctrl), .L(L2), .R(R2), .Z(Z_ctrl), .dU(dU2), .dD(dD2), .dL(dL2),
+      .A(A2), .B(B2), .start(start2), .L(L2), .R(R2), .Z(Z2), .dU(dU2), .dD(dD2), .dL(dL2),
       .dR(dR2), .cU(cU2), .cD(cD2), .cL(cL2), .cR(cR2), .stickX(stickX2), 
       .stickY(stickY2), .controller_data(controller_data2));
 
@@ -221,24 +217,24 @@ module labkit(input clk,
   wire clean_stickLeft2;
   wire clean_stickRight2;
 
-  debounce debounceA(rst, clk_100mhz, A2, clean_A2);
-  debounce debounceB(rst, clk_100mhz, B2, clean_B2);
-  debounce debounceS(rst, clk_100mhz, start2, clean_start2);
-  debounce debounceZ(rst, clk_100mhz, Z2, clean_Z2);
-  debounce debounceR(rst, clk_100mhz, R2, clean_R2);
-  debounce debounceL(rst, clk_100mhz, L2, clean_L2);
-  debounce debounceDU(rst, clk_100mhz, dU2, clean_dU2);
-  debounce debounceDD(rst, clk_100mhz, dD2, clean_dD2);
-  debounce debounceDL(rst, clk_100mhz, dL2, clean_dL2);
-  debounce debounceDR(rst, clk_100mhz, dR2, clean_dR2);
-  debounce debounceCU(rst, clk_100mhz, cU2, clean_cU2);
-  debounce debounceCD(rst, clk_100mhz, cD2, clean_cD2);
-  debounce debounceCL(rst, clk_100mhz, cL2, clean_cL2);
-  debounce debounceCR(rst, clk_100mhz, cR2, clean_cR2);
-  debounce debounceSU(rst, clk_100mhz, stickUp2, clean_stickUp2);
-  debounce debounceSD(rst, clk_100mhz, stickDown2, clean_stickDown2);
-  debounce debounceSL(rst, clk_100mhz, stickLeft2, clean_stickLeft2);
-  debounce debounceSR(rst, clk_100mhz, stickRight2, clean_stickRight2);
+  debounce debounceA2(rst, clk_100mhz, A2, clean_A2);
+  debounce debounceB2(rst, clk_100mhz, B2, clean_B2);
+  debounce debounceS2(rst, clk_100mhz, start2, clean_start2);
+  debounce debounceZ2(rst, clk_100mhz, Z2, clean_Z2);
+  debounce debounceR2(rst, clk_100mhz, R2, clean_R2);
+  debounce debounceL2(rst, clk_100mhz, L2, clean_L2);
+  debounce debounceDU2(rst, clk_100mhz, dU2, clean_dU2);
+  debounce debounceDD2(rst, clk_100mhz, dD2, clean_dD2);
+  debounce debounceDL2(rst, clk_100mhz, dL2, clean_dL2);
+  debounce debounceDR2(rst, clk_100mhz, dR2, clean_dR2);
+  debounce debounceCU2(rst, clk_100mhz, cU2, clean_cU2);
+  debounce debounceCD2(rst, clk_100mhz, cD2, clean_cD2);
+  debounce debounceCL2(rst, clk_100mhz, cL2, clean_cL2);
+  debounce debounceCR2(rst, clk_100mhz, cR2, clean_cR2);
+  debounce debounceSU2(rst, clk_100mhz, stickUp2, clean_stickUp2);
+  debounce debounceSD2(rst, clk_100mhz, stickDown2, clean_stickDown2);
+  debounce debounceSL2(rst, clk_100mhz, stickLeft2, clean_stickLeft2);
+  debounce debounceSR2(rst, clk_100mhz, stickRight2, clean_stickRight2);
 
   wire paused_stickUp2;
   wire paused_stickDown2;
