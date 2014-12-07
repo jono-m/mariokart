@@ -323,6 +323,9 @@ module labkit(input clk,
   wire car2_banana_buff;
   wire car2_mushroom_buff;
   wire car2_lightning_buff;
+  wire lightning_used;
+  wire banana_placed;
+  wire mushroom_used;
 
 	game_logic gl(.clk_100mhz(clk_100mhz), .rst(rst), .A1(A1), .B1(clean_B1), 
 			.start1(clean_start1), .Z1(clean_Z1), .R1(clean_R1), .L1(clean_L1), .dU1(clean_dU1),
@@ -376,7 +379,10 @@ module labkit(input clk,
       .car1_lightning_buff(car1_lightning_buff),
       .car2_banana_buff(car2_banana_buff),
       .car2_mushroom_buff(car2_mushroom_buff),
-      .car2_lightning_buff(car2_lightning_buff));
+      .car2_lightning_buff(car2_lightning_buff),
+      .lightning_used(lightning_used),
+      .banana_placed(banana_placed),
+      .mushroom_used(mushroom_used));
 
   // -----------------------------------
   // Car drivers and simulators.
@@ -457,7 +463,8 @@ module labkit(input clk,
       .banana1(banana1), .banana2(banana2),
       .banana3(banana3), .banana4(banana4),
       .banana5(banana5), .banana6(banana6),
-      .banana7(banana7), .banana8(banana8));
+      .banana7(banana7), .banana8(banana8),
+      .lightning_used(lightning_used));
 
   // ------------------------
   // Track information map.

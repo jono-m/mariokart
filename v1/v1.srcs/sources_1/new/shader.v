@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module shader(input [4:0] fader,
+module shader(input lightning_display, input [4:0] fader,
         input [3:0] bg_r, input [3:0] bg_g, input [3:0] bg_b, input bg_alpha,
         input [3:0] text_r, input [3:0] text_g, input [3:0] text_b, input text_alpha,
         input [3:0] csb1_r, input [3:0] csb1_g, input [3:0] csb1_b, input csb1_alpha,
@@ -68,7 +68,7 @@ module shader(input [4:0] fader,
     wire [7:0] green_fade = (shader_green) * fader;
     wire [7:0] blue_fade = (shader_blue) * fader;
     
-    assign out_red = red_fade[7:4];
-    assign out_green = green_fade[7:4];
-    assign out_blue = blue_fade[7:4];
+    assign out_red = lightning_display ? 4'hF : red_fade[7:4];
+    assign out_green = lightning_display ? 4'hF : green_fade[7:4];
+    assign out_blue = lightning_display ? 4'hF : blue_fade[7:4];
 endmodule

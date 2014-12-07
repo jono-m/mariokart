@@ -53,9 +53,10 @@
 
 `define ITEM_BOX_RESPAWN_SECONDS        5
 `define ITEM_PICK_TIME_SECONDS          4
-`define MUSHROOM_BOOST_SECONDS          2
+`define MUSHROOM_BOOST_SECONDS          1
 `define BANANA_SECONDS                  1
 `define LIGHTNING_SECONDS               3
+`define LIGHTNING_FLASH_SECONDS			1
 
 `define ITEM_NONE                      0
 `define ITEM_BANANA                    1

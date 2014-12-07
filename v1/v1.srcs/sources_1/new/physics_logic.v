@@ -47,7 +47,7 @@ module physics_logic (input clk_100mhz, input rst,
     input [20:0] item_box6,
     input [20:0] item_box7,
     input [20:0] item_box8,
-    
+
     input [20:0] banana1,
     input [20:0] banana2,
     input [20:0] banana3,
@@ -473,8 +473,8 @@ module physics_logic (input clk_100mhz, input rst,
 
     assign forward1 = A1 && (~wall_forward1 || (wall_forward1 && wall_backward1)) && race_begin;
     assign backward1 = B1 && (~wall_backward1 || (wall_forward1 && wall_backward1)) && race_begin;
-    assign turn_left1 = (car1_banana_buff ? stickRight1 : stickLeft1) && (~wall_turn_left1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
-    assign turn_right1 = (car1_banana_buff ? stickLeft1 : stickRight1) && (~wall_turn_right1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
+    assign turn_left1 = (car1_banana_buff || car1_lightning_buff ? stickRight1 : stickLeft1) && (~wall_turn_left1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
+    assign turn_right1 = (car1_banana_buff || car1_lightning_buff ? stickLeft1 : stickRight1) && (~wall_turn_right1 || (wall_turn_left1 && wall_turn_right1)) && race_begin;
 
     wire wall_forward2 = (car2_forward_map_type == `MAPTYPE_WALL) ||
             (car2_forward_x >= 640 || car2_forward_y >= 480 || car2_forward_y == 0);
@@ -487,8 +487,8 @@ module physics_logic (input clk_100mhz, input rst,
 
     assign forward2 = A2 && (~wall_forward2 || (wall_forward2 && wall_backward2)) && race_begin;
     assign backward2 = B2 && (~wall_backward2 || (wall_forward2 && wall_backward2)) && race_begin;
-    assign turn_left2 = stickLeft2 && (~wall_turn_left2 || (wall_turn_left2 && wall_turn_right2)) && race_begin;
-    assign turn_right2 = stickRight2 && (~wall_turn_right2 || (wall_turn_left2 && wall_turn_right2)) && race_begin;
+    assign turn_left2 = (car2_banana_buff || car2_lightning_buff ? stickRight2 : stickLeft2) && (~wall_turn_left2 || (wall_turn_left2 && wall_turn_right2)) && race_begin;
+    assign turn_right2 = (car2_banana_buff || car2_lightning_buff ? stickLeft2 : stickRight2) && (~wall_turn_right2 || (wall_turn_left2 && wall_turn_right2)) && race_begin;
 
     // -------
     // Collision with items

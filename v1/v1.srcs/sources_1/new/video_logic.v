@@ -42,7 +42,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
         input [20:0] banana1, input [20:0] banana2,
         input [20:0] banana3, input [20:0] banana4,
         input [20:0] banana5, input [20:0] banana6,
-        input [20:0] banana7, input [20:0] banana8
+        input [20:0] banana7, input [20:0] banana8,
+
+        input lightning_used
     );
 
     // Flag if image loaders should be unloaded.
@@ -515,10 +517,14 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
                        .sprite9({((owned_item1 == `ITEM_LIGHTNING || powerup_counter == 0) ? 1'b1 : 1'b0), sprite1_x, 1'b0, sprite1_y}), 
                        .sprite10({((owned_item2 == `ITEM_LIGHTNING || powerup_counter == 0) ? 1'b1 : 1'b0), sprite2_x, 1'b0, sprite2_y}));
 
+    wire lightning_display;
+    lightning_display ld(.clk_100mhz(clk_100mhz), .rst(rst),
+            .lightning_used(lightning_used), .lightning_display(lightning_display));
+
     // -------
     // SHADER
     
-    shader image_shader(.fader(fader), .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
+    shader image_shader(.lightning_display(lightning_display), .fader(fader), .bg_r(bg_r), .bg_g(bg_g), .bg_b(bg_b), .bg_alpha(bg_a),
             .text_r(text_r), .text_g(text_g), .text_b(text_b), .text_alpha(text_alpha),
             .csb1_r(csb1_r), .csb1_g(csb1_g), .csb1_b(csb1_b), .csb1_alpha(csb1_alpha),
             .csb2_r(csb2_r), .csb2_g(csb2_g), .csb2_b(csb2_b), .csb2_alpha(csb2_alpha),

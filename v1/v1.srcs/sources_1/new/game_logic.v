@@ -96,7 +96,11 @@ module game_logic(input clk_100mhz, input rst,
 	    output reg [20:0] banana5 = 0,
 	    output reg [20:0] banana6 = 0,
 	    output reg [20:0] banana7 = 0,
-	    output reg [20:0] banana8 = 0
+	    output reg [20:0] banana8 = 0,
+
+	    output lightning_used,
+	    output banana_placed,
+	    output mushroom_used
 	);
 	// Loading phases
 
@@ -361,6 +365,11 @@ module game_logic(input clk_100mhz, input rst,
 	wire car2_place_banana;
 	wire car1_use_lightning;
 	wire car2_use_lightning;
+	wire car1_use_mushroom;
+	wire car2_use_mushroom;
+	assign lightning_used = car1_use_lightning || car2_use_lightning;
+	assign banana_placed = car1_place_banana || car2_place_banana;
+	assign mushroom_used = car1_use_mushroom || car2_use_mushroom;
 	buff_item_manager car1_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
 			.item_box_hit(item_box_hit1), 
 			.banana_hit(banana_hit1),
@@ -371,7 +380,8 @@ module game_logic(input clk_100mhz, input rst,
 			.has_mushroom_buff(car1_mushroom_buff),
 			.has_lightning_buff(car1_lightning_buff),
 			.place_banana(car1_place_banana),
-			.use_lightning(car1_use_lightning));
+			.use_lightning(car1_use_lightning),
+			.use_mushroom(car1_use_mushroom));
 	buff_item_manager car2_buffs(.clk_100mhz(clk_100mhz), .rst(rst),
 			.item_box_hit(item_box_hit2), 
 			.banana_hit(banana_hit2),
@@ -382,7 +392,8 @@ module game_logic(input clk_100mhz, input rst,
 			.has_mushroom_buff(car2_mushroom_buff),
 			.has_lightning_buff(car2_lightning_buff),
 			.place_banana(car2_place_banana),
-			.use_lightning(car2_use_lightning));
+			.use_lightning(car2_use_lightning),
+			.use_mushroom(car2_use_mushroom));
 
 	wire [4:0] next_free_banana_slot = 
 			(banana1[20] == 0 ? 1 :
