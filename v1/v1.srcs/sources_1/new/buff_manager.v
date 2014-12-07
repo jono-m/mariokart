@@ -12,7 +12,7 @@ module buff_item_manager(input clk_100mhz, input rst,
     output has_mushroom_buff,
     output reg place_banana,
     output reg use_lightning,
-    output reg use_mushroom,
+    output reg use_mushroom
     );
 
   reg [2:0] item_pick_counter = 0;
