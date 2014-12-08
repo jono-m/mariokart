@@ -635,18 +635,6 @@ module labkit(input clk,
       .sd_address(sound_sd_adr), .sd_do_read(sound_sd_read),
       .cram_data(cram_data), .cram_adr(cram_adr), .cram_we(cram_we));
 
-
-  information_map imap(.clk_100mhz(clk_100mhz), .rst(rst), .load(imap_load),
-      .in_loading_phase(in_loading_phase),
-      .address_offset(`ADR_TRACK_INFORMATION_IMAGE),
-      .x(imap_x), .y(imap_y), .map_type(map_type), .is_loaded(imap_loaded),
-      .sd_byte_available(sd_byte_available), 
-      .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
-      .sd_address(imap_sd_adr), .sd_do_read(imap_sd_read),
-      .item_box1(imap_item_box1), .item_box2(imap_item_box2),
-      .item_box3(imap_item_box3), .item_box4(imap_item_box4),
-      .item_box5(imap_item_box5), .item_box6(imap_item_box6),
-      .item_box7(imap_item_box7), .item_box8(imap_item_box8));
   // ------------------------------------------
   // SD card loader.
 
