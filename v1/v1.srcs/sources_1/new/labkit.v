@@ -690,8 +690,8 @@ module labkit(input clk,
   assign RamUBn = 0;
   assign RamWait = 1'bZ;
 
-  assign [15:0] MemDB = cram_data;
-  assign [22:0] MemAdr = cram_adr;
+  assign MemDB = cram_data;
+  assign MemAdr = cram_adr;
   
   assign JA = {controller_data1, controller_data2};
   assign JB = {driver_right1, driver_left1, driver_backward1, driver_forward1, 
