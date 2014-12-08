@@ -330,7 +330,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input clk_25mhz, input rst
     wire [9:0] laps1_x;
     wire [8:0] laps1_y;
     wire [9:0] laps1_sprite_x;
-    wire [9:0] laps1_sprite_y;
+    wire [8:0] laps1_sprite_y;
     wire [3:0] laps1_r;
     wire [3:0] laps1_g;
     wire [3:0] laps1_b;
@@ -347,7 +347,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input clk_25mhz, input rst
     wire [9:0] laps2_x;
     wire [8:0] laps2_y;
     wire [9:0] laps2_sprite_x;
-    wire [9:0] laps2_sprite_y;
+    wire [8:0] laps2_sprite_y;
     wire [3:0] laps2_r;
     wire [3:0] laps2_g;
     wire [3:0] laps2_b;

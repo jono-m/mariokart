@@ -32,7 +32,7 @@
 `define ADR_TROPHY_IMAGE				1062400  // LEN 512
 `define ADR_RESULTS_BG					1062912  // LEN 307200
 `define SOUND_SD_ADR					1370112	 // LEN 262144
-`define SOUND_SD_LENGTH					262144
+`define SOUND_SD_LENGTH					3577139
   
 `define TURN_LEFT                       0
 `define TURN_STRAIGHT                   1
@@ -49,13 +49,13 @@
 `define MAPTYPE_FINISH					        3
 
 `define PWM_P_FORWARD_SLOW              10000000
-`define PWM_DS_FORWARD_SLOW             3
+`define PWM_DS_FORWARD_SLOW             5
 `define PWM_P_FORWARD_NORMAL            10000000
-`define PWM_DS_FORWARD_NORMAL           5
+`define PWM_DS_FORWARD_NORMAL           7
 `define PWM_P_BACKWARD_SLOW             10000000
-`define PWM_DS_BACKWARD_SLOW            3
+`define PWM_DS_BACKWARD_SLOW            5
 `define PWM_P_BACKWARD_NORMAL           10000000
-`define PWM_DS_BACKWARD_NORMAL          5
+`define PWM_DS_BACKWARD_NORMAL          7
 
 `define ITEM_BOX_RESPAWN_SECONDS        5
 `define ITEM_PICK_TIME_SECONDS          2
@@ -69,3 +69,8 @@
 `define ITEM_BANANA                    1
 `define ITEM_MUSHROOM                  2
 `define ITEM_LIGHTNING                 3
+
+`define MUSIC_START_ADDRESS             0
+`define MUSIC_START_LENGTH              2128020
+`define MUSIC_GAME_ADDRESS              678901
+`define MUSIC_GAME_LENGTH               1449119

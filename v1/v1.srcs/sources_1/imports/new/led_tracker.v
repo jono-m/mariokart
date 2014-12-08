@@ -47,9 +47,9 @@ module led_tracker(input clk, input replace_cars, output[3:0] vgaRed, output[3:0
     //Camera start calibration
     //reg camera_adjust_state = 0;
     reg [9:0] x_cam1_start = 100;
-    reg [8:0] y_cam1_start = 50;
+    reg [8:0] y_cam1_start = 70;
     reg [9:0] x_cam2_start = 100;
-    reg [8:0] y_cam2_start = 100;
+    reg [8:0] y_cam2_start = 120;
     // always @(posedge clk) begin
     //     if(btnL == 1) begin
     //         camera_adjust_state <= 0;
@@ -249,7 +249,7 @@ module tracker #(DEFAULT_X = 400, DEFAULT_Y = 250) (input clk, input hard_reset,
     assign xloc = x_loc_full[9:0];
     assign yloc = y_loc_full[8:0];
 
-    wire [9:0] roi_width = 30;
+    wire [9:0] roi_width = 60;
     
     wire in_region;
     rectangle roi(.pixel_x(x), .pixel_y(y), 

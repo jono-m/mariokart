@@ -23,20 +23,13 @@ module sd_loader(input clk_100mhz, input rst,
         imap_load <= 1;
       end
       if(in_loading_phase) begin
-        if(imap_loaded == 0) begin
-          imap_load <= 1;
-          video_load <= 0;
-          sound_load <= 0;
-        end
-        else if(video_loaded == 0) begin
+        if(imap_loaded == 1) begin
           imap_load <= 0;
-          video_load <= 1;
-          sound_load <= 0;
-        end
-        else if(sound_loaded == 0) begin
-          imap_load <= 0;
-          video_load <= 0;
           sound_load <= 1;
+        end
+        if(sound_loaded == 1) begin
+          sound_load <= 0;
+          video_load <= 1;
         end
       end
     end

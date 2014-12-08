@@ -56,7 +56,10 @@ module labkit(input clk,
     input RamWait,
 
     inout [15:0] MemDB,
-    output [22:0] MemAdr
+    output [22:0] MemAdr,
+
+    output ampPWM,
+    output ampSD
 	);
 
   // -----------------
@@ -92,7 +95,7 @@ module labkit(input clk,
 	wire sd_ready_for_read;
 	wire [31:0] sd_address;
 
-	sd_controller sdcont(.clk(clk_25mhz), .cs(sd_CS), .mosi(sd_MOSI), 
+	sd_controller sdcont(.clk(clk_12mhz), .cs(sd_CS), .mosi(sd_MOSI), 
 			.miso(sd_MISO), .sclk(sd_CLK), .rd(sd_read), .wr(0), .dm_in(0), 
 			.reset(rst), .din(0), .dout(sd_byte),
 			.byte_available(sd_byte_available), .ready_for_read(sd_ready_for_read), 
@@ -635,6 +638,10 @@ module labkit(input clk,
       .sd_address(sound_sd_adr), .sd_do_read(sound_sd_read),
       .cram_data(cram_data), .cram_adr(cram_adr), .cram_we(cram_we));
 
+  audio_logic audio(.clk(clk_100mhz), .rst(rst),
+      .playing(sound_loaded), .music_data(sample), .phase(phase),
+      .current_address(sound_address), .ampPWM(ampPWM), .ampSD(ampSD));
+
   // ------------------------------------------
   // SD card loader.
 
@@ -686,5 +693,5 @@ module labkit(input clk,
       driver_right2, driver_left2, driver_backward2, driver_forward2};
 
   assign led = {phase, phase_loaded, A1, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, forcing_display, 1'b1};
+      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, forcing_display, sound_loaded};
 endmodule
