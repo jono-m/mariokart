@@ -39,7 +39,8 @@ module labkit(input clk,
 		input [15:0] sw,
 
     // PMOD
-    inout [1:0] JA
+    inout [1:0] JA,
+    inout [7:0] JB
 	);
 
   // -----------------
@@ -624,7 +625,8 @@ module labkit(input clk,
   assign sdData[1] = 1;
   
   assign JA = {controller_data1, controller_data2};
+  assign JB = {turn_right1, turn_left1, backward1, forward1, turn_right2, turn_left2, backward2, forward2};
 
   assign led = {phase, phase_loaded, A1, sd_read, sd_ready_for_read, sd_byte_available, rst, 
-      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, imap_loaded, video_loaded, forcing_display};
+      paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, forcing_display, 1'b1};
 endmodule

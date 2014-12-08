@@ -305,12 +305,22 @@ module game_logic(input clk_100mhz, input rst,
 						if(laps_completed1 == 2) begin
 							finish_place1 <= finish_place2 == 0 ? 1 : 2;
 							laps_completed1 <= 3;
-							fmin_tens1 <= min_tens;
-							fmin_ones1 <= min_ones;
-							fsec_tens1 <= sec_tens;
-							fsec_ones1 <= sec_ones;
-							fms_tens1 <= ms_tens;
-							fms_ones1 <= ms_ones;
+							if(finish_place2 == 0) begin
+								fmin_tens1 <= min_tens;
+								fmin_ones1 <= min_ones;
+								fsec_tens1 <= sec_tens;
+								fsec_ones1 <= sec_ones;
+								fms_tens1 <= ms_tens;
+								fms_ones1 <= ms_ones;
+							end
+							else begin
+								fmin_tens2 <= min_tens;
+								fmin_ones2 <= min_ones;
+								fsec_tens2 <= sec_tens;
+								fsec_ones2 <= sec_ones;
+								fms_tens2 <= ms_tens;
+								fms_ones2 <= ms_ones;
+							end
 						end
 						else if(laps_completed1 < 2) begin
 							laps_completed1 <= laps_completed1 + 1;
@@ -320,12 +330,22 @@ module game_logic(input clk_100mhz, input rst,
 						if(laps_completed2 == 2) begin
 							finish_place2 <= finish_place1 == 0 ? 1 : 2;
 							laps_completed2 <= 3;
-							fmin_tens2 <= min_tens;
-							fmin_ones2 <= min_ones;
-							fsec_tens2 <= sec_tens;
-							fsec_ones2 <= sec_ones;
-							fms_tens2 <= ms_tens;
-							fms_ones2 <= ms_ones;
+							if(finish_place1 == 0) begin
+								fmin_tens1 <= min_tens;
+								fmin_ones1 <= min_ones;
+								fsec_tens1 <= sec_tens;
+								fsec_ones1 <= sec_ones;
+								fms_tens1 <= ms_tens;
+								fms_ones1 <= ms_ones;
+							end
+							else begin
+								fmin_tens2 <= min_tens;
+								fmin_ones2 <= min_ones;
+								fsec_tens2 <= sec_tens;
+								fsec_ones2 <= sec_ones;
+								fms_tens2 <= ms_tens;
+								fms_ones2 <= ms_ones;
+							end
 						end
 						else if(laps_completed2 < 2) begin
 							laps_completed2 <= laps_completed2 + 1;
@@ -337,7 +357,7 @@ module game_logic(input clk_100mhz, input rst,
 				end
 				`PHASE_LOADING_RESULTS: begin
 					if(phase_loaded == 1) begin
-						phase <= `PHASE_START_SCREEN;
+						phase <= `PHASE_RESULTS;
 					end
 				end
 				`PHASE_RESULTS: begin

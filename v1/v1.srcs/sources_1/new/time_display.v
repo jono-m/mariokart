@@ -83,7 +83,7 @@ module time_display
     wire in_ms_tens = ms_tens_x < BMP_X;
     wire in_ms_ones = ms_ones_x < BMP_X;
 
-    wire in_y2 = (y >= (BMP_Y + 40) && y < (BMP_Y + BMP_Y + 40));
+    wire in_y2 = (y >= (BMP_Y + 20) && y < (BMP_Y + BMP_Y + 20));
 
     wire in_drawing = in_min_tens || in_min_ones || in_min_separator ||
         in_sec_tens || in_sec_ones || in_sec_separator ||
@@ -112,7 +112,7 @@ module time_display
         ))))))));
 
     assign time_y = in_y ? (y + (number_to_draw * BMP_Y)) : (in_y2 ?
-        (y - 40 - BMP_Y + (number_to_draw * BMP_Y)) : 0);
+        (y - 20 - BMP_Y + (number_to_draw * BMP_Y)) : 0);
 
     reg [19:0] counter = 0;
     always @(posedge clk_100mhz) begin
