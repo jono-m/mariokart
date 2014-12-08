@@ -628,7 +628,7 @@ module labkit(input clk,
   wire [22:0] cram_adr;
   wire cram_we;
 
-  sound_loaded soundloader(.clk_12mhz(clk_12mhz), .rst(rst), .load(sound_load),
+  sound_loader soundloader(.clk_12mhz(clk_12mhz), .rst(rst), .load(sound_load),
       .is_loaded(sound_loaded), .sound_address(sound_address), .sample(sample),
       .sd_byte_available(sd_byte_available), 
       .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
