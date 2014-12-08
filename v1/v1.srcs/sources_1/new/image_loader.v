@@ -7,7 +7,7 @@ module image_loader
         #(WIDTH = 400, HEIGHT = 80, ROWS = 8000, BRAM_ADDWIDTH = 12, ALPHA = 0)
         (input clk, input rst, input load,
         input [31:0] address_offset,
-        input [9:0] x, input [9:0] y,
+        input [9:0] x, input [8:0] y,
         output [3:0] red, output [3:0] green, output [3:0] blue, output alpha,
         output is_loaded,
 
