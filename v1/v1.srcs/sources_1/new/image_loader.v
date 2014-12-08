@@ -74,9 +74,14 @@ module image_loader
                     was_byte_available <= sd_byte_available;
                     if(was_byte_available == 0 && sd_byte_available == 1) begin
                         new_pixels <= {new_pixels[23:0], sd_byte};
+                        if(loaded_pixels == 0) begin
+                            bram_write_enable <= 1;
+                        end
+                        if(loaded_pixels == 2) begin
+                            bram_write_enable <= 0;
+                        end
                         if(loaded_pixels == 3) begin
                             bram_write_data <= {new_pixels[23:0], sd_byte};
-                            bram_write_enable <= 1;
                             write_address <= loaded_rows;
                             loaded_rows <= loaded_rows + 1;
                         end
