@@ -46,21 +46,21 @@
 `define MAPTYPE_WALL					          2
 `define MAPTYPE_FINISH					        3
 
-`define PWM_P_FORWARD_SLOW              0
-`define PWM_DS_FORWARD_SLOW             0
-`define PWM_P_FORWARD_NORMAL            0
-`define PWM_DS_FORWARD_NORMAL           0
-`define PWM_P_BACKWARD_SLOW             0
-`define PWM_DS_BACKWARD_SLOW            0
-`define PWM_P_BACKWARD_NORMAL           0
-`define PWM_DS_BACKWARD_NORMAL          0
+`define PWM_P_FORWARD_SLOW              10000000
+`define PWM_DS_FORWARD_SLOW             3
+`define PWM_P_FORWARD_NORMAL            10000000
+`define PWM_DS_FORWARD_NORMAL           5
+`define PWM_P_BACKWARD_SLOW             10000000
+`define PWM_DS_BACKWARD_SLOW            3
+`define PWM_P_BACKWARD_NORMAL           10000000
+`define PWM_DS_BACKWARD_NORMAL          5
 
 `define ITEM_BOX_RESPAWN_SECONDS        5
-`define ITEM_PICK_TIME_SECONDS          4
+`define ITEM_PICK_TIME_SECONDS          2
 `define MUSHROOM_BOOST_SECONDS          1
 `define BANANA_SECONDS                  1
 `define LIGHTNING_SECONDS               3
-`define LIGHTNING_FLASH_MS				500
+`define LIGHTNING_FLASH_MS				1000
 `define BANANA_GRACE_CYCLES				50000000
 
 `define ITEM_NONE                      0

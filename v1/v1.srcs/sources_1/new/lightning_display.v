@@ -2,7 +2,7 @@
 
 module lightning_display(input clk_100mhz, input rst,
 		input lightning_used, output reg lightning_display);
-    reg [9:0] lightning_counter = 0;
+    reg [11:0] lightning_counter = 0;
     reg [26:0] lightning_clk_counter = 0;
 	wire displaying_lightning = lightning_counter > 0;
 

@@ -2,7 +2,7 @@
 
 `timescale 1ns / 1ps
 
-module video_logic(input clk_100mhz, input clk_50mhz, input rst,
+module video_logic(input clk_100mhz, input clk_50mhz, input clk_25mhz, input rst,
         // Game logic connections
         input [2:0] phase,
         input [2:0] selected_character1, input [2:0] selected_character2,
@@ -103,7 +103,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input rst,
     wire bg_sd_read;
     image_loader #(.WIDTH(640), .HEIGHT(480), .ROWS(76800), .BRAM_ADDWIDTH(16),
             .ALPHA(0)) 
-            bg_loader(.clk(clk_50mhz), .rst(rst_loader), 
+            bg_loader(.clk(clk_25mhz), .rst(rst_loader), 
                     .load(bg_load), .x(x), .y(y), .red(bg_r), 
                     .green(bg_g), .blue(bg_b), .alpha(bg_a),
                     .address_offset(bg_address_offset),

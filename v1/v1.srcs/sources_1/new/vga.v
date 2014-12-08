@@ -3,9 +3,12 @@
 module vga(input vga_clock,
             output [9:0] x,
             output [8:0] y,
-            output vsync, hsync, at_display_area);
+            output vsync, hsync, at_display_area,
+            output [9:0] hcount_o, output [9:0] vcount_o);
     reg [9:0] hcount = 0;    // pixel number on current line
     reg [9:0] vcount = 0;     // line number
+    assign hcount_o = hcount;
+    assign vcount_o = vcount;
     assign x = at_display_area ? (hcount-144) : 0;
     wire [9:0] y1 = at_display_area ? (vcount-35) : 0;
     assign y = y1[8:0];

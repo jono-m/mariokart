@@ -40,7 +40,9 @@ module labkit(input clk,
 
     // PMOD
     inout [1:0] JA,
-    inout [7:0] JB
+    inout [7:0] JB,
+    inout [7:0] JC,
+    inout [7:0] JD
 	);
 
   // -----------------
@@ -85,9 +87,12 @@ module labkit(input clk,
 
 	wire [9:0] x;
 	wire [8:0] y;
+  wire [9:0] hcount;
+  wire [9:0] vcount;
 	wire at_display_area;
 	vga vga_module(.vga_clock(clk_25mhz), .x(x), .y(y), .vsync(Vsync),
-			.hsync(Hsync), .at_display_area(at_display_area));
+			.hsync(Hsync), .at_display_area(at_display_area),
+      .hcount_o(hcount), .vcount_o(vcount));
 
   // -----------------------
 	// Button and N64 input.
@@ -439,9 +444,15 @@ module labkit(input clk,
   wire turn_left1;
   wire turn_right1;
 
-  car_simulator car1(.clk_100mhz(clk_100mhz), .rst(rst || phase == `PHASE_LOADING_RACING), .forward(forward1),
-      .backward(backward1), .left(turn_left1), .right(turn_right1), .speed(speed1), 
-      .car_x(car1_x), .car_y(car1_y));
+  wire [3:0] ct_r;
+  wire [3:0] ct_g;
+  wire [3:0] ct_b;
+
+  led_tracker car_tracker(.clk(clk_100mhz), .replace_cars(phase == `PHASE_LOADING_RACING), .vgaRed(ct_r), .vgaGreen(ct_g), .vgaBlue(ct_b), .hcount(hcount), .vcount(vcount),
+      .hsync(Hsync), .vsync(~Vsync), .at_display_area(at_display_area), .btnCpuReset(btnCpuReset), .sw(sw), .btnU(btnU),
+      .btnL(btnL), .btnR(btnR), .btnD(btnD), .btnLU(clean_dD1), .btnLD(clean_dU1), .btnLL(clean_dR1), .btnLR(clean_dL1), .btnRU(clean_cD1), 
+      .btnRD(clean_cU1), .btnRL(clean_cR1), .btnRR(clean_cL1),
+      .JC(JC), .JD(JD), .xloc_1(car1_x), .yloc_1(car1_y), .xloc_2(car2_x), .yloc_2(car2_y));
 
   wire driver_forward1;
   wire driver_backward1;
@@ -460,10 +471,6 @@ module labkit(input clk,
   wire backward2;
   wire turn_left2;
   wire turn_right2;
-
-  car_simulator car2(.clk_100mhz(clk_100mhz), .rst(rst || phase == `PHASE_LOADING_RACING), .forward(forward2),
-      .backward(backward2), .left(turn_left2), .right(turn_right2), .speed(speed2), 
-      .car_x(car2_x), .car_y(car2_y));
 
   wire driver_forward2;
   wire driver_backward2;
@@ -488,7 +495,7 @@ module labkit(input clk,
   wire video_sd_read;
   wire forcing_display;
 
-	video_logic vl(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .rst(rst), .phase(phase),
+	video_logic vl(.clk_100mhz(clk_100mhz), .clk_50mhz(clk_50mhz), .clk_25mhz(clk_25mhz), .rst(rst), .phase(phase),
 			.selected_character1(selected_character1), .selected_character2(selected_character2), 
       .character_selected1(character_selected1), .character_selected2(character_selected2),
       .ready_for_race(ready_for_race),
@@ -602,10 +609,9 @@ module labkit(input clk,
   
   // -----------------
   // Labkit outputs
-
-  assign vgaRed = at_display_area ? red : 0;
-  assign vgaGreen = at_display_area ? green : 0;
-  assign vgaBlue = at_display_area ? blue : 0;
+  assign vgaRed = at_display_area ? (ct_r > 0 ? ct_r : red) : 0;
+  assign vgaGreen = at_display_area ? (ct_g > 0 ? ct_g : green) : 0;
+  assign vgaBlue = at_display_area ? (ct_b > 0 ? ct_b : blue) : 0;
     
   // MicroSD SPI/SD Mode/Nexys 4
   // 1: Unused / DAT2 / sdData[2]
@@ -625,7 +631,8 @@ module labkit(input clk,
   assign sdData[1] = 1;
   
   assign JA = {controller_data1, controller_data2};
-  assign JB = {turn_right1, turn_left1, backward1, forward1, turn_right2, turn_left2, backward2, forward2};
+  assign JB = {driver_right1, driver_left1, driver_backward1, driver_forward1, 
+      driver_right2, driver_left2, driver_backward2, driver_forward2};
 
   assign led = {phase, phase_loaded, A1, sd_read, sd_ready_for_read, sd_byte_available, rst, 
       paused_stickLeft1, stickLeft1, clean_stickLeft1, laps_completed1, forcing_display, 1'b1};
