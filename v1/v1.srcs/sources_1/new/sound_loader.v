@@ -12,7 +12,7 @@ module sound_loader(input clk_12mhz, input rst, input load,
 		output reg sd_do_read = 0,
 
         // Cellular RAM signals
-        inout cram_data[15:0], output cram_adr[22:0], output reg cram_we);
+        inout [15:0] cram_data, output [22:0] cram_adr, output reg cram_we);
 	
     reg was_byte_available = 0;
     reg [22:0] loaded_rows = 0;
@@ -23,6 +23,7 @@ module sound_loader(input clk_12mhz, input rst, input load,
     assign is_loaded = loaded;
     assign cram_adr = is_loaded ? sound_address : write_address;
     assign cram_data = is_loaded ? 16'bZZZZ_ZZZZ_ZZZZ_ZZZZ : new_data;
+    assign sample = cram_data[7:0];
 
     always @(posedge clk_12mhz) begin
         if(rst) begin
