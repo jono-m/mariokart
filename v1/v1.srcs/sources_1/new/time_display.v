@@ -50,7 +50,7 @@ module time_display
     // Loader connections.
     wire time_a;
     wire [9:0] time_x;
-    wire [9:0] time_y;
+    wire [8:0] time_y;
     image_loader #(.WIDTH(20), .HEIGHT(220), .ROWS(1100), .BRAM_ADDWIDTH(10),
             .ALPHA(1)) 
             time_loader(.clk(clk_100mhz), .rst(rst), 

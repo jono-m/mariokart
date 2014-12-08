@@ -4,8 +4,8 @@ module laps_display
         #(DOT_SIZE = 4, DOT_THICKNESS = 1, DOT_SPACING = 7)
         (input clk, input rst,
         input [1:0] laps_completed,
-        input [9:0] x, input [9:0] y,
-        output [9:0] sprite_x, output [9:0] sprite_y,
+        input [9:0] x, input [8:0] y,
+        output [9:0] sprite_x, output [8:0] sprite_y,
         input [11:0] color,
         output [3:0] red, output [3:0] green, output [3:0] blue, output alpha);
     assign sprite_x = x - 66;

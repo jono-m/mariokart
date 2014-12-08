@@ -7,14 +7,16 @@ def create_hex(filename):
 
   byteno = 0
   samples_written = 0
-  while (byteno < len(bytes)):
+  coe_file.write("memory_initialization_radix = 16;\n")
+  coe_file.write("memory_initialization_vector = \n")
+  while (byteno < 262144):
     sample = (int(bytes[byteno].encode('hex'), 16));
     total = hex(sample)[2:];
-    coe_file.write(total)
+    coe_file.write(total + ', ')
     byteno = byteno + 1
     samples_written = samples_written + 1
   coe_file.close()
   bmp_file.close()
   print samples_written
 
-create_hex('C:/Users/JMM/Documents/GitHub/mariokart/Ass/sounds/menu_music.wav')
+create_hex('/Users/JMM/Repositories/MarioKart/Ass/sounds/menu_music.wav')
