@@ -633,7 +633,7 @@ module labkit(input clk,
       .sd_byte_available(sd_byte_available), 
       .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
       .sd_address(sound_sd_adr), .sd_do_read(sound_sd_read),
-      .cram_data[15:0], .cram_adr[22:0], .cram_we(cram_we));
+      .cram_data(cram_data), .cram_adr(cram_adr), .cram_we(cram_we));
 
 
   information_map imap(.clk_100mhz(clk_100mhz), .rst(rst), .load(imap_load),
