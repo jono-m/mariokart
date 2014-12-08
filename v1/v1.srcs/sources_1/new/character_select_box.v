@@ -3,7 +3,7 @@
 module character_select_box
         #(WIDTH = 127, HEIGHT = 153, THICKNESS = 5)
         (input clk, input rst,
-        input [9:0] x, input [9:0] y,
+        input [9:0] x, input [8:0] y,
         input [11:0] color, input filled,
         output [3:0] red, output [3:0] green, output [3:0] blue, output alpha);
     wire within_outer = (x < THICKNESS + WIDTH + THICKNESS) 

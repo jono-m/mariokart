@@ -42,7 +42,21 @@ module labkit(input clk,
     inout [1:0] JA,
     inout [7:0] JB,
     inout [7:0] JC,
-    inout [7:0] JD
+    inout [7:0] JD,
+
+    // Cellular RAM
+    output RamCLK,
+    output RamADVn,
+    output RamCEn,
+    output RamCRE,
+    output RamOEn,
+    output RamWEn,
+    output RamLBn,
+    output RamUBn,
+    input RamWait,
+
+    inout [15:0] MemDB,
+    output [22:0] MemAdr
 	);
 
   // -----------------
@@ -56,10 +70,12 @@ module labkit(input clk,
 	wire clk_100mhz = clk;
   wire clk_50mhz;
   wire clk_25mhz;
+  wire clk_12mhz;
   wire clk_1mhz;
 
   clock_divider div1(clk_100mhz, clk_50mhz);
   clock_divider div2(clk_50mhz, clk_25mhz);
+  clock_divider div3(clk_25mhz, clk_12mhz);
   us_divider usdiv(.clk_100mhz(clk_100mhz), .rst(rst), .clk_1mhz(clk_1mhz));
 
   // ------------------
@@ -508,8 +524,8 @@ module labkit(input clk,
 			.sd_byte_available(sd_byte_available), 
 			.sd_ready_for_read(sd_ready_for_read), .sd_address(video_sd_adr),
 			.x(x), .y(y), .red(red), .green(green), .blue(blue),
-      .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
-      .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
+      .car1_x(car1_x), .car1_y(car1_y),
+      .car2_x(car2_x), .car2_y(car2_y),
       .owned_item1(owned_item1), .owned_item2(owned_item2),
       .picking1(picking_item1), .picking2(picking_item2),
       .item_box1(item_box1), .item_box2(item_box2),
@@ -598,12 +614,34 @@ module labkit(input clk,
       .banana5_active(banana5_active), .banana6_active(banana6_active),
       .banana7_active(banana7_active), .banana8_active(banana8_active));
 
+  // Sound loader
+
+  wire sound_load;
+  wire [22:0] sound_address;
+  wire [7:0] sample;
+
+  wire sound_loaded;
+  wire [31:0] sound_sd_adr;
+  wire sound_sd_read;
+
+  wire [15:0] cram_data;
+  wire [22:0] cram_adr;
+  wire cram_we;
+
+  sound_loader soundloader(.clk_12mhz(clk_12mhz), .rst(rst), .load(sound_load),
+      .is_loaded(sound_loaded), .sound_address(sound_address), .sample(sample),
+      .sd_byte_available(sd_byte_available), 
+      .sd_ready_for_read(sd_ready_for_read), .sd_byte(sd_byte),
+      .sd_address(sound_sd_adr), .sd_do_read(sound_sd_read),
+      .cram_data(cram_data), .cram_adr(cram_adr), .cram_we(cram_we));
+
   // ------------------------------------------
   // SD card loader.
 
   sd_loader sl(.clk_100mhz(clk_100mhz), .rst(rst), .in_loading_phase(in_loading_phase),
                .imap_loaded(imap_loaded) ,.imap_load(imap_load), .imap_sd_adr(imap_sd_adr), .imap_sd_read(imap_sd_read),
                .video_loaded(video_loaded), .video_load(video_load), .video_sd_adr(video_sd_adr), .video_sd_read(video_sd_read),
+               .sound_loaded(sound_loaded), .sound_load(sound_load), .sound_sd_adr(sound_sd_adr), .sound_sd_read(sound_sd_read),
                .all_loaded(phase_loaded), .sd_address(sd_address),
                .sd_read(sd_read));
   
@@ -629,6 +667,19 @@ module labkit(input clk,
   assign sdSCK = sd_CLK;
   assign sd_MISO = sdData[0];
   assign sdData[1] = 1;
+
+  assign RamCLK = 0;
+  assign RamADVn = 0;
+  assign RamCEn = 0;
+  assign RamCRE = 0;
+  assign RamOEn = 0;
+  assign RamWEn = ~cram_we;
+  assign RamLBn = 0;
+  assign RamUBn = 0;
+  assign RamWait = 1'bZ;
+
+  assign MemDB = cram_data;
+  assign MemAdr = cram_adr;
   
   assign JA = {controller_data1, controller_data2};
   assign JB = {driver_right1, driver_left1, driver_backward1, driver_forward1, 

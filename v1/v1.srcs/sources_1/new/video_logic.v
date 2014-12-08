@@ -25,9 +25,9 @@ module video_logic(input clk_100mhz, input clk_50mhz, input clk_25mhz, input rst
         output [3:0] red, output [3:0] green, output [3:0] blue,
 
         // Car connections
-        input [9:0] car1_x, input [8:0] car1_y, input car1_present,
+        input [9:0] car1_x, input [8:0] car1_y,
         input [1:0] owned_item1, input picking1,
-        input [9:0] car2_x, input [8:0] car2_y, input car2_present,
+        input [9:0] car2_x, input [8:0] car2_y,
         input [1:0] owned_item2, input picking2,
 
         // More logic connections,
@@ -616,8 +616,8 @@ module video_logic(input clk_100mhz, input clk_50mhz, input clk_25mhz, input rst
             .selected_character1(selected_character1),
             .selected_character2(selected_character2),
             .ready_for_race(ready_for_race),
-            .car1_x(car1_x), .car1_y(car1_y), .car1_present(car1_present),
-            .car2_x(car2_x), .car2_y(car2_y), .car2_present(car2_present),
+            .car1_x(car1_x), .car1_y(car1_y),
+            .car2_x(car2_x), .car2_y(car2_y),
             .race_begin(race_begin), .faded(faded),
             .laps_completed1(laps_completed1), .laps_completed2(laps_completed2),
             .finish_place1(finish_place1), .finish_place2(finish_place2),
