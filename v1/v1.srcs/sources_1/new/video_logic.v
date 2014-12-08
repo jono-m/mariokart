@@ -27,7 +27,7 @@ module video_logic(input clk_100mhz, input clk_50mhz, input clk_25mhz, input rst
         // Car connections
         input [9:0] car1_x, input [8:0] car1_y,
         input [1:0] owned_item1, input picking1,
-        input [9:0] car2_x, input [8:0] car2_y
+        input [9:0] car2_x, input [8:0] car2_y,
         input [1:0] owned_item2, input picking2,
 
         // More logic connections,
