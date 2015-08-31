@@ -39,7 +39,7 @@ module sd_controller(
     parameter WRITE_BLOCK_BYTE = 17;
     parameter WRITE_BLOCK_WAIT = 18;
     
-    parameter WRITE_DATA_SIZE = 515;
+    parameter WRITE_DATA_SIZE = 514;
     
     reg [4:0] state = RST;
     assign status = state;
@@ -65,7 +65,7 @@ module sd_controller(
                     cmd_out <= {56{1'b1}};
                     byte_counter <= 0;
                     byte_available <= 0;
-                    next_byte <= 0;
+                    ready_for_next_byte <= 0;
                     cmd_mode <= 1;
                     bit_counter <= 160;
                     cs <= 1;
@@ -169,12 +169,7 @@ module sd_controller(
                     if (sclk_sig == 1) begin
                         if (miso == 0) begin
                             recv_data <= 0;
-                            if (response_mode == 0) begin
-                                bit_counter <= 3;
-                            end
-                            else begin
-                                bit_counter <= 6;
-                            end
+                            bit_counter <= 6;
                             state <= RECEIVE_BYTE;
                         end
                     end
@@ -196,7 +191,7 @@ module sd_controller(
                 WRITE_BLOCK_CMD: begin
                     cmd_out <= {16'hFF_58, address, 8'hFF};
                     bit_counter <= 55;
-                    return_state <= WRITE_BLOCK_DATA;
+                    return_state <= WRITE_BLOCK_INIT;
                     state <= SEND_CMD;
                 end
                 WRITE_BLOCK_INIT: begin
@@ -206,9 +201,8 @@ module sd_controller(
                 end
                 WRITE_BLOCK_DATA: begin
                     if (byte_counter == 0) begin
-                        if (miso == 0) begin
-                            state <= WRITE_BLOCK_WAIT;
-                        end
+                        state <= RECEIVE_BYTE_WAIT;
+                        return_state <= WRITE_BLOCK_WAIT;
                     end
                     else begin
                         if ((byte_counter == 2) || (byte_counter == 1)) begin
@@ -219,7 +213,7 @@ module sd_controller(
                         end
                         else begin
                             data_sig <= din;
-                            ready_for_next_byte <= 0;
+                            ready_for_next_byte <= 1;
                         end
                         bit_counter <= 7;
                         state <= WRITE_BLOCK_BYTE;
@@ -234,7 +228,7 @@ module sd_controller(
                         else begin
                             data_sig <= {data_sig[6:0], 1'b1};
                             bit_counter <= bit_counter - 1;
-                            ready_for_next_byte <= 1;
+                            ready_for_next_byte <= 0;
                         end;
                     end;
                     sclk_sig <= ~sclk_sig;
@@ -253,5 +247,5 @@ module sd_controller(
 
     assign sclk = sclk_sig;
     assign mosi = cmd_mode ? cmd_out[55] : data_sig[7];
-    assign ready_for_read = (state == IDLE);
+    assign ready = (state == IDLE);
 endmodule

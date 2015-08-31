@@ -20,16 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd, 
-	inout [3:0] sdData, output [15:0] led, input btnC);
-	wire clk_100mhz = clk;
+module labkit(input CLK100MHZ, input SD_CD, output SD_RESET, output SD_SCK, output SD_CMD, 
+	inout [3:0] SD_DAT, output [15:0] LED, input BTNC);
+	wire clk_100mhz = CLK100MHZ;
     wire clk_50mhz;
     wire clk_25mhz;
 
     clock_divider div1(clk_100mhz, clk_50mhz);
     clock_divider div2(clk_50mhz, clk_25mhz);
 
-    wire rst = btnC;
+    wire rst = BTNC;
 
     wire spiClk;
     wire spiMiso;
@@ -37,21 +37,21 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
     wire spiCS;
 
     // MicroSD SPI/SD Mode/Nexys 4
-    // 1: Unused / DAT2 / sdData[2]
-    // 2: CS / DAT3 / sdData[3]
-    // 3: MOSI / CMD / sdCmd
-    // 4: VDD / VDD / ~sdReset
-    // 5: SCLK / SCLK / sdSCK
+    // 1: Unused / DAT2 / SD_DAT[2]
+    // 2: CS / DAT3 / SD_DAT[3]
+    // 3: MOSI / CMD / SD_CMD
+    // 4: VDD / VDD / ~SD_RESET
+    // 5: SCLK / SCLK / SD_SCK
     // 6: GND / GND / - 
-    // 7: MISO / DAT0 / sdData[0]
-    // 8: UNUSED / DAT1 / sdData[1]
-    assign sdData[2] = 1;
-    assign sdData[3] = spiCS;
-    assign sdCmd = spiMosi;
-    assign sdReset = 0;
-    assign sdSCK = spiClk;
-    assign spiMiso = sdData[0];
-    assign sdData[1] = 1;
+    // 7: MISO / DAT0 / SD_DAT[0]
+    // 8: UNUSED / DAT1 / SD_DAT[1]
+    assign SD_DAT[2] = 1;
+    assign SD_DAT[3] = spiCS;
+    assign SD_CMD = spiMosi;
+    assign SD_RESET = 0;
+    assign SD_SCK = spiClk;
+    assign spiMiso = SD_DAT[0];
+    assign SD_DAT[1] = 1;
     
     reg rd = 0;
     reg wr = 0;
@@ -67,7 +67,11 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
     
     wire [4:0] state;
     
-    assign led = {state, 1'b1, 1'b1, 1'b1, bytes[15:8]};
+    parameter STATE_START = 1;
+    parameter STATE_WRITE = 0;
+    parameter STATE_READ = 3;
+    reg [1:0] test_state = STATE_START;
+    assign LED = {state, ready, test_state, bytes[15:8]};
     
     sd_controller sdcont(.cs(spiCS), .mosi(spiMosi), .miso(spiMiso),
             .sclk(spiClk), .rd(rd), .wr(wr), .reset(rst),
@@ -76,10 +80,6 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
             .ready_for_next_byte(ready_for_next_byte), .clk(clk_25mhz), 
             .status(state));
     
-    parameter STATE_START = 0;
-    parameter STATE_WRITE = 1;
-    parameter STATE_READ = 2;
-    reg test_state = STATE_WRITE;
 
     always @(posedge clk_25mhz) begin
         if(rst) begin
@@ -88,20 +88,25 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
             din <= 0;
             wr <= 0;
             rd <= 0;
+            test_state <= STATE_START;
         end
         else begin
             case (test_state)
                 STATE_START: begin
                     if(ready) begin
                         wr <= 1;
-                        din <= 8'hAC;
-                        test_state <= STATE_WRITE;
+                        din <= 8'hFF;
+                    end
+                    else begin
+                        if(wr == 1) begin
+                            test_state <= STATE_WRITE;
+                        end
                     end
                 end
                 STATE_WRITE: begin
                     if(ready_for_next_byte) begin
                         wr <= 0;
-                        din <= 8'hF3;
+                        din <= 8'hFF;
                     end
                     if(ready) begin
                         test_state <= STATE_READ;
