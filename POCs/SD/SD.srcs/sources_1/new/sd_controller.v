@@ -5,15 +5,14 @@ module sd_controller(
     output mosi,
     input miso,
     output sclk,
-    
     input rd,
     input wr,
-    input dm_in,
     input reset,
     input [7:0] din,
     output reg [7:0] dout,
     output reg byte_available,
-    output ready_for_read,
+    output reg ready_for_next_byte,
+    output ready,
     input [31:0] address,
     input clk,
     output [4:0] status
@@ -49,8 +48,6 @@ module sd_controller(
     reg [55:0] cmd_out;
     reg [7:0] recv_data;
     reg cmd_mode = 1;
-    reg data_mode = 1;
-    reg response_mode = 1;
     reg [7:0] data_sig = 8'h00;
     
     reg [9:0] byte_counter;
@@ -68,8 +65,8 @@ module sd_controller(
                     cmd_out <= {56{1'b1}};
                     byte_counter <= 0;
                     byte_available <= 0;
+                    next_byte <= 0;
                     cmd_mode <= 1;
-                    response_mode <= 1;
                     bit_counter <= 160;
                     cs <= 1;
                     state <= INIT;
@@ -129,7 +126,6 @@ module sd_controller(
                 end
                 READ_BLOCK_WAIT: begin
                     if(sclk_sig == 1 && miso == 0) begin
-                        state <= READ_BLOCK_DATA;
                         byte_counter <= 511;
                         bit_counter <= 7;
                         return_state <= READ_BLOCK_DATA;
@@ -198,15 +194,9 @@ module sd_controller(
                     sclk_sig <= ~sclk_sig;
                 end
                 WRITE_BLOCK_CMD: begin
-                    cmd_mode <= 1;
-                    if (data_mode == 0) begin
-                        cmd_out <= {8'hFF, 8'h59, address, 8'hFF};
-                    end
-                    else begin
-                        cmd_out <= {8'hFF, 8'h58, address, 8'hFF};
-                    end
+                    cmd_out <= {16'hFF_58, address, 8'hFF};
                     bit_counter <= 55;
-                    return_state <= WRITE_BLOCK_INIT;
+                    return_state <= WRITE_BLOCK_DATA;
                     state <= SEND_CMD;
                 end
                 WRITE_BLOCK_INIT: begin
@@ -216,21 +206,20 @@ module sd_controller(
                 end
                 WRITE_BLOCK_DATA: begin
                     if (byte_counter == 0) begin
-                        state <= RECEIVE_BYTE_WAIT;
-                        return_state <= WRITE_BLOCK_WAIT;
-                        response_mode <= 0;
+                        if (miso == 0) begin
+                            state <= WRITE_BLOCK_WAIT;
+                        end
                     end
                     else begin
                         if ((byte_counter == 2) || (byte_counter == 1)) begin
                             data_sig <= 8'hFF;
                         end
                         else if (byte_counter == WRITE_DATA_SIZE) begin
-                            if (data_mode == 0) begin
-                                data_sig <= 8'hFC;
-                            end
-                            else begin
-                                data_sig <= 8'hFE;
-                            end
+                            data_sig <= 8'hFE;
+                        end
+                        else begin
+                            data_sig <= din;
+                            ready_for_next_byte <= 0;
                         end
                         bit_counter <= 7;
                         state <= WRITE_BLOCK_BYTE;
@@ -245,20 +234,15 @@ module sd_controller(
                         else begin
                             data_sig <= {data_sig[6:0], 1'b1};
                             bit_counter <= bit_counter - 1;
+                            ready_for_next_byte <= 1;
                         end;
                     end;
                     sclk_sig <= ~sclk_sig;
                 end
                 WRITE_BLOCK_WAIT: begin
-                    response_mode <= 1;
                     if (sclk_sig == 1) begin
                         if (miso == 1) begin
-                            if (data_mode == 0) begin
-                                state <= WRITE_BLOCK_INIT;
-                            end
-                            else begin
-                                state <= IDLE;
-                            end
+                            state <= IDLE;
                         end
                     end
                     sclk_sig = ~sclk_sig;

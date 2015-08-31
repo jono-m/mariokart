@@ -55,11 +55,11 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
     
     reg rd = 0;
     reg wr = 0;
-    reg dm_in = 0;
     reg [7:0] din = 0;
     wire [7:0] dout;
     wire byte_available;
-    wire ready_for_read;
+    wire ready;
+    wire ready_for_next_byte;
     reg [31:0] adr = 32'h00_00_00_00;
     
     reg [15:0] bytes = 0;
@@ -70,31 +70,60 @@ module labkit(input clk, input sdCD, output sdReset, output sdSCK, output sdCmd,
     assign led = {state, 1'b1, 1'b1, 1'b1, bytes[15:8]};
     
     sd_controller sdcont(.cs(spiCS), .mosi(spiMosi), .miso(spiMiso),
-            .sclk(spiClk), .rd(rd), .wr(wr), .dm_in(dm_in), .reset(rst),
+            .sclk(spiClk), .rd(rd), .wr(wr), .reset(rst),
             .din(din), .dout(dout), .byte_available(byte_available),
-            .ready_for_read(ready_for_read), .address(adr), .clk(clk_25mhz), .status(state));
-            
+            .ready(ready), .address(adr), 
+            .ready_for_next_byte(ready_for_next_byte), .clk(clk_25mhz), 
+            .status(state));
+    
+    parameter STATE_START = 0;
+    parameter STATE_WRITE = 1;
+    parameter STATE_READ = 2;
+    reg test_state = STATE_WRITE;
+
     always @(posedge clk_25mhz) begin
         if(rst) begin
             bytes <= 0;
             bytes_read <= 0;
+            din <= 0;
+            wr <= 0;
             rd <= 0;
         end
         else begin
-            if(ready_for_read && bytes_read < 2) begin
-                rd <= 1; 
-            end
-            if(byte_available) begin
-                rd <= 0;
-                if(bytes_read == 0) begin
-                    bytes_read <= 1;
-                    bytes[15:8] <= dout;
+            case (test_state)
+                STATE_START: begin
+                    if(ready) begin
+                        wr <= 1;
+                        din <= 8'hAC;
+                        test_state <= STATE_WRITE;
+                    end
                 end
-                else if(bytes_read == 1) begin
-                    bytes_read <= 2;
-                    bytes[7:0] <= dout;
+                STATE_WRITE: begin
+                    if(ready_for_next_byte) begin
+                        wr <= 0;
+                        din <= 8'hF3;
+                    end
+                    if(ready) begin
+                        test_state <= STATE_READ;
+                    end
                 end
-            end
+                STATE_READ: begin
+                    if(ready && bytes_read < 2) begin
+                        rd <= 1; 
+                    end
+                    if(byte_available) begin
+                        rd <= 0;
+                        if(bytes_read == 0) begin
+                            bytes_read <= 1;
+                            bytes[15:8] <= dout;
+                        end
+                        else if(bytes_read == 1) begin
+                            bytes_read <= 2;
+                            bytes[7:0] <= dout;
+                        end
+                    end
+                end
+            endcase
         end
     end
 endmodule
