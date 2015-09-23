@@ -93,24 +93,26 @@ module labkit(input CLK100MHZ, input SD_CD, output SD_RESET, output SD_SCK, outp
         end
         else begin
             case (test_state)
-		STATE_INIT: begin
-			if(ready) begin
-				test_state <= STATE_START;
-			end
-		end
-                STATE_START: begin
+                STATE_INIT: begin
+                    if(ready) begin
+                        test_state <= STATE_START;
                         wr <= 1;
-                        din <= 8'hFF;
+                        din <= 8'hAA;
+                    end
+                end
+                STATE_START: begin
+                    if(ready == 0) begin
                         test_state <= STATE_WRITE;
+                        wr <= 0;
+                    end
                 end
                 STATE_WRITE: begin
-		    if(ready) begin
-			    test_state <= STATE_READ;
-			    rd <= 1;
-		    end
+                    if(ready) begin
+                        test_state <= STATE_READ;
+                        rd <= 1;
+                    end
                     else if(ready_for_next_byte) begin
-                        wr <= 0;
-                        din <= 8'hFF;
+                        din <= 8'hAA;
                     end
                 end
                 STATE_READ: begin
@@ -123,6 +125,7 @@ module labkit(input CLK100MHZ, input SD_CD, output SD_RESET, output SD_SCK, outp
                         else if(bytes_read == 1) begin
                             bytes_read <= 2;
                             bytes[7:0] <= dout;
+                            
                         end
                     end
                 end

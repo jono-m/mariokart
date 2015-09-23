@@ -39,7 +39,7 @@ module sd_controller(
     parameter WRITE_BLOCK_BYTE = 17;
     parameter WRITE_BLOCK_WAIT = 18;
     
-    parameter WRITE_DATA_SIZE = 514;
+    parameter WRITE_DATA_SIZE = 515;
     
     reg [4:0] state = RST;
     assign status = state;
@@ -227,6 +227,7 @@ module sd_controller(
                         if (bit_counter == 0) begin
                             state <= WRITE_BLOCK_DATA;
                             ready_for_next_byte <= 0;
+                        end
                         else begin
                             data_sig <= {data_sig[6:0], 1'b1};
                             bit_counter <= bit_counter - 1;
@@ -238,6 +239,7 @@ module sd_controller(
                     if (sclk_sig == 1) begin
                         if (miso == 1) begin
                             state <= IDLE;
+                            cmd_mode <= 1;
                         end
                     end
                     sclk_sig = ~sclk_sig;
