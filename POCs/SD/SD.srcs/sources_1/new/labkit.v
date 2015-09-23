@@ -67,10 +67,11 @@ module labkit(input CLK100MHZ, input SD_CD, output SD_RESET, output SD_SCK, outp
     
     wire [4:0] state;
     
+    parameter STATE_INIT = 0;
     parameter STATE_START = 1;
-    parameter STATE_WRITE = 0;
+    parameter STATE_WRITE = 2;
     parameter STATE_READ = 3;
-    reg [1:0] test_state = STATE_START;
+    reg [1:0] test_state = STATE_INIT; 
     assign LED = {state, ready, test_state, bytes[15:8]};
     
     sd_controller sdcont(.cs(spiCS), .mosi(spiMosi), .miso(spiMiso),
@@ -88,34 +89,31 @@ module labkit(input CLK100MHZ, input SD_CD, output SD_RESET, output SD_SCK, outp
             din <= 0;
             wr <= 0;
             rd <= 0;
-            test_state <= STATE_START;
+            test_state <= STATE_INIT; 
         end
         else begin
             case (test_state)
+		STATE_INIT: begin
+			if(ready) begin
+				test_state <= STATE_START;
+			end
+		end
                 STATE_START: begin
-                    if(ready) begin
                         wr <= 1;
                         din <= 8'hFF;
-                    end
-                    else begin
-                        if(wr == 1) begin
-                            test_state <= STATE_WRITE;
-                        end
-                    end
+                        test_state <= STATE_WRITE;
                 end
                 STATE_WRITE: begin
-                    if(ready_for_next_byte) begin
+		    if(ready) begin
+			    test_state <= STATE_READ;
+			    rd <= 1;
+		    end
+                    else if(ready_for_next_byte) begin
                         wr <= 0;
                         din <= 8'hFF;
                     end
-                    if(ready) begin
-                        test_state <= STATE_READ;
-                    end
                 end
                 STATE_READ: begin
-                    if(ready && bytes_read < 2) begin
-                        rd <= 1; 
-                    end
                     if(byte_available) begin
                         rd <= 0;
                         if(bytes_read == 0) begin

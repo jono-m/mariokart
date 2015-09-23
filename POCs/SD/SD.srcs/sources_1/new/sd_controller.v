@@ -48,7 +48,7 @@ module sd_controller(
     reg [55:0] cmd_out;
     reg [7:0] recv_data;
     reg cmd_mode = 1;
-    reg [7:0] data_sig = 8'h00;
+    reg [7:0] data_sig = 8'hFF;
     
     reg [9:0] byte_counter;
     reg [9:0] bit_counter;
@@ -193,11 +193,13 @@ module sd_controller(
                     bit_counter <= 55;
                     return_state <= WRITE_BLOCK_INIT;
                     state <= SEND_CMD;
+		    ready_for_next_byte <= 1;
                 end
                 WRITE_BLOCK_INIT: begin
                     cmd_mode <= 0;
                     byte_counter <= WRITE_DATA_SIZE; 
                     state <= WRITE_BLOCK_DATA;
+                    ready_for_next_byte <= 0;
                 end
                 WRITE_BLOCK_DATA: begin
                     if (byte_counter == 0) begin
@@ -224,11 +226,10 @@ module sd_controller(
                     if (sclk_sig == 1) begin
                         if (bit_counter == 0) begin
                             state <= WRITE_BLOCK_DATA;
-                        end
+                            ready_for_next_byte <= 0;
                         else begin
                             data_sig <= {data_sig[6:0], 1'b1};
                             bit_counter <= bit_counter - 1;
-                            ready_for_next_byte <= 0;
                         end;
                     end;
                     sclk_sig <= ~sclk_sig;
